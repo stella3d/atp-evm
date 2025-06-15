@@ -1,10 +1,8 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import {
-    ConnectButton,
   getDefaultConfig,
-  RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
-import { WagmiProvider } from 'wagmi';
+import { useSignMessage, useAccount, WagmiProvider } from 'wagmi';
 import {
   mainnet,
   optimism,
@@ -17,25 +15,34 @@ import {
 } from "@tanstack/react-query";
 
 
-
 export const config = getDefaultConfig({
   appName: 'ATProto Wallet Linker',
   projectId: '9314bee13462fde2ec9f13451ea0f01c',
   chains: [mainnet, optimism, arbitrum, base],
 });
 
+export const SignMessageComponent = () => {
+  const account = useAccount();
+  const { signMessage } = useSignMessage()
+
+  console.log(account.address);
+
+  return (
+    <button onClick={() => signMessage({ message: `I control ${account.address}` })}>
+      Sign message
+    </button>
+  )
+};
 
 export const WalletConnector = () => {
     const queryClient = new QueryClient();
     
     return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-            <p>hi, this is the connector skeleton</p>
-            <ConnectButton />
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <p>hi, this is the connector</p>
+          <SignMessageComponent />
+        </QueryClientProvider>
+      </WagmiProvider>
     );
 }
