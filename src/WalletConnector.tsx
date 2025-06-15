@@ -61,8 +61,6 @@ function ConnectWallet() {
 export const WalletConnector = ({ isAuthenticated, did }: { isAuthenticated: boolean, did: DidString | undefined }) => {
   const queryClient = new QueryClient();
 
-  console.log(`DID in WalletConnector: ${did}`);
-    
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
