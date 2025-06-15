@@ -1,0 +1,1 @@
+export type DidString = `did:plc:${string}` | `did:web:${string}` | undefined;

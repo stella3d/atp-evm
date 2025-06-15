@@ -13,6 +13,7 @@ import {
   QueryClientProvider,
   QueryClient,
 } from "@tanstack/react-query";
+import type { DidString } from './common';
 
 
 export const config = getDefaultConfig({
@@ -21,28 +22,29 @@ export const config = getDefaultConfig({
   chains: [mainnet, optimism, arbitrum, base],
 });
 
-export const SignMessageComponent = () => {
+export const SignMessageComponent = ({ disabled, did }: { disabled: boolean, did: DidString }) => {
   const account = useAccount();
   const { signMessage } = useSignMessage()
 
-  console.log(account.address);
+  console.log('SignMessageComponent state:', { disabled, did, address: account.address });
 
   return (
-    <button onClick={() => signMessage({ message: `I control ${account.address}` })}>
-      Sign message
+    <button disabled={disabled} onClick={() => signMessage({ message: `${did} controls ${account.address}` })}>
+      Link DID to Wallet
     </button>
   )
 };
 
-export const WalletConnector = () => {
-    const queryClient = new QueryClient();
+export const WalletConnector = ({ isAuthenticated, did }: { isAuthenticated: boolean, did: DidString | undefined }) => {
+  const queryClient = new QueryClient();
+
+  console.log(`DID in WalletConnector: ${did}`);
     
-    return (
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <p>the below button should only be usable after OAuth completes</p>
-          <SignMessageComponent />
-        </QueryClientProvider>
-      </WagmiProvider>
-    );
+  return (
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        {did ? <SignMessageComponent disabled={!isAuthenticated} did={did} /> : null}
+      </QueryClientProvider>
+    </WagmiProvider>
+  );
 }
