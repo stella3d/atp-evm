@@ -2,7 +2,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultConfig,
 } from '@rainbow-me/rainbowkit';
-import { useSignMessage, useAccount, WagmiProvider } from 'wagmi';
+import { useSignMessage, useAccount, WagmiProvider, useEnsName, useDisconnect, useEnsAvatar } from 'wagmi';
 import {
   mainnet,
   optimism,
@@ -14,6 +14,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import type { DidString } from './common';
+import WalletOptions from './WalletOptions';
 
 
 export const config = getDefaultConfig({
@@ -35,6 +36,30 @@ export const SignMessageComponent = ({ disabled, did }: { disabled: boolean, did
   )
 };
 
+export function Account() {
+  const { address } = useAccount()
+  //const { disconnect } = useDisconnect()
+  const { data: ensName } = useEnsName({ address })
+  const { data: ensAvatar } = useEnsAvatar({ name: ensName! })
+
+  const acctLabel = ensName ? `${ensName} (${address})` : address
+
+  return (
+    <div>
+      <p>✅ connected on EVM wallet side as:</p>
+      {ensAvatar && <img alt="ENS Avatar" src={ensAvatar} />}
+      {address && <div>{acctLabel}</div>}
+      <br/>
+    </div>
+  )
+}
+
+function ConnectWallet() {
+  const { isConnected } = useAccount()
+  if (isConnected) return <Account />
+  return <WalletOptions />
+}
+
 export const WalletConnector = ({ isAuthenticated, did }: { isAuthenticated: boolean, did: DidString | undefined }) => {
   const queryClient = new QueryClient();
 
@@ -43,6 +68,7 @@ export const WalletConnector = ({ isAuthenticated, did }: { isAuthenticated: boo
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
+        <ConnectWallet />
         {did ? <SignMessageComponent disabled={!isAuthenticated} did={did} /> : null}
       </QueryClientProvider>
     </WagmiProvider>

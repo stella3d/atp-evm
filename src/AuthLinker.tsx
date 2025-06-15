@@ -22,7 +22,10 @@ const AuthLinker: React.FC = () => {
   return (
     <div>
       {oauthSession ? (
-        <p>authenticated as {oauthSession.sub}</p>
+        <div>
+          <p>✅ authenticated on ATProto side as:</p>
+          <p>{oauthSession.sub}</p>
+        </div>
       ) : (
         <OAuthUI />
       )}
