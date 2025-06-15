@@ -4,6 +4,9 @@ import { oauthClient } from './oauth';
 const OAuthUI: React.FC = () => {
   const [handle, setHandle] = useState('');
 
+  let oauthInit = oauthClient.init();
+  console.log('OAuth initialization:', oauthInit);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {

@@ -40,7 +40,7 @@ export const WalletConnector = () => {
     return (
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <p>hi, this is the connector</p>
+          <p>the below button should only be usable after OAuth completes</p>
           <SignMessageComponent />
         </QueryClientProvider>
       </WagmiProvider>
