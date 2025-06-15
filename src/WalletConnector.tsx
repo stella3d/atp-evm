@@ -2,7 +2,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultConfig,
 } from '@rainbow-me/rainbowkit';
-import { useSignMessage, useAccount, WagmiProvider, useEnsName, useDisconnect, useEnsAvatar } from 'wagmi';
+import { useSignMessage, useAccount, WagmiProvider, useEnsName, /*useDisconnect,*/ useEnsAvatar } from 'wagmi';
 import {
   mainnet,
   optimism,
@@ -26,8 +26,6 @@ export const config = getDefaultConfig({
 export const SignMessageComponent = ({ disabled, did }: { disabled: boolean, did: DidString }) => {
   const account = useAccount();
   const { signMessage } = useSignMessage()
-
-  console.log('SignMessageComponent state:', { disabled, did, address: account.address });
 
   return (
     <button disabled={disabled} onClick={() => signMessage({ message: `${did} controls ${account.address}` })}>
