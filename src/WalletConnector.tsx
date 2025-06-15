@@ -25,7 +25,13 @@ export const config = getDefaultConfig({
 
 export const SignMessageComponent = ({ disabled, did }: { disabled: boolean, did: DidString }) => {
   const account = useAccount();
-  const { signMessage } = useSignMessage()
+  const { signMessage } = useSignMessage({
+    mutation: {
+        onSuccess: (sig) => {
+          console.log('message signature', sig);
+        }
+    }
+  })
 
   return (
     <button disabled={disabled} onClick={() => signMessage({ message: `${did} controls ${account.address}` })}>
