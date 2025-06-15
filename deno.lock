@@ -1,6 +1,7 @@
 {
   "version": "5",
   "specifiers": {
+    "npm:@atcute/client@^4.0.3": "4.0.3",
     "npm:@atproto/oauth-client-browser@~0.3.23": "0.3.23",
     "npm:@eslint/js@^9.25.0": "9.29.0",
     "npm:@rainbow-me/rainbowkit@^2.2.7": "2.2.7_@tanstack+react-query@5.80.7__react@19.1.0_react@19.1.0_react-dom@19.1.0__react@19.1.0_viem@2.31.2__typescript@5.8.3__ws@8.18.2_wagmi@2.15.6__@tanstack+react-query@5.80.7___react@19.1.0__react@19.1.0__typescript@5.8.3__viem@2.31.2___typescript@5.8.3___ws@8.18.2__@wagmi+core@2.17.3___typescript@5.8.3___viem@2.31.2____typescript@5.8.3____ws@8.18.2___@types+react@19.1.8___react@19.1.0___use-sync-external-store@1.4.0____react@19.1.0__@types+react@19.1.8__use-sync-external-store@1.4.0___react@19.1.0_@vanilla-extract+css@1.17.3_typescript@5.8.3_@types+react@19.1.8",
@@ -29,6 +30,26 @@
       "dependencies": [
         "@jridgewell/gen-mapping",
         "@jridgewell/trace-mapping"
+      ]
+    },
+    "@atcute/client@4.0.3": {
+      "integrity": "sha512-RIOZWFVLca/HiPAAUDqQPOdOreCxTbL5cb+WUf5yqQOKIu5yEAP3eksinmlLmgIrlr5qVOE7brazUUzaskFCfw==",
+      "dependencies": [
+        "@atcute/identity",
+        "@atcute/lexicons"
+      ]
+    },
+    "@atcute/identity@1.0.3": {
+      "integrity": "sha512-mNMxbKHFGys03A8JXKk0KfMBzdd0vrYMzZZWjpw1nYTs0+ea6bo5S1hwqVUZxHdo1gFHSe/t63jxQIF4yL9aKw==",
+      "dependencies": [
+        "@atcute/lexicons",
+        "@badrap/valita"
+      ]
+    },
+    "@atcute/lexicons@1.0.4": {
+      "integrity": "sha512-VyGJuGKAIeE+71UT9aSMJJdvfxfXsdsGMG9acv9rnGT7enVy4TD5XoYQy7TCHZ4YpxXzuHkqjyAqBz95c4WkRg==",
+      "dependencies": [
+        "esm-env"
       ]
     },
     "@atproto-labs/did-resolver@0.1.13": {
@@ -308,6 +329,9 @@
         "@babel/helper-string-parser",
         "@babel/helper-validator-identifier"
       ]
+    },
+    "@badrap/valita@0.4.5": {
+      "integrity": "sha512-4QwGbuhh/JesHRQj79mO/l37PvJj4l/tlAu7+S1n4h47qwaNpZ0WDvIwUGLYUsdi9uQ5UPpiG9wb1Wm3XUFBUQ=="
     },
     "@coinbase/wallet-sdk@3.9.3": {
       "integrity": "sha512-N/A2DRIf0Y3PHc1XAMvbBUu4zisna6qAdqABMZwBMNEfWrXpAwx16pZGkYCLGE+Rvv1edbcB2LYDRnACNcmCiw==",
@@ -2191,6 +2215,9 @@
       ],
       "bin": true
     },
+    "esm-env@1.2.2": {
+      "integrity": "sha512-Epxrv+Nr/CaL4ZcFGPJIYLWFom+YeV1DqMLHJoEd9SYRxNbaFruBwfEX/kkHUJf55j2+TUbmDcmuilbP1TmXHA=="
+    },
     "espree@10.4.0_acorn@8.15.0": {
       "integrity": "sha512-j6PAQ2uUr79PZhBjP5C5fhl8e39FmRnOjsD5lGnWrFU8i2G776tBK7+nP8KuQUTTyAZUwfQqXAgrVH5MbH9CYQ==",
       "dependencies": [
@@ -3665,6 +3692,7 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
+        "npm:@atcute/client@^4.0.3",
         "npm:@atproto/oauth-client-browser@~0.3.23",
         "npm:@eslint/js@^9.25.0",
         "npm:@rainbow-me/rainbowkit@^2.2.7",

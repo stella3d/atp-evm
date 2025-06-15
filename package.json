@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@atcute/client": "^4.0.3",
     "@atproto/oauth-client-browser": "^0.3.23",
     "@rainbow-me/rainbowkit": "^2.2.7",
     "@tanstack/react-query": "^5.80.7",

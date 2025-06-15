@@ -29,7 +29,7 @@ const AuthLinker: React.FC = () => {
       ) : (
         <OAuthUI />
       )}
-      <WalletConnector isAuthenticated={!!oauthSession} did={oauthSession?.sub} />
+      <WalletConnector isAuthenticated={!!oauthSession} did={oauthSession?.sub} oauthToken={'true'} />
     </div>
   );
 };
