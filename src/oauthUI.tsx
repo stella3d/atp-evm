@@ -8,7 +8,7 @@ console.log('OAuth initialization:', oauthInit);
 
 const OAuthUI: React.FC = () => {
   const [handle, setHandle] = useState('');
-  const [oauthSession, setOAuthSession] = useState<OAuthSession | null>(oauthInit?.session || null);
+  const [oauthSession, _] = useState<OAuthSession | null>(oauthInit?.session || null);
 
 
   const handleSubmit = async (e: React.FormEvent) => {

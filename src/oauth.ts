@@ -1,4 +1,4 @@
-import { BrowserOAuthClient, OAuthSession, type OAuthClientMetadataInput, type TokenInfo, type TokenSet } from '@atproto/oauth-client-browser'
+import { BrowserOAuthClient, type OAuthClientMetadataInput } from '@atproto/oauth-client-browser'
 
 export const config: Readonly<OAuthClientMetadataInput> = {
   // Must be the same URL as the one used to obtain this JSON object
