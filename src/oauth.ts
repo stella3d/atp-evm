@@ -22,8 +22,8 @@ let oauthClientInternal = new BrowserOAuthClient({
   handleResolver: "https://bsky.social",
 });
 
-  let oauthInit = await oauthClientInternal.init();
-  console.log('OAuth initialization:', oauthInit);
+//let oauthInit = await oauthClientInternal.init();
+//console.log('OAuth initialization:', oauthInit);
 
 export const oauthClient = oauthClientInternal;
 

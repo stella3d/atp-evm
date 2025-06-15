@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { oauthClient } from './oauth';
+import type { OAuthSession } from '@atproto/oauth-client-browser';
+
+
+let oauthInit = await oauthClient.init();
+console.log('OAuth initialization:', oauthInit);
 
 const OAuthUI: React.FC = () => {
   const [handle, setHandle] = useState('');
+  const [oauthSession, setOAuthSession] = useState<OAuthSession | null>(oauthInit?.session || null);
 
-  let oauthInit = oauthClient.init();
-  console.log('OAuth initialization:', oauthInit);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,15 +27,19 @@ const OAuthUI: React.FC = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={handle}
-          onChange={(e) => setHandle(e.target.value)}
-          placeholder="Bluesky handle or DID"
-        />
-        <button type="submit">Login</button>
-      </form>
+      {oauthSession ? (
+        <p>authenticated as {oauthSession.sub}</p>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={handle}
+            onChange={(e) => setHandle(e.target.value)}
+            placeholder="Bluesky handle or DID"
+          />
+          <button type="submit">Login</button>
+        </form>
+      )}
     </div>
   );
 };
