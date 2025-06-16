@@ -16,7 +16,7 @@ const AuthLinker: React.FC = () => {
     fetchSession();
   }, []);
 
-  console.log('OAuth session:', oauthSession);
+  //console.log('OAuth session:', oauthSession);
 
   // If oauthSession is null, the OAuthUI login form is shown.
   return (
@@ -25,11 +25,16 @@ const AuthLinker: React.FC = () => {
         <div>
           <p>✅ authenticated on ATProto side as:</p>
           <p>{oauthSession.sub}</p>
+          <br/>
+          <WalletConnector 
+            isAuthenticated={!!oauthSession} 
+            did={oauthSession?.sub} 
+            oauth={oauthSession} 
+          />
         </div>
       ) : (
         <OAuthUI />
       )}
-      <WalletConnector isAuthenticated={!!oauthSession} did={oauthSession?.sub} oauthToken={'true'} />
     </div>
   );
 };

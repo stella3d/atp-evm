@@ -16,6 +16,7 @@ import {
 import type { DidString } from './common';
 import WalletOptions from './WalletOptions';
 import { createAddressControlRecord, writeAddressControlRecord } from './recordWrite';
+import type { OAuthSession } from '@atproto/oauth-client-browser';
 
 
 export const config = getDefaultConfig({
@@ -24,7 +25,7 @@ export const config = getDefaultConfig({
   chains: [mainnet, optimism, arbitrum, base],
 });
 
-export const SignMessageComponent = ({ disabled, did, oauthToken }: { disabled: boolean, did: DidString, oauthToken: string }) => {
+export const SignMessageComponent = ({ disabled, did, oauth }: { disabled: boolean, did: DidString, oauth: OAuthSession }) => {
   const account = useAccount();
   const { signMessage } = useSignMessage({
     mutation: {
@@ -34,7 +35,7 @@ export const SignMessageComponent = ({ disabled, did, oauthToken }: { disabled: 
             console.warn('no account found for signing message');
           } else {
             const record = createAddressControlRecord(account.address, sig);
-            await writeAddressControlRecord(did, record, 'https://bsky.network', oauthToken);
+            await writeAddressControlRecord(did, record, 'https://bsky.network', oauth);
           }
         }
     }
@@ -71,15 +72,15 @@ function ConnectWallet() {
   return <WalletOptions />
 }
 
-export const WalletConnector = ({ isAuthenticated, did, oauthToken }: { isAuthenticated: boolean, did: DidString | undefined, oauthToken?: string }) => {
+export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticated: boolean, did: DidString | undefined, oauth: OAuthSession }) => {
   const queryClient = new QueryClient();
 
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <ConnectWallet />
-        {did && oauthToken ? (
-          <SignMessageComponent disabled={!isAuthenticated} did={did} oauthToken={oauthToken} />
+        {did && oauth ? (
+          <SignMessageComponent disabled={!isAuthenticated} did={did} oauth={oauth} />
         ) : null}
       </QueryClientProvider>
     </WagmiProvider>

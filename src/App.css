@@ -1,8 +1,19 @@
+html, body {
+  height: 100%;
+  margin-top: 1vh;
+  padding: 0;
+  /* Ensure content starts at the top instead of centered */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+
 }
 
 .logo {

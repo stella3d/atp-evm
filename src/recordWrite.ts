@@ -1,3 +1,4 @@
+import type { OAuthSession } from "@atproto/oauth-client-browser";
 import { hexToBase64, type DidString } from "./common";
 
 
@@ -26,28 +27,8 @@ export const writeAddressControlRecord = async (
   did: DidString,
   record: AddressControlRecord,
   pdsUrl: string, 
-  accessToken: string 
+  oauth: OAuthSession 
 ): Promise<any> => {
-  const response = await fetch(`https://bsky.network/xrpc/com.atproto.repo.createRecord`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {})
-    },
-    body: JSON.stringify({
-        repo: did,
-        collection: 'club.stellz.evm.addressControl',
-        record: record
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to write record: ${response.statusText}`);
-  }
-
-  const data = await response.json();
-  console.log('Record written:', data);
-
-  return data;
+  return null;
 }
 
