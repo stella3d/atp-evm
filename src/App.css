@@ -1,6 +1,5 @@
 html, body {
   height: 100%;
-  margin-top: 1vh;
   padding: 0;
   /* Ensure content starts at the top instead of centered */
   display: flex;
