@@ -2,7 +2,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultConfig,
 } from '@rainbow-me/rainbowkit';
-import { useSignMessage, useAccount, WagmiProvider, useEnsName, /*useDisconnect,*/ useEnsAvatar } from 'wagmi';
+import { useSignMessage, useAccount, WagmiProvider, useEnsName, useDisconnect, useEnsAvatar } from 'wagmi';
 import {
   mainnet,
   optimism,
@@ -50,7 +50,7 @@ export const SignMessageComponent = ({ disabled, did, oauth }: { disabled: boole
 
 export function Account() {
   const { address } = useAccount()
-  //const { disconnect } = useDisconnect()
+  const { disconnect } = useDisconnect()
   const { data: ensName } = useEnsName({ address })
   const { data: ensAvatar } = useEnsAvatar({ name: ensName! })
 
@@ -62,11 +62,14 @@ export function Account() {
       {ensAvatar && <img alt="ENS Avatar" src={ensAvatar} />}
       {address && <div>{acctLabel}</div>}
       <br/>
+      <button onClick={() => disconnect()}>Disconnect</button>
+      <br/>
+      <br/>
     </div>
   )
 }
 
-function ConnectWallet() {
+export function ConnectWallet() {
   const { isConnected } = useAccount()
   if (isConnected) return <Account />
   return <WalletOptions />
@@ -78,7 +81,7 @@ export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticat
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <ConnectWallet />
+        <ConnectWallet/>
         {did && oauth ? (
           <SignMessageComponent disabled={!isAuthenticated} did={did} oauth={oauth} />
         ) : null}
