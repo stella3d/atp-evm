@@ -25,7 +25,6 @@ const AuthLinker: React.FC = () => {
         <div>
           <p>✅ authenticated on ATProto side as:</p>
           <p>{oauthSession.sub}</p>
-          <br/>
           <WalletConnector 
             isAuthenticated={!!oauthSession} 
             did={oauthSession?.sub} 
