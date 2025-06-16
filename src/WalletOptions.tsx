@@ -1,12 +1,43 @@
 import * as React from 'react'
-import { type Connector, useConnect } from 'wagmi'
+import { type Connector, type CreateConnectorFn, useConnect } from 'wagmi'
 
 export default function WalletOptions() {
   const { connectors, connect } = useConnect()
+  //console.log('All connectors:', connectors);
 
-  console.log(connectors);
+  // wagmi shows a bunch of duplicates for some reason, so we filter them out.
+  let allowedConnectors: Connector<CreateConnectorFn>[] = [];
+  connectors.forEach((connector) => {
+    if (connector.name === 'Safe' && connector.id === 'safe') {
+      allowedConnectors.push(connector);
+      return;
+    }
+    // wagmi shows 2 Metamask connectors sometimes, idk why
+    if (connector.name === 'MetaMask') {
+      console.log('metamask connector:', connector);
+      if (connector.id === 'io.metamask') {
+        allowedConnectors.push(connector);
+      }
+      return;
+    } 
+    // wagmi usually shows a bunch of WalletConnect connectors, but only this one seems to work.
+    if (connector.name === 'WalletConnect') {
+      if ((connector['rkDetails'] as any)['isWalletConnectModalConnector']) {
+        allowedConnectors.push(connector);
+      } 
+      return;
+    } 
+    if (connector.id === 'coinbaseWalletSDK') {
+      // we can add this back if people ask, but for now, we're not promoting Coinbase.
+    } else {
+      // allow other connectors by default
+      allowedConnectors.push(connector);
+    }
+  });
 
-  return connectors.map((connector) => (
+  //console.log('Allowed Connectors:', allowedConnectors);
+
+  return allowedConnectors.map((connector) => (
     <WalletOption
       key={connector.uid}
       connector={connector}
