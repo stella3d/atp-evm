@@ -15,18 +15,11 @@ export type AtprotoBytesField = { "$bytes": string };
 const hexToAtpBytes = (hex: string): AtprotoBytesField => ({ "$bytes": hexToBase64(hex) });
 
 export const createAddressControlRecord = (address: AddressString, attestation: SignatureString): AddressControlRecord => {
-
-  let b64Address = hexToAtpBytes(address);
-  let b64Attestation = hexToAtpBytes(attestation);
-
-  const record: AddressControlRecord = {
+  return {
     '$type': 'club.stellz.evm.addressControl',
-    address: b64Address,
-    attestation: b64Attestation,
+    address: hexToAtpBytes(address),
+    attestation: hexToAtpBytes(attestation),
   };
-
-  console.log(record);
-  return record;
 }
 
 export const writeAddressControlRecord = async (
