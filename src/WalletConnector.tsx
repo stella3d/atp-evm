@@ -27,6 +27,8 @@ export const config = getDefaultConfig({
 
 export const SignMessageComponent = ({ disabled, did, oauth }: { disabled: boolean, did: DidString, oauth: OAuthSession }) => {
   const account = useAccount();
+  disabled = disabled || !account?.address;
+
   const { signMessage } = useSignMessage({
     mutation: {
         onSuccess: async (sig) => {
@@ -41,7 +43,7 @@ export const SignMessageComponent = ({ disabled, did, oauth }: { disabled: boole
     }
   })
   
-  return (
+  return disabled ? <></> : (
     <button disabled={disabled} onClick={() => signMessage({ message: `${did} controls ${account.address}` })}>
       Link DID to Wallet
     </button>
@@ -62,7 +64,7 @@ export function Account() {
       {ensAvatar && <img alt="ENS Avatar" src={ensAvatar} />}
       {address && <div>{acctLabel}</div>}
       <br/>
-      <button onClick={() => disconnect()}>Disconnect</button>
+      <button onClick={() => disconnect()}>Disconnect Wallet</button>
       <br/>
       <br/>
     </div>
@@ -83,7 +85,9 @@ export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticat
       <QueryClientProvider client={queryClient}>
         <ConnectWallet/>
         {did && oauth ? (
-          <SignMessageComponent disabled={!isAuthenticated} did={did} oauth={oauth} />
+          <div>
+            <SignMessageComponent disabled={!isAuthenticated} did={did} oauth={oauth} />
+          </div>
         ) : null}
       </QueryClientProvider>
     </WagmiProvider>
