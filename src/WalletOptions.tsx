@@ -14,7 +14,6 @@ export default function WalletOptions() {
     }
     // wagmi shows 2 Metamask connectors sometimes, idk why
     if (connector.name === 'MetaMask') {
-      console.log('metamask connector:', connector);
       if (connector.id === 'io.metamask') {
         allowedConnectors.push(connector);
       }
@@ -37,13 +36,18 @@ export default function WalletOptions() {
 
   //console.log('Allowed Connectors:', allowedConnectors);
 
-  return allowedConnectors.map((connector) => (
-    <WalletOption
-      key={connector.uid}
-      connector={connector}
-      onClick={() => connect({ connector })}
-    />
-  ))
+  return (
+    <div>
+      <p>Please choose a wallet type to connect.</p>
+      {allowedConnectors.map((connector) => (
+        <WalletOption
+          key={connector.uid}
+          connector={connector}
+          onClick={() => connect({ connector })}
+        />
+      ))}
+    </div>
+  )
 }
 
 function WalletOption({
