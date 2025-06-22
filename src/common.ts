@@ -30,3 +30,22 @@ export const hexToBase64 = (hex: string): string => {
   }
   return bytes.toBase64();
 }
+
+
+export function uid(length = 96): string {
+  const byteLength = Math.ceil(length / 2);
+  const array = new Uint8Array(byteLength);
+
+  // Prefer cryptographically secure random numbers if available.
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    crypto.getRandomValues(array);
+  } else {
+    // Fallback to Math.random() (less secure)
+    for (let i = 0; i < byteLength; i++) {
+      array[i] = Math.floor(Math.random() * 256);
+    }
+  }
+  
+  // Convert bytes to hex string and return the first `length` characters.
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('').substring(0, length);
+}
