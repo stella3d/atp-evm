@@ -20,6 +20,7 @@ import type { OAuthSession } from '@atproto/oauth-client-browser';
 import { SiweError, SiweMessage } from 'siwe'
 import { useState } from 'react';
 import type { SiweStatementString } from './siwe';
+import AtUriLink from './AtUriLink'; // added import for the new component
 
 
 export const config = getDefaultConfig({
@@ -52,8 +53,8 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 	const account = useAccount();
 	const [siweMsg, setSiweMsg] = useState<SiweMessage | null>(null);
 	const [verificationError, setVerificationError] = useState<SiweError | null>(null);
+	const [successUri, setSuccessUri] = useState<string | null>(null); // new state for writeResponse URI
 	disabled = disabled || !account?.address;
-
   const did = oauth.did;
 
 	const { signMessage } = useSignMessage({
@@ -82,7 +83,15 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
         const record = serializeSiweAddressControlRecord(account.address, siweMsg, sig);
         console.log('record to write:', record);
 
-        //await writeAddressControlRecord(record, oauth);
+        const writeResponse = await writeAddressControlRecord(record, oauth);
+        console.log('record write response:', writeResponse);
+        
+        if (writeResponse.success) {
+          console.log('Address control record written successfully:', writeResponse.data);
+          setSuccessUri(writeResponse.data.uri);  // set the success URI
+				} else {
+					console.error('Failed to write address control record:', writeResponse);
+				}
 			}
 		}
 	});
@@ -98,14 +107,15 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 		const message = siwe.prepareMessage();
 		signMessage({ message });
 	};
-
+  
 	return disabled ? <></> : (
 		<>
 			<button disabled={disabled} onClick={onClick}>
 				Link DID to Wallet
 			</button>
-			{/* Render VerificationError only when verification fails */}
-			{verificationError && <VerificationError error={verificationError} />}
+			{ verificationError && <VerificationError error={verificationError} /> }
+      {/* Render AtUriLink only when writeResponse was successful */}
+			{ successUri && <AtUriLink atUri={successUri as `at://${string}`} /> }
 		</>
 	)
 };

@@ -1,4 +1,4 @@
-import { Agent } from '@atproto/api'
+import { Agent, ComAtprotoRepoCreateRecord } from '@atproto/api'
 import type { OAuthSession } from "@atproto/oauth-client-browser";
 import type { SiweMessage } from "siwe";
 
@@ -55,7 +55,7 @@ export const serializeSiweAddressControlRecord = (
 export const writeAddressControlRecord = async (
   record: SiweAddressControlRecord,
   oauth: OAuthSession 
-): Promise<any> => {
+): Promise<ComAtprotoRepoCreateRecord.Response> => {
   const agent = new Agent(oauth);
   
   const response = await agent.com.atproto.repo.createRecord({
@@ -64,8 +64,6 @@ export const writeAddressControlRecord = async (
     record,
   });
 
-  console.log('record write response:', response);
-
-  return null;
+  return response;
 }
 
