@@ -15,7 +15,7 @@ import {
 } from "@tanstack/react-query";
 import { uid, type DefinedDidString, type DidString } from './common';
 import WalletOptions from './WalletOptions';
-import { serializeSiweAddressControlRecord } from './recordWrite';
+import { serializeSiweAddressControlRecord, writeAddressControlRecord } from './recordWrite';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
 import { SiweError, SiweMessage } from 'siwe'
 import { useState } from 'react';
@@ -59,31 +59,30 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 	const { signMessage } = useSignMessage({
 		mutation: {
 			onSuccess: async (sig) => {
-				if (!account?.address) {
-					console.warn(NO_ACCOUNT_ERROR);
-				} else {
-					if (!siweMsg) {
-						console.error('SIWE message is not initialized before signing!');
-					} else {
-						const verifyResult = await siweMsg.verify({
-						  signature: sig, 
-							domain: siweMsg.domain
-						});
+        if (!account?.address) 
+          return console.warn(NO_ACCOUNT_ERROR);
 
-						if (!verifyResult.success && verifyResult.error) {
-              console.error('SIWE verification failed:', verifyResult.error);
-							setVerificationError(verifyResult.error);
-						} else {
-              console.log('SIWE verification succeeded');
-							//setVerificationError(null);
+        if (!siweMsg) 
+          return console.error('SIWE message is not initialized before signing!');
+        
+        const verifyResult = await siweMsg.verify({
+          signature: sig,
+          domain: siweMsg.domain,
+        });
 
-              const record = serializeSiweAddressControlRecord(account.address, siweMsg, sig);
-              console.log('record to write:', record);
-						}
+        if (!verifyResult.success && verifyResult.error) {
+          console.error('SIWE verification failed:', verifyResult.error);
+          setVerificationError(verifyResult.error);
+          return;
+        }
 
-					  //await writeAddressControlRecord(did, record, 'https://bsky.network', oauth);
-					}
-				}
+        console.log('SIWE verification succeeded');
+        setVerificationError(null);
+
+        const record = serializeSiweAddressControlRecord(account.address, siweMsg, sig);
+        console.log('record to write:', record);
+
+        //await writeAddressControlRecord(record, oauth);
 			}
 		}
 	});
