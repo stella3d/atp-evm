@@ -17,7 +17,7 @@ import { uid, type DidString } from './common';
 import WalletOptions from './WalletOptions';
 import { serializeSiweAddressControlRecord } from './recordWrite';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
-import { SiweMessage, type SiweResponse } from 'siwe'
+import { SiweError, SiweMessage, type SiweResponse } from 'siwe'
 import { useState } from 'react';
 
 
@@ -49,8 +49,7 @@ const NO_ACCOUNT_ERROR = 'No Ethereum account found for signing message. Please 
 export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, oauth: OAuthSession }) => {
 	const account = useAccount();
 	const [siweMsg, setSiweMsg] = useState<SiweMessage | null>(null);
-	// Added state to track verification error.
-	const [verificationError, setVerificationError] = useState<SiweResponse | null>(null);
+	const [verificationError, setVerificationError] = useState<SiweError | null>(null);
 	disabled = disabled || !account?.address;
 
   const did = oauth.did;
@@ -72,9 +71,9 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 						});
 
 						console.log('SIWE verification result:', verifyResult);
-            // Set verification error if verification failed.
-						if (!verifyResult.success) {
-							setVerificationError(verifyResult);
+            
+						if (!verifyResult.success && verifyResult.error) {
+							setVerificationError(verifyResult.error);
 						} else {
 							setVerificationError(null);
 						}
