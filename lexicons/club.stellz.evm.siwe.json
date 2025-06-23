@@ -1,0 +1,47 @@
+{
+  "lexicon": 1,
+  "$type": "com.atproto.lexicon.schema",
+  "id": "club.stellz.evm.siweLink",
+  "defs": {
+    "main": {
+      "type": "object",
+      "properties": {
+        "domain": { "type": "string" },
+        "address": { 
+          "type": "string",
+          "description": "Ethereum address in 0x-prefixed, checksummed hex format",
+          "minLength": 42,
+          "maxLength": 42
+        },
+        "statement": { 
+          "type": "string",
+          "description": "The message shown to the user in their wallet before signing, which MUST be of the format 'Prove control of ${address} to link it to ${did}', where ${address} is the linked Ethereum address in 0x-prefixed, checksummed hex format, and ${did} is the DID of the user."
+        },
+        "uri": { "type": "string" },
+        "version": { "type": "string" },
+        "chainId": { "type": "integer" },
+        "nonce": { 
+          "type": "string",
+          "description": "Random nonce the message was signed with",
+          "minLength": 8,
+          "maxLength": 256
+        },
+        "issuedAt": { 
+          "type": "string",
+          "description": "Timestamp when the message was signed",
+          "format": "datetime"
+        }
+      },
+      "required": [
+        "domain",
+        "address",
+        "statement",
+        "uri",
+        "version",
+        "chainId",
+        "nonce",
+        "issuedAt"
+      ]
+    }
+  }
+}
