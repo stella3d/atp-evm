@@ -2,7 +2,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultConfig,
 } from '@rainbow-me/rainbowkit';
-import { useSignMessage, useAccount, WagmiProvider, useEnsName, useDisconnect, useEnsAvatar } from 'wagmi';
+import { useSignMessage, useAccount, WagmiProvider, useEnsName, useDisconnect, useEnsAvatar} from 'wagmi';
 import {
   mainnet,
   optimism,
@@ -15,9 +15,8 @@ import {
 } from "@tanstack/react-query";
 import { uid, type DidString } from './common';
 import WalletOptions from './WalletOptions';
-import { createAddressControlRecord, writeAddressControlRecord } from './recordWrite';
+import { serializeSiweAddressControlRecord } from './recordWrite';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
-import type { Address } from 'viem';
 import { SiweMessage, type SiweResponse } from 'siwe'
 import { useState } from 'react';
 
@@ -28,11 +27,16 @@ export const config = getDefaultConfig({
   chains: [mainnet, optimism, arbitrum, base],
 });
 
-const makeSiweMessage = (address: Address, chainId: number = 1): SiweMessage => {
+// Generates a SIWE statement for linking an Ethereum address to a DID.
+// the message MUST be in this format in order to be verified by a client.
+export const makeSiweStatement = (address: `0x${string}`, did: DidString): string =>
+  `Prove control of ${address} to link it to ${did}`;
+
+export const makeSiweMessage = (did: DidString, address: `0x${string}`, chainId: number = 1): SiweMessage => {
   return new SiweMessage({
     domain: window.location.host,
     address,
-    statement: `Prove control of address ${address} to link your wallet to your DID.`,
+    statement: makeSiweStatement(address, did),
     uri: window.location.origin,
     version: '1',
     chainId,
@@ -42,12 +46,14 @@ const makeSiweMessage = (address: Address, chainId: number = 1): SiweMessage => 
 
 const NO_ACCOUNT_ERROR = 'No Ethereum account found for signing message. Please connect your wallet first.';
 
-export const SignMessageComponent = ({ disabled, did, oauth }: { disabled: boolean, did: DidString, oauth: OAuthSession }) => {
+export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, oauth: OAuthSession }) => {
 	const account = useAccount();
 	const [siweMsg, setSiweMsg] = useState<SiweMessage | null>(null);
 	// Added state to track verification error.
 	const [verificationError, setVerificationError] = useState<SiweResponse | null>(null);
 	disabled = disabled || !account?.address;
+
+  const did = oauth.did;
 
 	const { signMessage } = useSignMessage({
 		mutation: {
@@ -72,10 +78,11 @@ export const SignMessageComponent = ({ disabled, did, oauth }: { disabled: boole
 						} else {
 							setVerificationError(null);
 						}
-					}
 
-					const record = createAddressControlRecord(account.address, sig);
-					await writeAddressControlRecord(did, record, 'https://bsky.network', oauth);
+            const record = serializeSiweAddressControlRecord(account.address, siweMsg, sig);
+            console.log('record to write:', record);
+					  //await writeAddressControlRecord(did, record, 'https://bsky.network', oauth);
+					}
 				}
 			}
 		}
@@ -86,7 +93,7 @@ export const SignMessageComponent = ({ disabled, did, oauth }: { disabled: boole
 			alert(NO_ACCOUNT_ERROR);
 			return;
 		}
-		const siwe = makeSiweMessage(account.address, account.chainId);
+		const siwe = makeSiweMessage(did, account.address, account.chainId);
 		setSiweMsg(siwe);
 
 		const message = siwe.prepareMessage();
@@ -150,7 +157,7 @@ export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticat
         <ConnectWallet/>
         {did && oauth ? (
           <div>
-            <SignMessageComponent disabled={!isAuthenticated} did={did} oauth={oauth} />
+            <SignMessageComponent disabled={!isAuthenticated} oauth={oauth} />
           </div>
         ) : null}
       </QueryClientProvider>
