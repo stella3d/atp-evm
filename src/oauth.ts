@@ -10,7 +10,7 @@ export const config: Readonly<OAuthClientMetadataInput> = {
   "policy_uri": "https://atp-evm.stellz.club/policy",
   "redirect_uris": ["http://127.0.0.1:5173"],
   "scope": "atproto",
-  "grant_types": ["authorization_code"],
+  "grant_types": ["authorization_code", "refresh_token"],
   "response_types": ["code"],
   "token_endpoint_auth_method": "none",
   "application_type": "web",
