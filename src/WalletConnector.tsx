@@ -19,6 +19,7 @@ import { createAddressControlRecord, writeAddressControlRecord } from './recordW
 import type { OAuthSession } from '@atproto/oauth-client-browser';
 import type { Address } from 'viem';
 import { SiweMessage } from 'siwe'
+import { useState } from 'react';
 
 
 export const config = getDefaultConfig({
@@ -35,7 +36,7 @@ const makeSiweMessage = (address: Address, chainId: number = 1): SiweMessage => 
     uri: window.location.origin,
     version: '1',
     chainId,
-    nonce: uid(96),
+    nonce: uid(48),
   })
 }
 
@@ -43,32 +44,49 @@ const NO_ACCOUNT_ERROR = 'No Ethereum account found for signing message. Please 
 
 export const SignMessageComponent = ({ disabled, did, oauth }: { disabled: boolean, did: DidString, oauth: OAuthSession }) => {
   const account = useAccount();
+  const [siweMsg, setSiweMsg] = useState<SiweMessage | null>(null);
+  
   disabled = disabled || !account?.address;
 
   const { signMessage } = useSignMessage({
     mutation: {
         onSuccess: async (sig) => {
           console.log('message signature', sig);
+
           if (!account?.address) {
             console.warn(NO_ACCOUNT_ERROR);
           } else {
+            if (!siweMsg) {
+              console.error('SIWE message is not initialized before signing!');
+            } else {
+              const verifyResult = siweMsg.verify({
+                signature: sig,
+                domain: siweMsg.domain
+              });
+
+            console.log('SIWE verification result:', verifyResult);
+          }
             const record = createAddressControlRecord(account.address, sig);
             await writeAddressControlRecord(did, record, 'https://bsky.network', oauth);
           }
         }
     }
   })
+
+  const onClick = () => {
+    if (!account?.address) {
+      alert(NO_ACCOUNT_ERROR);
+      return;
+    }
+    const siwe = makeSiweMessage(account.address, account.chainId);
+    setSiweMsg(siwe);
+
+    const message = siwe.prepareMessage();
+    signMessage({ message });
+  }
   
   return disabled ? <></> : (
-    <button disabled={disabled} onClick={() => {
-      if (!account?.address) {
-        alert(NO_ACCOUNT_ERROR);
-        return;
-      }
-      const siweMsg = makeSiweMessage(account.address, account.chainId);
-      const message = siweMsg.prepareMessage();
-      signMessage({ message })
-    }}>
+    <button disabled={disabled} onClick={onClick}>
       Link DID to Wallet
     </button>
   )
