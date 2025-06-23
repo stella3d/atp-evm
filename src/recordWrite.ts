@@ -1,20 +1,21 @@
 import { Agent, ComAtprotoRepoCreateRecord } from '@atproto/api'
-import type { OAuthSession } from "@atproto/oauth-client-browser";
+import { OAuthClient, type OAuthSession } from "@atproto/oauth-client-browser";
 import type { SiweMessage } from "siwe";
 
+import { oauthClient } from './oauth';
 import { hexToBase64, type EvmAddressString } from "./common";
 import { lexiconFormatSiweMessage, type SiweLexiconObject } from './siwe';
 
 
 type SignatureString = `0x${string}`;
 
-export type AddressControlRecord = {
+export type OldAddressControlRecord = {
   '$type': 'club.stellz.evm.addressControl',
   address: AtprotoBytesField;
   attestation: AtprotoBytesField;
 };
 
-export type SiweAddressControlRecord = {
+export type AddressControlRecord = {
   '$type': 'club.stellz.evm.addressControl',
   address: AtprotoBytesField;
   signature: AtprotoBytesField;
@@ -27,7 +28,7 @@ export type AtprotoBytesField = { "$bytes": string };
 
 const hexToAtpBytes = (hex: string): AtprotoBytesField => ({ "$bytes": hexToBase64(hex) });
 
-export const createAddressControlRecord = (address: EvmAddressString, attestation: SignatureString): AddressControlRecord => {
+export const createAddressControlRecord = (address: EvmAddressString, attestation: SignatureString): OldAddressControlRecord => {
   return {
     '$type': ADDRESS_CONTROL_LEXICON_TYPE,
     address: hexToAtpBytes(address),
@@ -39,9 +40,9 @@ export const serializeSiweAddressControlRecord = (
   address: EvmAddressString, 
   siweMsg: SiweMessage, 
   sig: SignatureString
-): SiweAddressControlRecord => {
+): AddressControlRecord => {
   console.log('serializing SIWE address control record:', address, siweMsg, sig);
-  const record: SiweAddressControlRecord = {
+  const record: AddressControlRecord = {
     '$type': ADDRESS_CONTROL_LEXICON_TYPE,
     address: hexToAtpBytes(address),
     signature: hexToAtpBytes(sig),
@@ -53,17 +54,14 @@ export const serializeSiweAddressControlRecord = (
 }
 
 export const writeAddressControlRecord = async (
-  record: SiweAddressControlRecord,
-  oauth: OAuthSession 
+  record: AddressControlRecord,
+  oauth: OAuthSession,
 ): Promise<ComAtprotoRepoCreateRecord.Response> => {
   const agent = new Agent(oauth);
-  
-  const response = await agent.com.atproto.repo.createRecord({
+  return await agent.com.atproto.repo.createRecord({
     repo: oauth.did,
     collection: ADDRESS_CONTROL_LEXICON_TYPE,
     record,
   });
-
-  return response;
 }
 
