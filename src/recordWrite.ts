@@ -47,7 +47,7 @@ export const serializeSiweAddressControlRecord = (
     signature: hexToAtpBytes(sig),
     siwe: lexiconFormatSiweMessage(siweMsg)
   };
-  
+
   console.log('Serialized SIWE address control record:', record);
   return record;
 }
@@ -64,7 +64,7 @@ export const writeAddressControlRecord = async (
     record,
   });
 
-  console.log('Record write response:', response);
+  console.log('record write response:', response);
 
   return null;
 }

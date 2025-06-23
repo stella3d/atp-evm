@@ -59,8 +59,6 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 	const { signMessage } = useSignMessage({
 		mutation: {
 			onSuccess: async (sig) => {
-				console.log('message signature', sig);
-
 				if (!account?.address) {
 					console.warn(NO_ACCOUNT_ERROR);
 				} else {
@@ -72,8 +70,6 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 							domain: siweMsg.domain
 						});
 
-						console.log('SIWE verification result:', verifyResult);
-
 						if (!verifyResult.success && verifyResult.error) {
               console.error('SIWE verification failed:', verifyResult.error);
 							setVerificationError(verifyResult.error);
@@ -84,7 +80,6 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
               const record = serializeSiweAddressControlRecord(account.address, siweMsg, sig);
               console.log('record to write:', record);
 						}
-
 
 					  //await writeAddressControlRecord(did, record, 'https://bsky.network', oauth);
 					}
