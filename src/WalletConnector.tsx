@@ -18,7 +18,7 @@ import WalletOptions from './WalletOptions';
 import { createAddressControlRecord, writeAddressControlRecord } from './recordWrite';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
 import type { Address } from 'viem';
-import { SiweMessage } from 'siwe'
+import { SiweMessage, type SiweResponse } from 'siwe'
 import { useState } from 'react';
 
 
@@ -32,7 +32,7 @@ const makeSiweMessage = (address: Address, chainId: number = 1): SiweMessage => 
   return new SiweMessage({
     domain: window.location.host,
     address,
-    statement: 'Sign in with Ethereum to prove control of this address and link your wallet to your DID.',
+    statement: `Prove control of address ${address} to link your wallet to your DID.`,
     uri: window.location.origin,
     version: '1',
     chainId,
@@ -43,53 +43,75 @@ const makeSiweMessage = (address: Address, chainId: number = 1): SiweMessage => 
 const NO_ACCOUNT_ERROR = 'No Ethereum account found for signing message. Please connect your wallet first.';
 
 export const SignMessageComponent = ({ disabled, did, oauth }: { disabled: boolean, did: DidString, oauth: OAuthSession }) => {
-  const account = useAccount();
-  const [siweMsg, setSiweMsg] = useState<SiweMessage | null>(null);
-  
-  disabled = disabled || !account?.address;
+	const account = useAccount();
+	const [siweMsg, setSiweMsg] = useState<SiweMessage | null>(null);
+	// Added state to track verification error.
+	const [verificationError, setVerificationError] = useState<SiweResponse | null>(null);
+	disabled = disabled || !account?.address;
 
-  const { signMessage } = useSignMessage({
-    mutation: {
-        onSuccess: async (sig) => {
-          console.log('message signature', sig);
+	const { signMessage } = useSignMessage({
+		mutation: {
+			onSuccess: async (sig) => {
+				console.log('message signature', sig);
 
-          if (!account?.address) {
-            console.warn(NO_ACCOUNT_ERROR);
-          } else {
-            if (!siweMsg) {
-              console.error('SIWE message is not initialized before signing!');
-            } else {
-              const verifyResult = siweMsg.verify({
-                signature: sig,
-                domain: siweMsg.domain
-              });
+				if (!account?.address) {
+					console.warn(NO_ACCOUNT_ERROR);
+				} else {
+					if (!siweMsg) {
+						console.error('SIWE message is not initialized before signing!');
+					} else {
+						const verifyResult = await siweMsg.verify({
+						  signature: sig, 
+							domain: siweMsg.domain
+						});
 
-            console.log('SIWE verification result:', verifyResult);
-          }
-            const record = createAddressControlRecord(account.address, sig);
-            await writeAddressControlRecord(did, record, 'https://bsky.network', oauth);
-          }
-        }
-    }
-  })
+						console.log('SIWE verification result:', verifyResult);
+            // Set verification error if verification failed.
+						if (!verifyResult.success) {
+							setVerificationError(verifyResult);
+						} else {
+							setVerificationError(null);
+						}
+					}
 
-  const onClick = () => {
-    if (!account?.address) {
-      alert(NO_ACCOUNT_ERROR);
-      return;
-    }
-    const siwe = makeSiweMessage(account.address, account.chainId);
-    setSiweMsg(siwe);
+					const record = createAddressControlRecord(account.address, sig);
+					await writeAddressControlRecord(did, record, 'https://bsky.network', oauth);
+				}
+			}
+		}
+	});
 
-    const message = siwe.prepareMessage();
-    signMessage({ message });
-  }
-  
-  return disabled ? <></> : (
-    <button disabled={disabled} onClick={onClick}>
-      Link DID to Wallet
-    </button>
-  )
+	const onClick = () => {
+		if (!account?.address) {
+			alert(NO_ACCOUNT_ERROR);
+			return;
+		}
+		const siwe = makeSiweMessage(account.address, account.chainId);
+		setSiweMsg(siwe);
+
+		const message = siwe.prepareMessage();
+		signMessage({ message });
+	};
+
+	return disabled ? <></> : (
+		<>
+			<button disabled={disabled} onClick={onClick}>
+				Link DID to Wallet
+			</button>
+			{/* Render VerificationError only when verification fails */}
+			{verificationError && <VerificationError siwe={verificationError} />}
+		</>
+	)
+};
+
+const VerificationError = ({ siwe }: { siwe: SiweResponse }) => {
+  return (
+    <div>
+      <h3>Verification Error</h3>
+      <p>Signature of your Sign in With Ethereum message could not be verified:</p>
+      <pre>{JSON.stringify(siwe.error, null, 2)}</pre>
+    </div>
+  );
 };
 
 export function Account() {
