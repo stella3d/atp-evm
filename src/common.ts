@@ -1,4 +1,5 @@
 export type EvmAddressString = `0x${string}`;
+
 export type DidString = `did:plc:${string}` | `did:web:${string}` | undefined;
 export type DefinedDidString = Exclude<DidString, undefined>;
 
@@ -48,6 +49,5 @@ export function uid(length = 96): string {
     }
   }
   
-  // Convert bytes to hex string and return the first `length` characters.
   return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('').substring(0, length);
 }
