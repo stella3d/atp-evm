@@ -13,12 +13,13 @@ import {
   QueryClientProvider,
   QueryClient,
 } from "@tanstack/react-query";
-import { uid, type DidString } from './common';
+import { uid, type DefinedDidString, type DidString } from './common';
 import WalletOptions from './WalletOptions';
 import { serializeSiweAddressControlRecord } from './recordWrite';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
-import { SiweError, SiweMessage, type SiweResponse } from 'siwe'
+import { SiweError, SiweMessage } from 'siwe'
 import { useState } from 'react';
+import type { SiweStatementString } from './siwe';
 
 
 export const config = getDefaultConfig({
@@ -27,12 +28,13 @@ export const config = getDefaultConfig({
   chains: [mainnet, optimism, arbitrum, base],
 });
 
+
 // Generates a SIWE statement for linking an Ethereum address to a DID.
 // the message MUST be in this format in order to be verified by a client.
-export const makeSiweStatement = (address: `0x${string}`, did: DidString): string =>
+export const makeSiweStatement = (address: `0x${string}`, did: DefinedDidString): SiweStatementString =>
   `Prove control of ${address} to link it to ${did}`;
 
-export const makeSiweMessage = (did: DidString, address: `0x${string}`, chainId: number = 1): SiweMessage => {
+export const makeSiweMessage = (did: DefinedDidString, address: `0x${string}`, chainId: number = 1): SiweMessage => {
   return new SiweMessage({
     domain: window.location.host,
     address,
@@ -71,15 +73,19 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 						});
 
 						console.log('SIWE verification result:', verifyResult);
-            
+
 						if (!verifyResult.success && verifyResult.error) {
+              console.error('SIWE verification failed:', verifyResult.error);
 							setVerificationError(verifyResult.error);
 						} else {
-							setVerificationError(null);
+              console.log('SIWE verification succeeded');
+							//setVerificationError(null);
+
+              const record = serializeSiweAddressControlRecord(account.address, siweMsg, sig);
+              console.log('record to write:', record);
 						}
 
-            const record = serializeSiweAddressControlRecord(account.address, siweMsg, sig);
-            console.log('record to write:', record);
+
 					  //await writeAddressControlRecord(did, record, 'https://bsky.network', oauth);
 					}
 				}
@@ -105,17 +111,17 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 				Link DID to Wallet
 			</button>
 			{/* Render VerificationError only when verification fails */}
-			{verificationError && <VerificationError siwe={verificationError} />}
+			{verificationError && <VerificationError error={verificationError} />}
 		</>
 	)
 };
 
-const VerificationError = ({ siwe }: { siwe: SiweResponse }) => {
+const VerificationError = ({ error }: { error: SiweError }) => {
   return (
     <div>
       <h3>Verification Error</h3>
       <p>Signature of your Sign in With Ethereum message could not be verified:</p>
-      <pre>{JSON.stringify(siwe.error, null, 2)}</pre>
+      <pre>{JSON.stringify(error, null, 2)}</pre>
     </div>
   );
 };

@@ -1,9 +1,11 @@
+import { Agent } from '@atproto/api'
 import type { OAuthSession } from "@atproto/oauth-client-browser";
-import { hexToBase64, type DidString } from "./common";
 import type { SiweMessage } from "siwe";
 
+import { hexToBase64, type EvmAddressString } from "./common";
+import { lexiconFormatSiweMessage, type SiweLexiconObject } from './siwe';
 
-type AddressString = `0x${string}`;
+
 type SignatureString = `0x${string}`;
 
 export type AddressControlRecord = {
@@ -16,40 +18,54 @@ export type SiweAddressControlRecord = {
   '$type': 'club.stellz.evm.addressControl',
   address: AtprotoBytesField;
   signature: AtprotoBytesField;
-  siwe: SiweMessage;
+  siwe: SiweLexiconObject;
 };
+
+export const ADDRESS_CONTROL_LEXICON_TYPE = 'club.stellz.evm.addressControl';
 
 export type AtprotoBytesField = { "$bytes": string };
 
 const hexToAtpBytes = (hex: string): AtprotoBytesField => ({ "$bytes": hexToBase64(hex) });
 
-export const createAddressControlRecord = (address: AddressString, attestation: SignatureString): AddressControlRecord => {
+export const createAddressControlRecord = (address: EvmAddressString, attestation: SignatureString): AddressControlRecord => {
   return {
-    '$type': 'club.stellz.evm.addressControl',
+    '$type': ADDRESS_CONTROL_LEXICON_TYPE,
     address: hexToAtpBytes(address),
     attestation: hexToAtpBytes(attestation),
   };
 }
 
 export const serializeSiweAddressControlRecord = (
-  address: AddressString, 
-  siwe: SiweMessage, 
+  address: EvmAddressString, 
+  siweMsg: SiweMessage, 
   sig: SignatureString
 ): SiweAddressControlRecord => {
-  return {
-    '$type': 'club.stellz.evm.addressControl',
+  console.log('serializing SIWE address control record:', address, siweMsg, sig);
+  const record: SiweAddressControlRecord = {
+    '$type': ADDRESS_CONTROL_LEXICON_TYPE,
     address: hexToAtpBytes(address),
-    siwe,
-    signature: hexToAtpBytes(sig)
+    signature: hexToAtpBytes(sig),
+    siwe: lexiconFormatSiweMessage(siweMsg)
   };
+  
+  console.log('Serialized SIWE address control record:', record);
+  return record;
 }
 
 export const writeAddressControlRecord = async (
-  _did: DidString,
-  _record: AddressControlRecord,
-  _pdsUrl: string, 
-  _oauth: OAuthSession 
+  record: SiweAddressControlRecord,
+  oauth: OAuthSession 
 ): Promise<any> => {
+  const agent = new Agent(oauth);
+  
+  const response = await agent.com.atproto.repo.createRecord({
+    repo: oauth.did,
+    collection: ADDRESS_CONTROL_LEXICON_TYPE,
+    record,
+  });
+
+  console.log('Record write response:', response);
+
   return null;
 }
 

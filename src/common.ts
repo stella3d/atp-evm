@@ -1,4 +1,6 @@
+export type EvmAddressString = `0x${string}`;
 export type DidString = `did:plc:${string}` | `did:web:${string}` | undefined;
+export type DefinedDidString = Exclude<DidString, undefined>;
 
 declare global {
   interface Uint8Array {
