@@ -24,10 +24,10 @@ export const createAddressControlRecord = (address: AddressString, attestation: 
 }
 
 export const writeAddressControlRecord = async (
-  did: DidString,
-  record: AddressControlRecord,
-  pdsUrl: string, 
-  oauth: OAuthSession 
+  _did: DidString,
+  _record: AddressControlRecord,
+  _pdsUrl: string, 
+  _oauth: OAuthSession 
 ): Promise<any> => {
   return null;
 }
