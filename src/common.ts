@@ -21,7 +21,6 @@ if (!Uint8Array.prototype.toBase64) {
 }
 
 export const hexToBase64 = (hex: string): string => {
-  // check for 0x at start and strip it if present
   if (hex.startsWith('0x')) {
     hex = hex.slice(2);
   }  
