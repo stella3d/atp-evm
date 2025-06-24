@@ -2,7 +2,7 @@
   "version": "5",
   "specifiers": {
     "npm:@atproto/api@~0.15.16": "0.15.16",
-    "npm:@atproto/oauth-client-browser@~0.3.23": "0.3.23",
+    "npm:@atproto/oauth-client-browser@~0.3.25": "0.3.25",
     "npm:@eslint/js@^9.25.0": "9.29.0",
     "npm:@rainbow-me/rainbowkit@^2.2.7": "2.2.7_@tanstack+react-query@5.80.7__react@19.1.0_react@19.1.0_react-dom@19.1.0__react@19.1.0_viem@2.31.2__typescript@5.8.3__ws@8.18.2_wagmi@2.15.6__@tanstack+react-query@5.80.7___react@19.1.0__react@19.1.0__typescript@5.8.3__viem@2.31.2___typescript@5.8.3___ws@8.18.2__@wagmi+core@2.17.3___typescript@5.8.3___viem@2.31.2____typescript@5.8.3____ws@8.18.2___@types+react@19.1.8___react@19.1.0___use-sync-external-store@1.4.0____react@19.1.0__@types+react@19.1.8__use-sync-external-store@1.4.0___react@19.1.0_@vanilla-extract+css@1.17.3_typescript@5.8.3_@types+react@19.1.8",
     "npm:@tanstack/react-query@^5.80.7": "5.80.7_react@19.1.0",
@@ -36,8 +36,8 @@
         "@jridgewell/trace-mapping"
       ]
     },
-    "@atproto-labs/did-resolver@0.1.13": {
-      "integrity": "sha512-DG3YNaCKc6PAIv1Gsz3E1Kufw2t14OBxe4LdKK7KKLCNoex51hm+A5yMevShe3BSll+QosqWYIEgkPSc5xBoGQ==",
+    "@atproto-labs/did-resolver@0.2.0": {
+      "integrity": "sha512-y9GOx2gUETynDKmANnBrU5DTf+u0AwKBJpGns1vDDOYMdLdRCFIeYy3UH+TI8YOkcEazjgF5Q3m+LjwriE1KqQ==",
       "dependencies": [
         "@atproto-labs/fetch",
         "@atproto-labs/pipe",
@@ -53,8 +53,8 @@
         "@atproto-labs/pipe"
       ]
     },
-    "@atproto-labs/handle-resolver@0.1.8": {
-      "integrity": "sha512-Y0ckccoCGDo/3g4thPkgp9QcORmc+qqEaCBCYCZYtfLIQp4775u22wd+4fyEyJP4DqoReKacninkICgRGfs3dQ==",
+    "@atproto-labs/handle-resolver@0.3.0": {
+      "integrity": "sha512-TREelvXB6P2eHxx6QjINRkBzUZu/aXWrdY9iN57shQe3C8rzsHNEHHuTVvRa33Hc7vFdQbZN0TnCgKveoyiL/A==",
       "dependencies": [
         "@atproto-labs/simple-store",
         "@atproto-labs/simple-store-memory",
@@ -62,12 +62,11 @@
         "zod@3.25.64"
       ]
     },
-    "@atproto-labs/identity-resolver@0.1.18": {
-      "integrity": "sha512-DArYXP1hzZJIBcojun0CWEF+TjAhlGKcVq/RwLiGfY1mKq2yPjCiXyHj+5L0+z9jBSZiAB7L65JgcjI2+MFiRg==",
+    "@atproto-labs/identity-resolver@0.2.0": {
+      "integrity": "sha512-X4UpU9qSgbuBVRXw0kpYqdVRtjNGezmaetyQIwWHNdUl1+ILu4GhinSk1MBXamzgg/07/BVCU0r4LRIPg2Wiow==",
       "dependencies": [
         "@atproto-labs/did-resolver",
-        "@atproto-labs/handle-resolver",
-        "@atproto/syntax"
+        "@atproto-labs/handle-resolver"
       ]
     },
     "@atproto-labs/pipe@0.1.1": {
@@ -111,23 +110,23 @@
         "zod@3.25.64"
       ]
     },
-    "@atproto/jwk-jose@0.1.8": {
-      "integrity": "sha512-aoU2Q0GpIl388KhCcv9YvAxNscALUv3xzLq5gjVPdJ+zmqw94nGZNcjiNvpnbfS+VQM9e2DrrTuwmDXnxfrrSA==",
+    "@atproto/jwk-jose@0.1.9": {
+      "integrity": "sha512-HT9GcUe6htDxI5OSYXWdeS6QZ9lpuDDvJk508ppi8a48E/1f8eumoM0QhgbFRF9IKAnnFrtnZDOAvljQzFKwwQ==",
       "dependencies": [
         "@atproto/jwk",
         "jose"
       ]
     },
-    "@atproto/jwk-webcrypto@0.1.8": {
-      "integrity": "sha512-oOW/G40f6M0NbTOo8uZgiSsFtcvlfNFldyxm+V+fVo5yKe6cvgvPNqckpqMsoBe6JYfImdc/zdVak9fCSSh41A==",
+    "@atproto/jwk-webcrypto@0.1.9": {
+      "integrity": "sha512-ecciePHT0JEDZNAbMKSkdqoBYsjvhwuVno0jsS600SZmuvi2fAMhGraDZ5ZOO5M0hHHBiDbN7Ar/qcnIwyoxsA==",
       "dependencies": [
         "@atproto/jwk",
         "@atproto/jwk-jose",
         "zod@3.25.64"
       ]
     },
-    "@atproto/jwk@0.3.0": {
-      "integrity": "sha512-MIAXyNMGu1tCNHjqW/8jqfE/wgWCIoK2cJ0mR6UxwhNPvkbe35TcpRYJdtQu/E6MUd7TziyDBa/GO4dKAiePhQ==",
+    "@atproto/jwk@0.4.0": {
+      "integrity": "sha512-tvp4iZrzqEzKCeTOKz50/o6WdsZzOuWmWjF6On5QAp04fLwLpsFu2Hixgx/lA1KBO0O4sns7YSGcAqSSX6Rdog==",
       "dependencies": [
         "multiformats",
         "zod@3.25.64"
@@ -143,8 +142,8 @@
         "zod@3.25.64"
       ]
     },
-    "@atproto/oauth-client-browser@0.3.23": {
-      "integrity": "sha512-ZD+s1/+tlNTp5EDe7QOGRWm2fo8ltJWumvLoQ80B6m7rIkL+uz6Zi392h7YOpT6JlGV+iBoMa+ZpoIlpCUg2TQ==",
+    "@atproto/oauth-client-browser@0.3.25": {
+      "integrity": "sha512-SKpKqRXB27PQap79strDB9QENDluzaP2NDx0x2Grzo57kOYMDwToRdGkt1LMluzm7Ybe3sx3JRQnT9ZpzapeOA==",
       "dependencies": [
         "@atproto-labs/did-resolver",
         "@atproto-labs/handle-resolver",
@@ -156,8 +155,8 @@
         "@atproto/oauth-types"
       ]
     },
-    "@atproto/oauth-client@0.4.0": {
-      "integrity": "sha512-uWVnlhennWkgvzqP0l53sFaw6DM6B4zmq0fv1xs05vt56Sjly8YirAj0GVDXlb37/BQRJQ1WOBzJVYDI3bH9uw==",
+    "@atproto/oauth-client@0.4.2": {
+      "integrity": "sha512-wHRYcrh+iKQvMramYqE6PHs5Y/L2LYFzrEnyUMf83CjD3GYFwbSN5pwot6EFXONxRwuRjxpXsCSlFzZwx9YFvw==",
       "dependencies": [
         "@atproto-labs/did-resolver",
         "@atproto-labs/fetch",
@@ -173,8 +172,8 @@
         "zod@3.25.64"
       ]
     },
-    "@atproto/oauth-types@0.3.0": {
-      "integrity": "sha512-ptfsJARKODXfuOoDQag4a6PpEkDEj4Urz3jOmnQZy2YspPc/TNm1o0HglU0YehELv1vfhh9gEz40BJztPPhiLA==",
+    "@atproto/oauth-types@0.3.1": {
+      "integrity": "sha512-l8ahtm74lmBOs5boi5q7mqzF2D37+cIYqVmbCrpexNeJfg2BXu0sBxREt0ADxP25Td9pX+u6FnefCOQtI/YAZw==",
       "dependencies": [
         "@atproto/jwk",
         "zod@3.25.64"
@@ -3764,7 +3763,7 @@
     "packageJson": {
       "dependencies": [
         "npm:@atproto/api@~0.15.16",
-        "npm:@atproto/oauth-client-browser@~0.3.23",
+        "npm:@atproto/oauth-client-browser@~0.3.25",
         "npm:@eslint/js@^9.25.0",
         "npm:@rainbow-me/rainbowkit@^2.2.7",
         "npm:@tanstack/react-query@^5.80.7",
