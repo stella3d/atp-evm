@@ -1,7 +1,6 @@
 import type { SiweMessage } from "siwe";
 import type { DefinedDidString, EvmAddressString } from "./common";
 
-
 export type SiweStatementString = `Prove control of 0x${string} to link it to ${DefinedDidString}`;
 
 // TODO - make types stricter than just string, where applicable
@@ -21,32 +20,32 @@ export const lexiconFormatSiweMessage = (message: SiweMessage): SiweLexiconObjec
   // this validation code is pretty sloppy, but it should be enough for now
   let address: EvmAddressString;
   if (/^0x[a-fA-F0-9]{40}$/.test(message.address)) {
-	address = message.address as EvmAddressString;
+	  address = message.address as EvmAddressString;
   } else {
-	const err = `invalid Ethereum address format: ${message.address}`;
-	console.error(err);
-	throw new Error(err);
+    const err = `invalid Ethereum address format: ${message.address}`;
+    console.error(err);
+    throw new Error(err);
   }
 
   if (message.version !== "1") {
-	const err = `unsupported Sign in With Ethereum version: ${message.version}, must be "1"`;
-	console.error(err);
-	throw new Error(err);
+    const err = `unsupported Sign in With Ethereum version: ${message.version}, must be "1"`;
+    console.error(err);
+    throw new Error(err);
   }
 
   if (!message.issuedAt) {
-	const err = `issuedAt is required in Sign in With Ethereum message`;
-	console.error(err);
-	throw new Error(err);
+    const err = `issuedAt is required in Sign in With Ethereum message`;
+    console.error(err);
+    throw new Error(err);
   }
 
   let issuedAt: Date;
   try {
-	issuedAt = new Date(message.issuedAt);
+	  issuedAt = new Date(message.issuedAt);
   } catch {
-	const err = `invalid issuedAt format: ${message.issuedAt}`;
-	console.error(err);
-	throw new Error(err);
+    const err = `invalid issuedAt format: ${message.issuedAt}`;
+    console.error(err);
+    throw new Error(err);
   }
 
   return {
