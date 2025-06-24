@@ -7,7 +7,8 @@ import type { OAuthSession } from '@atproto/oauth-client-browser';
 const AuthLinker: React.FC = () => {
   const [oauthSession, setOauthSession] = useState<OAuthSession | null>(null);
 
-  // if on localhost & the url has a query string "oauthRedo", force oauth flow. this makes testing easier.
+  // if on localhost & the url has a query string "oauthRedo", force oauth flow. 
+  // this is just to make testing easier.
   const host = window.location.hostname;
   const isLocalhost = host === 'localhost' || host === '127.0.0.1';
   if (isLocalhost && oauthSession?.did) {
