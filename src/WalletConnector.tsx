@@ -44,7 +44,7 @@ export const makeSiweMessage = (did: DefinedDidString, address: `0x${string}`, c
     uri: window.location.origin,
     version: '1',
     chainId,
-    nonce: uid(48),
+    nonce: uid(24),
   })
 }
 
