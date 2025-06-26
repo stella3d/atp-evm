@@ -39,9 +39,8 @@ export const lexiconFormatSiweMessage = (message: SiweMessage): SiweLexiconObjec
     throw new Error(err);
   }
 
-  let issuedAt: Date;
   try {
-	  issuedAt = new Date(message.issuedAt);
+	  new Date(message.issuedAt);
   } catch {
     const err = `invalid issuedAt format: ${message.issuedAt}`;
     console.error(err);

@@ -1,8 +1,7 @@
 import { Agent, ComAtprotoRepoCreateRecord } from '@atproto/api'
-import { OAuthClient, type OAuthSession } from "@atproto/oauth-client-browser";
+import { type OAuthSession } from "@atproto/oauth-client-browser";
 import type { SiweMessage } from "siwe";
 
-import { oauthClient } from './oauth';
 import { hexToBase64, type EvmAddressString } from "./common";
 import { lexiconFormatSiweMessage, type SiweLexiconObject } from './siwe';
 
