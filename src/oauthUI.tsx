@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { oauthClient } from './oauth';
+import { oauthClient } from './oauth.ts';
 
 const OAuthUI: React.FC = () => {
   const [handle, setHandle] = useState('');

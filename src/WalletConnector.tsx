@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-window jsx-button-has-type
 import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultConfig,
@@ -13,14 +14,14 @@ import {
   QueryClientProvider,
   QueryClient,
 } from "@tanstack/react-query";
-import { uid, type DefinedDidString, type DidString } from './common';
-import WalletOptions from './WalletOptions';
-import { serializeSiweAddressControlRecord, writeAddressControlRecord } from './recordWrite';
+import { uid, type DefinedDidString, type DidString } from './common.ts';
+import WalletOptions from './WalletOptions.tsx';
+import { serializeSiweAddressControlRecord, writeAddressControlRecord } from './recordWrite.ts';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
 import { SiweError, SiweMessage } from 'siwe'
 import { useState } from 'react';
-import type { SiweStatementString } from './siwe';
-import AtUriLink from './AtUriLink'; // added import for the new component
+import type { SiweStatementString } from './siwe.ts';
+import AtUriLink from './AtUriLink.tsx'; // added import for the new component
 
 
 export const config = getDefaultConfig({
@@ -108,7 +109,7 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 		signMessage({ message });
 	};
   
-	return disabled ? <></> : (
+  return disabled ? null : (
 		<>
 			<button disabled={disabled} onClick={onClick}>
 				Link DID to Wallet

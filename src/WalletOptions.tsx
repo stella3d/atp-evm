@@ -6,7 +6,7 @@ export default function WalletOptions() {
   console.log('All connectors:', connectors);
 
   // wagmi shows a bunch of duplicates for some reason, so we filter them out.
-  let allowedConnectors: Connector<CreateConnectorFn>[] = [];
+  const allowedConnectors: Connector<CreateConnectorFn>[] = [];
   connectors.forEach((connector) => {
     if (connector.name === 'Safe' && connector.id === 'safe') {
       allowedConnectors.push(connector);
@@ -14,13 +14,14 @@ export default function WalletOptions() {
     }
     // wagmi shows 2 Metamask connectors sometimes, idk why
     if (connector.name === 'MetaMask') {
-      if (connector.id === 'io.metamask') {
+      if (connector.id === 'io.metamask' || 'metaMaskSDK') {
         allowedConnectors.push(connector);
       }
       return;
     } 
     // wagmi usually shows a bunch of WalletConnect connectors, but only this one seems to work.
     if (connector.name === 'WalletConnect') {
+      // deno-lint-ignore no-explicit-any
       if ((connector['rkDetails'] as any)['isWalletConnectModalConnector']) {
         allowedConnectors.push(connector);
       } 
@@ -67,7 +68,7 @@ function WalletOption({
   }, [connector])
 
   return (
-    <button disabled={!ready} onClick={onClick}>
+    <button disabled={!ready} onClick={onClick} type="button">
       {connector.name}
     </button>
   )
