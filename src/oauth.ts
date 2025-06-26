@@ -1,6 +1,6 @@
 import { BrowserOAuthClient, type OAuthClientMetadataInput } from '@atproto/oauth-client-browser'
 
-const prodDomain = 'https://atp-wallet-link.stellz.club';
+const prodDomain = 'https://wallet-link.stellz.club';
 const isProduction = import.meta.env.PROD;
 
 const baseUrl = isProduction ? prodDomain: 'http://127.0.0.1:5173';
