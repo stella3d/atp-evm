@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import React, { useState, useEffect } from 'react';
 import { oauthClient } from './oauth';
 import OAuthUI from './oauthUI';
@@ -7,15 +8,13 @@ import type { OAuthSession } from '@atproto/oauth-client-browser';
 const AuthLinker: React.FC = () => {
   const [oauthSession, setOauthSession] = useState<OAuthSession | null>(null);
 
-  // if on localhost & the url has a query string "oauthRedo", force oauth flow. 
   // this is just to make testing easier.
-  const host = window.location.hostname;
-  const isLocalhost = host === 'localhost' || host === '127.0.0.1';
-  if (isLocalhost && oauthSession?.did) {
+  if (oauthSession?.did) {
     const urlParams = new URLSearchParams(window.location.search);
-    let oauthRedoParam = urlParams.get('oauthRedo');
+    const oauthRedoParam = urlParams.get('oauthRedo');
     if (oauthRedoParam === 'true') {
       oauthClient.revoke(oauthSession.did);
+      setOauthSession(null);
     }
   }
 
