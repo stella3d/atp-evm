@@ -1,9 +1,10 @@
 import { BrowserOAuthClient, type OAuthClientMetadataInput } from '@atproto/oauth-client-browser'
 
+const prodDomain = 'https://atp-wallet-link.stellz.club';
 const isProduction = import.meta.env.PROD;
-const baseUrl = isProduction ? 'https://atp-wallet-link.stellz.club' : 'http://127.0.0.1:5173';
-const clientId = isProduction ? 'https://atp-wallet-link.stellz.club' : 'http://localhost';
 
+const baseUrl = isProduction ? prodDomain: 'http://127.0.0.1:5173';
+const clientId = isProduction ? prodDomain : 'http://localhost';
 const scope = isProduction ? 'atproto' : 'atproto transition:generic';
 
 export const config: Readonly<OAuthClientMetadataInput> = {
@@ -11,9 +12,9 @@ export const config: Readonly<OAuthClientMetadataInput> = {
   "client_id": clientId,
   "client_name": "Atproto Wallet Linker",
   "client_uri": baseUrl,
-  "logo_uri": "https://atp-wallet-link.stellz.club/logo.png",
-  "tos_uri": "https://atp-wallet-link.stellz.club/tos",
-  "policy_uri": "https://atp-wallet-link.stellz.club/policy",
+  "logo_uri": `${prodDomain}/logo.png`,
+  "tos_uri": `${prodDomain}/tos`,
+  "policy_uri": `${prodDomain}/policy`,
   "redirect_uris": [baseUrl],
   "scope": scope,
   "grant_types": ["authorization_code", "refresh_token"],
@@ -23,15 +24,7 @@ export const config: Readonly<OAuthClientMetadataInput> = {
   "dpop_bound_access_tokens": true
 };
 
-let oauthClientInternal = new BrowserOAuthClient({
+export const oauthClient = new BrowserOAuthClient({
   clientMetadata: config,
   handleResolver: "https://bsky.social",
 });
-
-//let oauthInit = await oauthClientInternal.init();
-//console.log('OAuth initialization:', oauthInit);
-
-export const oauthClient = oauthClientInternal;
-
-
-// did:plc:7mnpet2pvof2llhpcwattscf
