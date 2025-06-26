@@ -3,7 +3,7 @@ import { type Connector, type CreateConnectorFn, useConnect } from 'wagmi'
 
 export default function WalletOptions() {
   const { connectors, connect } = useConnect()
-  //console.log('All connectors:', connectors);
+  console.log('All connectors:', connectors);
 
   // wagmi shows a bunch of duplicates for some reason, so we filter them out.
   let allowedConnectors: Connector<CreateConnectorFn>[] = [];
@@ -34,7 +34,7 @@ export default function WalletOptions() {
     }
   });
 
-  //console.log('Allowed Connectors:', allowedConnectors);
+  console.log('Allowed Connectors:', allowedConnectors);
 
   return (
     <div>
