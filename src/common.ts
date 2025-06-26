@@ -1,4 +1,7 @@
+export type EvmAddressString = `0x${string}`;
+
 export type DidString = `did:plc:${string}` | `did:web:${string}` | undefined;
+export type DefinedDidString = Exclude<DidString, undefined>;
 
 declare global {
   interface Uint8Array {
@@ -18,7 +21,6 @@ if (!Uint8Array.prototype.toBase64) {
 }
 
 export const hexToBase64 = (hex: string): string => {
-  // check for 0x at start and strip it if present
   if (hex.startsWith('0x')) {
     hex = hex.slice(2);
   }  
@@ -46,6 +48,5 @@ export function uid(length = 96): string {
     }
   }
   
-  // Convert bytes to hex string and return the first `length` characters.
   return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('').substring(0, length);
 }

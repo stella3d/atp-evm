@@ -1,34 +1,67 @@
-import type { OAuthSession } from "@atproto/oauth-client-browser";
-import { hexToBase64, type DidString } from "./common";
+import { Agent, ComAtprotoRepoCreateRecord } from '@atproto/api'
+import { OAuthClient, type OAuthSession } from "@atproto/oauth-client-browser";
+import type { SiweMessage } from "siwe";
+
+import { oauthClient } from './oauth';
+import { hexToBase64, type EvmAddressString } from "./common";
+import { lexiconFormatSiweMessage, type SiweLexiconObject } from './siwe';
 
 
-type AddressString = `0x${string}`;
 type SignatureString = `0x${string}`;
 
-export type AddressControlRecord = {
+export type OldAddressControlRecord = {
   '$type': 'club.stellz.evm.addressControl',
   address: AtprotoBytesField;
   attestation: AtprotoBytesField;
 };
 
+export type AddressControlRecord = {
+  '$type': 'club.stellz.evm.addressControl',
+  address: AtprotoBytesField;
+  signature: AtprotoBytesField;
+  siwe: SiweLexiconObject;
+};
+
+export const ADDRESS_CONTROL_LEXICON_TYPE = 'club.stellz.evm.addressControl';
+
 export type AtprotoBytesField = { "$bytes": string };
 
 const hexToAtpBytes = (hex: string): AtprotoBytesField => ({ "$bytes": hexToBase64(hex) });
 
-export const createAddressControlRecord = (address: AddressString, attestation: SignatureString): AddressControlRecord => {
+export const createAddressControlRecord = (address: EvmAddressString, attestation: SignatureString): OldAddressControlRecord => {
   return {
-    '$type': 'club.stellz.evm.addressControl',
+    '$type': ADDRESS_CONTROL_LEXICON_TYPE,
     address: hexToAtpBytes(address),
     attestation: hexToAtpBytes(attestation),
   };
 }
 
+export const serializeSiweAddressControlRecord = (
+  address: EvmAddressString, 
+  siweMsg: SiweMessage, 
+  sig: SignatureString
+): AddressControlRecord => {
+  console.log('serializing SIWE address control record:', address, siweMsg, sig);
+  const record: AddressControlRecord = {
+    '$type': ADDRESS_CONTROL_LEXICON_TYPE,
+    address: hexToAtpBytes(address),
+    signature: hexToAtpBytes(sig),
+    siwe: lexiconFormatSiweMessage(siweMsg)
+  };
+
+  console.log('Serialized SIWE address control record:', record);
+  return record;
+}
+
 export const writeAddressControlRecord = async (
-  did: DidString,
   record: AddressControlRecord,
-  pdsUrl: string, 
-  oauth: OAuthSession 
-): Promise<any> => {
-  return null;
+  oauth: OAuthSession,
+): Promise<ComAtprotoRepoCreateRecord.Response> => {
+  const agent = new Agent(oauth);
+  return await agent.com.atproto.repo.createRecord({
+    repo: oauth.did,
+    collection: ADDRESS_CONTROL_LEXICON_TYPE,
+    record,
+  });
 }
 
