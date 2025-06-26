@@ -1,9 +1,31 @@
 {
   "lexicon": 1,
   "$type": "com.atproto.lexicon.schema",
-  "id": "club.stellz.evm.siweLink",
+  "id": "club.stellz.evm.addressControl",
   "defs": {
     "main": {
+      "type": "object",
+      "properties": {
+        "address": { 
+          "type": "bytes",
+          "description": "Ethereum address as bytes (20 bytes)"
+        },
+        "signature": { 
+          "type": "bytes",
+          "description": "Sign in With Ethereum message signature as bytes"
+        },
+        "siwe": {
+          "type": "ref",
+          "ref": "#siweMessage"
+        }
+      },
+      "required": [
+        "address",
+        "signature", 
+        "siwe"
+      ]
+    },
+    "siweMessage": {
       "type": "object",
       "properties": {
         "domain": { "type": "string" },
