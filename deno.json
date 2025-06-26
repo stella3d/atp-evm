@@ -1,0 +1,26 @@
+{
+  "tasks": {
+    "dev": "deno run --allow-all npm:vite",
+    "build": "deno run --allow-all npm:vite build",
+    "lint": "deno run --allow-all npm:eslint .",
+    "preview": "deno run --allow-all npm:vite preview",
+    "type-check": "deno check src/**/*.ts src/**/*.tsx"
+  },
+  "imports": {
+    "@atproto/api": "npm:@atproto/api@^0.15.16",
+    "@atproto/oauth-client-browser": "npm:@atproto/oauth-client-browser@^0.3.25",
+    "@rainbow-me/rainbowkit": "npm:@rainbow-me/rainbowkit@^2.2.7",
+    "@tanstack/react-query": "npm:@tanstack/react-query@^5.80.7",
+    "react": "npm:react@^19.1.0",
+    "react-dom": "npm:react-dom@^19.1.0",
+    "siwe": "npm:siwe@^3.0.0",
+    "viem": "npm:viem@^2.31.2",
+    "wagmi": "npm:wagmi@^2.15.6"
+  },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "lib": ["dom", "dom.iterable", "es6"],
+    "strict": true
+  }
+}

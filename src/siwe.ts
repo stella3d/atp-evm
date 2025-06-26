@@ -1,5 +1,5 @@
 import type { SiweMessage } from "siwe";
-import type { DefinedDidString, EvmAddressString } from "./common";
+import type { DefinedDidString, EvmAddressString } from "./common.ts";
 
 export type SiweStatementString = `Prove control of 0x${string} to link it to ${DefinedDidString}`;
 
