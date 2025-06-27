@@ -1,5 +1,5 @@
 import './App.css'
-import AuthLinker from './AuthLinker';
+import AuthLinker from './AuthLinker.tsx';
 
 function App() {
   return (
