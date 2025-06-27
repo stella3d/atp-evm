@@ -28,7 +28,10 @@
     "siweMessage": {
       "type": "object",
       "properties": {
-        "domain": { "type": "string" },
+        "domain": { 
+          "type": "string", 
+          "description": "Domain of the application requesting the signature, e.g. 'wallet-link.stellz.club'"
+        },
         "address": { 
           "type": "string",
           "description": "Ethereum address in 0x-prefixed, checksummed hex format",
@@ -40,7 +43,11 @@
           "description": "The message shown to the user in their wallet before signing, which MUST be of the format 'Prove control of ${address} to link it to ${did}', where ${address} is the linked Ethereum address in 0x-prefixed, checksummed hex format, and ${did} is the DID of the user.",
           "minLength": 78
         },
-        "uri": { "type": "string" },
+        "uri": {
+          "type": "string",
+          "description": "URI of the application requesting the signature, e.g. 'https://wallet-link.stellz.club'",
+          "format": "uri"
+        },
         "version": {
           "type": "string", 
           "description": "Sign in With Ethereum message version",
@@ -48,7 +55,7 @@
         },
         "chainId": {
           "type": "integer",
-          "description": "Chain ID of the Ethereum VM network the address is on."
+          "description": "Chain ID of the Ethereum VM network the address is on"
         },
         "nonce": {
           "type": "string",
@@ -75,6 +82,3 @@
     }
   }
 }
-
-
-Prove control of 0x91443aF8B0B551Ba45208f03D32B22029969576c to link it to did
