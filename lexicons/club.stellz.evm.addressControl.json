@@ -46,8 +46,11 @@
           "description": "Sign in With Ethereum message version",
           "enum": ["1"]
         },
-        "chainId": { "type": "integer" },
-        "nonce": { 
+        "chainId": {
+          "type": "integer",
+          "description": "Chain ID of the Ethereum VM network the address is on."
+        },
+        "nonce": {
           "type": "string",
           "description": "Random nonce the message was signed with",
           "minLength": 8,
