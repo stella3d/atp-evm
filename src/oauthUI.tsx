@@ -8,13 +8,11 @@ const OAuthUI: React.FC = () => {
     e.preventDefault();
     try {
       await oauthClient.signIn(handle, {
-        state: 'some value needed later',
         prompt: 'login',
         signal: new AbortController().signal,
       });
-      console.log('oauth login ever executed');
     } catch (err) {
-      console.log('The user aborted the authorization process by navigating "back"');
+      console.log('oauth login cancelled:', err);
     }
   };
 

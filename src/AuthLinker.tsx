@@ -1,8 +1,8 @@
 // deno-lint-ignore-file
 import React, { useState, useEffect } from 'react';
-import { oauthClient } from './oauth';
-import OAuthUI from './oauthUI';
-import { WalletConnector } from './WalletConnector';
+import { oauthClient } from './oauth.ts';
+import OAuthUI from './oauthUI.tsx';
+import { WalletConnector } from './WalletConnector.tsx';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
 
 const AuthLinker: React.FC = () => {
@@ -18,7 +18,6 @@ const AuthLinker: React.FC = () => {
     }
   }
 
-  // Initialize OAuth session on mount.
   useEffect(() => {
     const fetchSession = async () => {
       const initRes = await oauthClient.init();
@@ -27,9 +26,6 @@ const AuthLinker: React.FC = () => {
     fetchSession();
   }, []);
 
-  //console.log('OAuth session:', oauthSession);
-
-  // If oauthSession is null, the OAuthUI login form is shown.
   return (
     <div>
       {oauthSession ? (

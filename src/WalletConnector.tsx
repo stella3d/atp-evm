@@ -82,16 +82,9 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
         setVerificationError(null);
 
         const record = serializeSiweAddressControlRecord(account.address, siweMsg, sig);
-        console.log('record to write:', record);
-
         const writeResponse = await writeAddressControlRecord(record, oauth);
-        console.log('record write response:', writeResponse);
-        
         if (writeResponse.success) {
-          console.log('Address control record written successfully:', writeResponse.data);
           setSuccessUri(writeResponse.data.uri);  // set the success URI
-				} else {
-					console.error('Failed to write address control record:', writeResponse);
 				}
 			}
 		}

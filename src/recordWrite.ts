@@ -40,7 +40,6 @@ export const serializeSiweAddressControlRecord = (
   siweMsg: SiweMessage, 
   sig: SignatureString
 ): AddressControlRecord => {
-  console.log('serializing SIWE address control record:', address, siweMsg, sig);
   const record: AddressControlRecord = {
     '$type': ADDRESS_CONTROL_LEXICON_TYPE,
     address: hexToAtpBytes(address),
@@ -48,7 +47,6 @@ export const serializeSiweAddressControlRecord = (
     siwe: lexiconFormatSiweMessage(siweMsg)
   };
 
-  console.log('Serialized SIWE address control record:', record);
   return record;
 }
 
