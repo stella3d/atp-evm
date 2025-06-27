@@ -109,7 +109,10 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 			</button>
 			{ verificationError && <VerificationError error={verificationError} /> }
       {/* Render AtUriLink only when writeResponse was successful */}
-			{ successUri && <AtUriLink atUri={successUri as `at://${string}`} /> }
+			{ successUri && <div>
+        <p>✅ successfully linked your wallet</p>
+        <AtUriLink atUri={successUri as `at://${string}`} caption="view the link's record on your PDS"/>
+      </div> }
 		</>
 	)
 };
