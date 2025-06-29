@@ -76,7 +76,9 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
         const verifyResult = await verifySiweMessage(client, {
           message,
           signature: sig,
-          domain: siweMsg.domain
+          domain: siweMsg.domain,
+          nonce: siweMsg.nonce,
+          address: siweMsg.address,
         });
 
         if (!verifyResult) {
