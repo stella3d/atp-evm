@@ -3,7 +3,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultConfig,
 } from '@rainbow-me/rainbowkit';
-import { useSignMessage, useAccount, WagmiProvider, useEnsName, useDisconnect, useEnsAvatar} from 'wagmi';
+import { useSignMessage, useAccount, WagmiProvider, useEnsName, useDisconnect, useEnsAvatar, useClient} from 'wagmi';
 import {
   mainnet,
   optimism,
@@ -18,10 +18,10 @@ import { uid, type DefinedDidString, type DidString } from './common.ts';
 import WalletOptions from './WalletOptions.tsx';
 import { serializeSiweAddressControlRecord, writeAddressControlRecord } from './recordWrite.ts';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
-import { SiweError, SiweMessage } from 'siwe'
 import { useState } from 'react';
 import type { SiweStatementString } from './siwe.ts';
 import AtUriLink from './AtUriLink.tsx'; // added import for the new component
+import { createSiweMessage, verifySiweMessage, type SiweMessage } from 'viem/siwe';
 
 
 export const config = getDefaultConfig({
@@ -37,7 +37,7 @@ export const makeSiweStatement = (address: `0x${string}`, did: DefinedDidString)
   `Prove control of ${address} to link it to ${did}`;
 
 export const makeSiweMessage = (did: DefinedDidString, address: `0x${string}`, chainId: number = 1): SiweMessage => {
-  return new SiweMessage({
+  return {
     domain: window.location.host,
     address,
     statement: makeSiweStatement(address, did),
@@ -45,36 +45,43 @@ export const makeSiweMessage = (did: DefinedDidString, address: `0x${string}`, c
     version: '1',
     chainId,
     nonce: uid(24),
-  })
+    issuedAt: new Date()
+  }
 }
 
 const NO_ACCOUNT_ERROR = 'No Ethereum account found for signing message. Please connect your wallet first.';
 
 export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, oauth: OAuthSession }) => {
 	const account = useAccount();
+  const client = useClient();
 	const [siweMsg, setSiweMsg] = useState<SiweMessage | null>(null);
-	const [verificationError, setVerificationError] = useState<SiweError | null>(null);
+	const [verificationError, setVerificationError] = useState<string | null>(null);
 	const [successUri, setSuccessUri] = useState<string | null>(null); // new state for writeResponse URI
 	disabled = disabled || !account?.address;
   const did = oauth.did;
 
 	const { signMessage } = useSignMessage({
 		mutation: {
-			onSuccess: async (sig) => {
+			onSuccess: async (sig, { message }) => {
+        if (!client)
+          return console.warn('No client for chain!')
         if (!account?.address) 
           return console.warn(NO_ACCOUNT_ERROR);
 
         if (!siweMsg) 
           return console.error('SIWE message is not initialized before signing!');
+        if (typeof message !== 'string')
+          return console.error('SIWE serialized message is not a string!')
         
-        const verifyResult = await siweMsg.verify({
+        const verifyResult = await verifySiweMessage(client, {
+          message,
           signature: sig,
-          domain: siweMsg.domain,
+          domain: siweMsg.domain
         });
 
-        if (!verifyResult.success && verifyResult.error) {
-          console.error('SIWE verification failed:', verifyResult.error);
-          setVerificationError(verifyResult.error);
+        if (!verifyResult) {
+          console.error('SIWE verification failed.');
+          setVerificationError('SIWE verification failed.');
           return;
         }
 
@@ -98,7 +105,7 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 		const siwe = makeSiweMessage(did, account.address, account.chainId);
 		setSiweMsg(siwe);
 
-		const message = siwe.prepareMessage();
+		const message = createSiweMessage(siwe);
 		signMessage({ message });
 	};
   
@@ -117,7 +124,7 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 	)
 };
 
-const VerificationError = ({ error }: { error: SiweError }) => {
+const VerificationError = ({ error }: { error: string }) => {
   return (
     <div>
       <h3>Verification Error</h3>
