@@ -8,16 +8,6 @@ import type { OAuthSession } from '@atproto/oauth-client-browser';
 const AuthLinker: React.FC = () => {
   const [oauthSession, setOauthSession] = useState<OAuthSession | null>(null);
 
-  // this is just to make testing easier.
-  if (oauthSession?.did) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const oauthRedoParam = urlParams.get('oauthRedo');
-    if (oauthRedoParam === 'true') {
-      oauthClient.revoke(oauthSession.did);
-      setOauthSession(null);
-    }
-  }
-
   useEffect(() => {
     const fetchSession = async () => {
       const initRes = await oauthClient.init();
@@ -30,8 +20,8 @@ const AuthLinker: React.FC = () => {
     <div>
       {oauthSession ? (
         <div>
-          <p>✅ authenticated on ATProto side as:</p>
-          <p>{oauthSession.sub}</p>
+          <p>✅ authenticated as: <b>{oauthSession.sub}</b></p>
+          <OAuthUI oauthSession={oauthSession} onSessionChange={setOauthSession} />
           <WalletConnector 
             isAuthenticated={!!oauthSession} 
             did={oauthSession?.sub} 
@@ -39,7 +29,7 @@ const AuthLinker: React.FC = () => {
           />
         </div>
       ) : (
-        <OAuthUI />
+        <OAuthUI oauthSession={oauthSession} onSessionChange={setOauthSession} />
       )}
     </div>
   );
