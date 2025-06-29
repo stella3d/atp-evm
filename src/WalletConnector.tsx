@@ -3,7 +3,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultConfig,
 } from '@rainbow-me/rainbowkit';
-import { useSignMessage, useAccount, WagmiProvider, useEnsName, useDisconnect, useEnsAvatar, useClient} from 'wagmi';
+import { useSignMessage, useAccount, WagmiProvider, useEnsName, useDisconnect, useEnsAvatar} from 'wagmi';
 import {
   mainnet,
   optimism,
@@ -22,6 +22,8 @@ import { useState } from 'react';
 import type { SiweStatementString } from './siwe.ts';
 import AtUriLink from './AtUriLink.tsx'; // added import for the new component
 import { createSiweMessage, verifySiweMessage, type SiweMessage } from 'viem/siwe';
+import { getClient } from 'wagmi/actions';
+import { createPublicClient, http } from 'viem';
 
 
 export const config = getDefaultConfig({
@@ -53,7 +55,6 @@ const NO_ACCOUNT_ERROR = 'No Ethereum account found for signing message. Please 
 
 export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, oauth: OAuthSession }) => {
 	const account = useAccount();
-  const client = useClient();
 	const [siweMsg, setSiweMsg] = useState<SiweMessage | null>(null);
 	const [verificationError, setVerificationError] = useState<string | null>(null);
 	const [successUri, setSuccessUri] = useState<string | null>(null); // new state for writeResponse URI
@@ -63,16 +64,23 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 	const { signMessage } = useSignMessage({
 		mutation: {
 			onSuccess: async (sig, { message }) => {
-        if (!client)
-          return console.warn('No client for chain!')
         if (!account?.address) 
           return console.warn(NO_ACCOUNT_ERROR);
 
         if (!siweMsg) 
           return console.error('SIWE message is not initialized before signing!');
         if (typeof message !== 'string')
-          return console.error('SIWE serialized message is not a string!')
-        
+          return console.error('SIWE serialized message is not a string!');
+
+        const chain = chainForId(siweMsg.chainId);
+        if(!chain)
+          return console.error(`SIWE message is for chain ID ${siweMsg.chainId}, which isn't one of our supported chains.`);
+
+        const client = createPublicClient({
+          chain,
+          transport: http()
+        });
+
         const verifyResult = await verifySiweMessage(client, {
           message,
           signature: sig,
@@ -178,4 +186,8 @@ export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticat
       </QueryClientProvider>
     </WagmiProvider>
   );
+}
+
+function chainForId(chainId: number): (typeof config)['chains'][number] | undefined{
+  return config.chains.find(chain => chain.id === chainId)
 }
