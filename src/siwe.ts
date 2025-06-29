@@ -1,4 +1,4 @@
-import type { SiweMessage } from "siwe";
+import type { SiweMessage } from "viem/siwe";
 import type { DefinedDidString, EvmAddressString } from "./common.ts";
 
 export type SiweStatementString = `Prove control of 0x${string} to link it to ${DefinedDidString}`;
@@ -55,6 +55,6 @@ export const lexiconFormatSiweMessage = (message: SiweMessage): SiweLexiconObjec
     chainId: message.chainId,
     nonce: message.nonce,
     uri: message.uri,
-    issuedAt: message.issuedAt,
+    issuedAt: message.issuedAt.toISOString(),
   };
 };
