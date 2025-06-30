@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import type { EnrichedUser, AddressControlRecord } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
+import { PaymentModal } from "../../shared/PaymentModal.tsx";
+import { config } from '../../shared/WalletConnector.tsx';
 import './UserDetailCard.css';
+import { WagmiProvider } from "wagmi";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 interface UserDetailCardProps {
   selectedUser: EnrichedUser;
@@ -12,6 +16,15 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
   const [addressRecords, setAddressRecords] = useState<AddressControlRecord[]>([]);
   const [loadingRecords, setLoadingRecords] = useState(false);
   const [recordsError, setRecordsError] = useState<string | null>(null);
+  const [paymentModal, setPaymentModal] = useState<{
+    isOpen: boolean;
+    recipientAddress: `0x${string}`;
+    chainId: number;
+  }>({
+    isOpen: false,
+    recipientAddress: '0x0' as `0x${string}`,
+    chainId: 1,
+  });
 
   useEffect(() => {
     const loadAddressRecords = async () => {
@@ -41,6 +54,8 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
       globalThis.open(`https://bsky.app/profile/${selectedUser.handle}`, '_blank');
     }
   };
+
+  const queryClient = new QueryClient();
 
   return (
     <div className="user-detail-card">
@@ -135,8 +150,11 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
                       type="button" 
                       className="send-payment-button"
                       onClick={() => {
-                        // TODO: Implement send payment logic
-                        console.log('Send payment to:', address, 'on chain:', chainId);
+                        setPaymentModal({
+                          isOpen: true,
+                          recipientAddress: address as `0x${string}`,
+                          chainId: chainId || 1,
+                        });
                       }}
                     >
                       Send Payment
@@ -160,6 +178,18 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
           </div>
         )}
       </div>
+      
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <PaymentModal
+            isOpen={paymentModal.isOpen}
+            onClose={() => setPaymentModal(prev => ({ ...prev, isOpen: false }))}
+            recipientAddress={paymentModal.recipientAddress}
+            recipientName={selectedUser.displayName || selectedUser.handle || undefined}
+            chainId={paymentModal.chainId}
+          />
+        </QueryClientProvider>
+      </WagmiProvider>
     </div>
   );
 };

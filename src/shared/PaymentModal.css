@@ -1,0 +1,549 @@
+.payment-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.payment-modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .payment-modal-overlay {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  .payment-modal {
+    background: #1a1a1a;
+    color: #ffffff;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Enhanced modal overlay for dark mode */
+  .payment-modal-overlay {
+    backdrop-filter: blur(4px);
+  }
+
+  /* Enhanced scrollbar styling for dark mode */
+  .payment-modal::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .payment-modal::-webkit-scrollbar-track {
+    background: #2a2a2a;
+  }
+
+  .payment-modal::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+  }
+
+  .payment-modal::-webkit-scrollbar-thumb:hover {
+    background: #777;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: #666;
+}
+
+.close-button:hover {
+  background: #f0f0f0;
+  color: #000;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .modal-header {
+    border-bottom: 1px solid #333;
+  }
+
+  .close-button {
+    color: #ccc;
+  }
+
+  .close-button:hover {
+    background: #333;
+    color: #fff;
+  }
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.step-connect {
+  text-align: center;
+}
+
+.wallet-info {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.wallet-status {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.wallet-status p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.wallet-info code {
+  font-family: monospace;
+  font-size: 0.9rem;
+  background: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.disconnect-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.disconnect-btn:hover {
+  background: #5a6268;
+}
+
+.recipient-section {
+  margin-bottom: 20px;
+}
+
+.recipient-section label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.recipient-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.recipient-name {
+  margin-top: 8px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .wallet-info {
+    background: #2a2a2a;
+  }
+
+  .wallet-info code {
+    background: #333;
+    color: #fff;
+  }
+
+  .disconnect-btn {
+    background: #495057;
+  }
+
+  .disconnect-btn:hover {
+    background: #343a40;
+  }
+
+  .recipient-input {
+    background: #2a2a2a;
+    border: 1px solid #555;
+    color: #fff;
+  }
+
+  .recipient-input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+
+  .recipient-name {
+    color: #ccc;
+  }
+
+  /* Enhanced focus states for dark mode */
+  .recipient-input:focus,
+  .amount-row input:focus {
+    box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+  }
+}
+
+.token-selection {
+  margin-bottom: 20px;
+}
+
+.token-selection label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.no-tokens {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-style: italic;
+}
+
+.token-list {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.token-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #eee;
+}
+
+.token-item:last-child {
+  border-bottom: none;
+}
+
+.token-item:hover {
+  background: #f8f9fa;
+}
+
+.token-item.selected {
+  background: #e3f2fd;
+  border-color: #2196f3;
+}
+
+/* Enhanced token item selected state */
+.token-item.selected {
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.token-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.token-symbol {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.token-name {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.token-balance {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .loading {
+    color: #ccc;
+  }
+
+  .no-tokens {
+    color: #999;
+  }
+
+  .token-list {
+    border: 1px solid #555;
+  }
+
+  .token-item {
+    border-bottom: 1px solid #333;
+  }
+
+  .token-item:hover {
+    background: #2a2a2a;
+  }
+
+  .token-item.selected {
+    background: #1e3a8a;
+    border-color: #3b82f6;
+  }
+
+  .token-name {
+    color: #ccc;
+  }
+
+  .token-balance {
+    color: #fff;
+  }
+}
+
+.amount-input {
+  margin-top: 16px;
+}
+
+.amount-input label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.amount-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.amount-row input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.amount-row .token-symbol {
+  font-weight: 600;
+  color: #333;
+  min-width: 40px;
+}
+
+.max-button-container {
+  text-align: right;
+}
+
+.max-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.max-button:hover {
+  background: #0056b3;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .amount-row input {
+    background: #2a2a2a;
+    border: 1px solid #555;
+    color: #fff;
+  }
+
+  .amount-row input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+
+  .amount-row .token-symbol {
+    color: #fff;
+  }
+
+  .max-button {
+    background: #0d6efd;
+  }
+
+  .max-button:hover {
+    background: #0b5ed7;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.confirm-button, .send-button, .done-button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.confirm-button:hover, .send-button:hover, .done-button:hover {
+  background: #218838;
+}
+
+.confirm-button:disabled, .send-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.back-button, .cancel-button {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.back-button:hover, .cancel-button:hover {
+  background: #5a6268;
+}
+
+/* Dark mode styles for buttons */
+@media (prefers-color-scheme: dark) {
+  .confirm-button, .send-button, .done-button {
+    background: #198754;
+  }
+
+  .confirm-button:hover, .send-button:hover, .done-button:hover {
+    background: #157347;
+  }
+
+  .confirm-button:disabled, .send-button:disabled {
+    background: #495057;
+  }
+
+  .back-button, .cancel-button {
+    background: #495057;
+  }
+
+  .back-button:hover, .cancel-button:hover {
+    background: #343a40;
+  }
+}
+
+.step-confirm {
+  text-align: center;
+}
+
+.payment-summary {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  text-align: left;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.summary-row:last-child {
+  margin-bottom: 0;
+}
+
+.summary-row span:first-child {
+  font-weight: 600;
+}
+
+.address-short {
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.step-sending, .step-success, .step-error {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.loading-spinner {
+  font-size: 2rem;
+  margin-bottom: 16px;
+}
+
+.success-icon, .error-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.tx-hash {
+  margin-top: 16px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .payment-summary {
+    background: #2a2a2a;
+  }
+
+  .tx-hash {
+    background: #2a2a2a;
+    color: #fff;
+  }
+
+  /* Success and error state improvements */
+  .step-success .success-icon {
+    color: #22c55e;
+  }
+
+  .step-error .error-icon {
+    color: #ef4444;
+  }
+}
