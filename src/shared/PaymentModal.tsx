@@ -24,6 +24,8 @@ interface PaymentModalProps {
   onClose: () => void;
   recipientAddress: `0x${string}`;
   recipientName?: string;
+  recipientHandle?: string;
+  recipientAvatar?: string;
   chainId?: number;
 }
 
@@ -32,6 +34,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   onClose,
   recipientAddress,
   recipientName,
+  recipientHandle,
+  recipientAvatar,
   chainId = 1
 }) => {
   const { address, isConnected } = useAccount();
@@ -106,6 +110,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       setError(null);
     }
   }, [isOpen, recipientAddress]);
+
+  // Update recipient address when recipientAddress prop changes
+  React.useEffect(() => {
+    setCustomRecipient(recipientAddress);
+  }, [recipientAddress]);
 
   const handleSendPayment = () => {
     if (!selectedToken || !amount || !customRecipient) return;
@@ -182,7 +191,28 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   placeholder="0x..."
                   className="recipient-input"
                 />
-                {recipientName && <p className="recipient-name">Sending to: {recipientName}</p>}
+                {(recipientName || recipientHandle) && (
+                  <div className="recipient-info">
+                    <div className="recipient-header">which is controlled by</div>
+                    <div className="recipient-profile">
+                      {recipientAvatar ? (
+                        <img 
+                          src={recipientAvatar} 
+                          alt={`${recipientHandle || recipientName} avatar`}
+                          className="recipient-avatar"
+                        />
+                      ) : (
+                        <div className="recipient-avatar-placeholder">
+                          {(recipientHandle || recipientName || '?').charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div className="recipient-details">
+                        {recipientName && <div className="recipient-name">{recipientName}</div>}
+                        {recipientHandle && <div className="recipient-handle">@{recipientHandle}</div>}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="token-selection">

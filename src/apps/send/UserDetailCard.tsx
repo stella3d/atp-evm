@@ -185,7 +185,9 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
             isOpen={paymentModal.isOpen}
             onClose={() => setPaymentModal(prev => ({ ...prev, isOpen: false }))}
             recipientAddress={paymentModal.recipientAddress}
-            recipientName={selectedUser.displayName || selectedUser.handle || undefined}
+            recipientName={selectedUser.displayName || undefined}
+            recipientHandle={selectedUser.handle || undefined}
+            recipientAvatar={selectedUser.avatar || undefined}
             chainId={paymentModal.chainId}
           />
         </QueryClientProvider>
