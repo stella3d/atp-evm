@@ -5,7 +5,6 @@ import './SearchUsers.css';
 import type { DefinedDidString } from "../../shared/common.ts";
 
 interface SearchUsersProps {
-  oauth: OAuthSession;
   onUserSelect?: (user: DefinedDidString) => void;
 }
 
