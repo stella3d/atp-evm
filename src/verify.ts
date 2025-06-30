@@ -78,6 +78,8 @@ export const fetchAndDecodeRecord = async (
       rkey,
     });
 
+	console.log("fetched addressControl record:", response);
+
     // The response.data should contain the CAR file bytes
     let carBytes: Uint8Array;
     
