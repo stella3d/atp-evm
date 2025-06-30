@@ -3,6 +3,19 @@ export type EvmAddressString = `0x${string}`;
 export type DidString = `did:plc:${string}` | `did:web:${string}` | undefined;
 export type DefinedDidString = Exclude<DidString, undefined>;
 
+// Address control record from the user's PDS
+export interface AddressControlRecord {
+  uri: string;
+  value: {
+    siwe: {
+      address: EvmAddressString;
+      issuedAt?: string;
+      [key: string]: unknown;
+    };
+    [key: string]: unknown;
+  };
+}
+
 // Enriched user data with handle and profile information
 export interface EnrichedUser {
   did: DefinedDidString;
@@ -10,6 +23,8 @@ export interface EnrichedUser {
   displayName?: string;
   avatar?: string;
   description?: string;
+  pds?: string;
+  addressControlRecords?: AddressControlRecord[];
 }
 
 // Cache entry for enriched user data

@@ -6,6 +6,8 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-top: 16px;
   animation: slideIn 0.2s ease-out;
+  max-width: min(84vw);
+  width: 100%;
 }
 
 @keyframes slideIn {
@@ -133,41 +135,68 @@
   word-break: break-all;
 }
 
-.user-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+.address-records {
+  margin-top: 8px;
 }
 
-.action-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
+.address-records label {
+  display: block;
   font-size: 14px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex: 1;
-  min-width: 120px;
+  color: #536471;
+  margin-bottom: 8px;
 }
 
-.action-button.primary {
-  background: #1d9bf0;
-  color: white;
+.loading-records, .records-error, .no-records {
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
 }
 
-.action-button.primary:hover {
-  background: #1a8cd8;
-}
-
-.action-button.secondary {
+.loading-records {
   background: #f7f9fa;
-  color: #0f1419;
+  color: #536471;
   border: 1px solid #e1e5e9;
 }
 
-.action-button.secondary:hover {
-  background: #e1e5e9;
+.records-error {
+  background: #fef1f1;
+  color: #d73502;
+  border: 1px solid #f4c2c2;
+}
+
+.no-records {
+  background: #f7f9fa;
+  color: #536471;
+  border: 1px solid #e1e5e9;
+}
+
+.records-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.address-record {
+  background: #f7f9fa;
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.address-value {
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f1419;
+  word-break: break-all;
+  margin-bottom: 4px;
+}
+
+.address-date {
+  font-size: 12px;
+  color: #536471;
 }
 
 /* Dark mode styles */
@@ -215,6 +244,41 @@
     color: #e0e0e0;
     background: #2d2d2d;
     border-color: #404040;
+  }
+
+  .address-records label {
+    color: #cccccc;
+  }
+
+  .loading-records {
+    background: #2d2d2d;
+    color: #cccccc;
+    border-color: #404040;
+  }
+
+  .records-error {
+    background: #3d1a1a;
+    color: #ff6b6b;
+    border-color: #5d2a2a;
+  }
+
+  .no-records {
+    background: #2d2d2d;
+    color: #cccccc;
+    border-color: #404040;
+  }
+
+  .address-record {
+    background: #2d2d2d;
+    border-color: #404040;
+  }
+
+  .address-value {
+    color: #e0e0e0;
+  }
+
+  .address-date {
+    color: #999999;
   }
 
   .action-button.primary {

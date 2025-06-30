@@ -59,6 +59,13 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
     );
   }, [users, searchTerm]);
 
+  // Auto-select user when there's exactly one match
+  useEffect(() => {
+    if (filteredUsers.length === 1 && searchTerm.trim() && onUserSelect) {
+      onUserSelect(filteredUsers[0].did);
+    }
+  }, [filteredUsers, searchTerm, onUserSelect]);
+
   const handleUserClick = (user: EnrichedUser) => {
     if (onUserSelect) {
       onUserSelect(user.did);
@@ -94,7 +101,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
       </div>
       
       <div className="users-count">
-        at least {filteredUsers.length} user{filteredUsers.length !== 1 ? 's' : ''} with linked wallets found
+        {filteredUsers.length} matching user{filteredUsers.length !== 1 ? 's' : ''} with linked wallets found
         {enriching && (
           <span className="enriching-indicator">
             {" • "}Enriching profiles...

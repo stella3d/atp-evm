@@ -1,4 +1,4 @@
-import type { DefinedDidString, EnrichedUser, EnrichedUserCacheEntry } from "./common.ts";
+import type { DefinedDidString, EnrichedUser, EnrichedUserCacheEntry, AddressControlRecord } from "./common.ts";
 
 // Cache configuration
 const CACHE_DURATION = import.meta.env.DEV 
@@ -6,7 +6,7 @@ const CACHE_DURATION = import.meta.env.DEV
   : 5 * 60 * 1000;  // 5 minutes in production
 
 const CACHE_KEY = 'users_with_address_record';
-const ENRICHED_CACHE_KEY = 'enriched_users_data';
+const ENRICHED_CACHE_KEY = 'enriched_users_data_v2';
 
 // Batch size for bulk operations
 const BATCH_SIZE = 20;
@@ -122,9 +122,10 @@ const batchProcessDids = async (dids: DefinedDidString[]): Promise<EnrichedUser[
     const batchResults = await Promise.allSettled(
       batch.map(async (did) => {
         try {
-          // Resolve DID document to get handle
+          // Resolve DID document to get handle and PDS
           const didDoc = await resolveDid(did);
           const handle = extractHandleFromDidDoc(didDoc);
+          const pds = extractPdsFromDidDoc(didDoc);
           
           // Fetch profile if we have a handle
           let profileData = null;
@@ -135,6 +136,7 @@ const batchProcessDids = async (dids: DefinedDidString[]): Promise<EnrichedUser[
           return {
             did,
             handle,
+            pds,
             displayName: profileData?.displayName,
             avatar: profileData?.avatar,
             description: profileData?.description
@@ -165,6 +167,11 @@ const batchProcessDids = async (dids: DefinedDidString[]): Promise<EnrichedUser[
 // DID Document interface
 interface DidDocument {
   alsoKnownAs?: string[];
+  service?: Array<{
+    id: string;
+    type: string;
+    serviceEndpoint: string;
+  }>;
   [key: string]: unknown;
 }
 
@@ -192,6 +199,24 @@ const extractHandleFromDidDoc = (didDoc: DidDocument): string | undefined => {
   return undefined;
 };
 
+// Extract PDS from DID document
+const extractPdsFromDidDoc = (didDoc: DidDocument): string | undefined => {
+  const service = didDoc.service;
+  if (!Array.isArray(service)) return undefined;
+  
+  // Look for ATProto Personal Data Server service
+  const pdsService = service.find(s => 
+    s.type === 'AtprotoPersonalDataServer' || 
+    s.id === '#atproto_pds'
+  );
+  
+  if (pdsService) {
+    console.log(`Found PDS for DID: ${pdsService.serviceEndpoint}`);
+  }
+  
+  return pdsService?.serviceEndpoint;
+};
+
 // Fetch Bluesky profile data
 const fetchBlueskyProfile = async (handle: string): Promise<{
   displayName?: string;
@@ -216,6 +241,38 @@ const fetchBlueskyProfile = async (handle: string): Promise<{
   } catch (error) {
     console.warn(`Failed to fetch profile for ${handle}:`, error);
     return null;
+  }
+};
+
+// Fetch address control records from user's PDS
+export const fetchAddressControlRecords = async (
+  did: DefinedDidString, 
+  pds: string
+): Promise<AddressControlRecord[]> => {
+  try {
+    // Extract hostname from PDS URL
+    const pdsUrl = new URL(pds);
+    const pdsHost = pdsUrl.hostname;
+    
+    console.log(`Fetching address records for ${did} from PDS: ${pdsHost}`);
+    
+    const response = await fetch(
+      `https://${pdsHost}/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=club.stellz.evm.addressControl`
+    );
+    
+    if (!response.ok) {
+      console.error(`Failed to fetch address control records: ${response.status} ${response.statusText}`);
+      throw new Error(`Failed to fetch address control records: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log(`Raw response for ${did}:`, data);
+    console.log(`Found ${data.records?.length || 0} address control records for ${did}`);
+    
+    return data.records || [];
+  } catch (error) {
+    console.warn(`Failed to fetch address control records for ${did}:`, error);
+    return [];
   }
 };
 
@@ -266,9 +323,10 @@ export const enrichUsersProgressively = async (
       batch.map(async (did, batchIndex) => {
         const actualIndex = i + batchIndex;
         try {
-          // Resolve DID document to get handle
+          // Resolve DID document to get handle and PDS
           const didDoc = await resolveDid(did);
           const handle = extractHandleFromDidDoc(didDoc);
+          const pds = extractPdsFromDidDoc(didDoc);
           
           // Fetch profile if we have a handle
           let profileData = null;
@@ -281,6 +339,7 @@ export const enrichUsersProgressively = async (
             enrichedUser: {
               did,
               handle,
+              pds,
               displayName: profileData?.displayName,
               avatar: profileData?.avatar,
               description: profileData?.description
