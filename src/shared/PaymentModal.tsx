@@ -1,9 +1,23 @@
 import React, { useState } from 'react';
-import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { parseUnits, isAddress } from 'viem';
 import { SimpleWalletConnector } from './SimpleWalletConnector.tsx';
 import { useTokenBalances, type TokenBalance } from './useTokenBalances.ts';
 import './PaymentModal.css';
+
+// ERC20 ABI for transfer function
+const ERC20_ABI = [
+  {
+    name: 'transfer',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'to', type: 'address' },
+      { name: 'amount', type: 'uint256' }
+    ],
+    outputs: [{ name: '', type: 'bool' }]
+  }
+] as const;
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -25,13 +39,26 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [selectedToken, setSelectedToken] = useState<TokenBalance | null>(null);
   const [amount, setAmount] = useState('');
   const [customRecipient, setCustomRecipient] = useState(recipientAddress);
-  const [step, setStep] = useState<'connect' | 'select' | 'confirm' | 'sending' | 'success' | 'error'>('connect');
+  const [step, setStep] = useState<'connect' | 'select' | 'sending' | 'success' | 'error'>('connect');
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const { tokenBalances, loading: loadingBalances } = useTokenBalances(chainId);
   
   const { sendTransaction, isPending: isSending } = useSendTransaction({
+    mutation: {
+      onSuccess: (hash) => {
+        setTxHash(hash);
+        setStep('sending');
+      },
+      onError: (error) => {
+        setError(error.message);
+        setStep('error');
+      }
+    }
+  });
+
+  const { writeContract, isPending: isWriting } = useWriteContract({
     mutation: {
       onSuccess: (hash) => {
         setTxHash(hash);
@@ -55,10 +82,18 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   }, [isSuccess, step]);
 
   React.useEffect(() => {
+    console.log('PaymentModal: checking step transition', { 
+      isConnected, 
+      tokenBalancesLength: tokenBalances.length, 
+      step,
+      tokenBalances 
+    });
+    
     if (isConnected && tokenBalances.length > 0 && step === 'connect') {
+      console.log('PaymentModal: transitioning to select step');
       setStep('select');
     }
-  }, [isConnected, tokenBalances.length, step]);
+  }, [isConnected, tokenBalances.length, step, tokenBalances]);
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -85,17 +120,21 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       const parsedAmount = parseUnits(amount, selectedToken.decimals);
       
       if (selectedToken.address === 'native') {
-        // Send native token
+        // Send native token (ETH)
         sendTransaction({
           to: customRecipient,
           value: parsedAmount,
           chainId,
         });
       } else {
-        // Send ERC20 token (would need to implement ERC20 transfer)
-        setError('ERC20 transfers not yet implemented');
-        setStep('error');
-        return;
+        // Send ERC20 token
+        writeContract({
+          address: selectedToken.address,
+          abi: ERC20_ABI,
+          functionName: 'transfer',
+          args: [customRecipient, parsedAmount],
+          chainId,
+        });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send transaction');
@@ -103,11 +142,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     }
   };
 
-  const resetToSelect = () => {
-    setStep('select');
-    setError(null);
-    setTxHash(null);
-  };
+  const isTransactionPending = isSending || isWriting;
 
   if (!isOpen) return null;
 
@@ -207,44 +242,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <button 
                   type="button" 
                   className="confirm-button"
-                  disabled={!selectedToken || !amount || !customRecipient || parseFloat(amount) <= 0}
-                  onClick={() => setStep('confirm')}
-                >
-                  Review Payment
-                </button>
-              </div>
-            </div>
-          )}
-
-          {step === 'confirm' && selectedToken && (
-            <div className="step-confirm">
-              <h4>Confirm Payment</h4>
-              <div className="payment-summary">
-                <div className="summary-row">
-                  <span>Amount:</span>
-                  <span>{amount} {selectedToken.symbol}</span>
-                </div>
-                <div className="summary-row">
-                  <span>To:</span>
-                  <span className="address-short">{customRecipient}</span>
-                </div>
-                <div className="summary-row">
-                  <span>Chain:</span>
-                  <span>Chain ID {chainId}</span>
-                </div>
-              </div>
-              
-              <div className="modal-actions">
-                <button type="button" className="back-button" onClick={resetToSelect}>
-                  Back
-                </button>
-                <button 
-                  type="button" 
-                  className="send-button"
+                  disabled={!selectedToken || !amount || !customRecipient || parseFloat(amount) <= 0 || isTransactionPending}
                   onClick={handleSendPayment}
-                  disabled={isSending}
                 >
-                  {isSending ? 'Sending...' : 'Send Payment'}
+                  {isTransactionPending ? 'Sending...' : `Send ${selectedToken?.symbol || 'Payment'}`}
                 </button>
               </div>
             </div>
@@ -285,7 +286,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               <h4>Payment Failed</h4>
               <p>{error}</p>
               <div className="modal-actions">
-                <button type="button" className="back-button" onClick={resetToSelect}>
+                <button type="button" className="back-button" onClick={() => {
+                  setStep('select');
+                  setError(null);
+                  setTxHash(null);
+                }}>
                   Try Again
                 </button>
                 <button type="button" className="cancel-button" onClick={onClose}>
