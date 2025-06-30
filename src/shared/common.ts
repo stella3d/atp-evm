@@ -11,6 +11,7 @@ export interface AddressControlRecord {
       address: string;
       issuedAt: string;
       chainId: number;
+      domain: string;
       [key: string]: unknown;
     };
     [key: string]: unknown;

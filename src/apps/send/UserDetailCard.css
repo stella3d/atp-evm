@@ -259,9 +259,22 @@
   gap: 4px;
   padding: 4px 8px;
   border-radius: 4px;
+  width: fit-content;
+}
+
+.safety-checklist-inline .checklist-item.verified {
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
-  width: fit-content;
+}
+
+.safety-checklist-inline .checklist-item.failed {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.safety-checklist-inline .checklist-item.warning {
+  background: #fffbeb;
+  border: 1px solid #fed7aa;
 }
 
 .safety-checklist-inline .check-icon {
@@ -388,9 +401,19 @@
     background: #404040;
   }
 
-  .safety-checklist-inline .checklist-item {
+  .safety-checklist-inline .checklist-item.verified {
     background: #1a2e1a;
     border-color: #16a34a;
+  }
+
+  .safety-checklist-inline .checklist-item.failed {
+    background: #2d1b1b;
+    border-color: #dc2626;
+  }
+
+  .safety-checklist-inline .checklist-item.warning {
+    background: #2d2416;
+    border-color: #d97706;
   }
 
   .safety-checklist-inline .check-text {

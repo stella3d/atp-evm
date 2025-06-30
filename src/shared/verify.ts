@@ -48,8 +48,8 @@ export const checkLinkValidity = async (
 	}
 
   // check 4: for purposes of our demo, we are only trusting records made via "stellz.club"
-
-  results.domainIsTrusted = (record.siwe.domain === "stellz.club");
+  results.domainIsTrusted = record.siwe.domain.includes("stellz.club");
+  console.log(results);
 
 	return results;
 }

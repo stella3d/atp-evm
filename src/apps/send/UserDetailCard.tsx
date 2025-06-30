@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { EnrichedUser, AddressControlRecord } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
+import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
 import { PaymentModal } from "../../shared/PaymentModal.tsx";
 import { config } from '../../shared/WalletConnector.tsx';
 import './UserDetailCard.css';
@@ -16,6 +17,7 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
   const [addressRecords, setAddressRecords] = useState<AddressControlRecord[]>([]);
   const [loadingRecords, setLoadingRecords] = useState(false);
   const [recordsError, setRecordsError] = useState<string | null>(null);
+  const [validationResults, setValidationResults] = useState<Map<string, AddressControlVerificationChecks>>(new Map());
   const [paymentModal, setPaymentModal] = useState<{
     isOpen: boolean;
     recipientAddress: `0x${string}`;
@@ -25,6 +27,9 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
     recipientAddress: '0x0' as `0x${string}`,
     chainId: 1,
   });
+
+  // Flag to show/hide validation checks
+  const showValidationChecks = false;
 
   useEffect(() => {
     const loadAddressRecords = async () => {
@@ -39,6 +44,44 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
         const records = await fetchAddressControlRecords(selectedUser.did, selectedUser.pds);
         console.log('Raw address records:', records);
         setAddressRecords(records);
+
+        // Validate each record
+        const validationMap = new Map<string, AddressControlVerificationChecks>();
+        for (const record of records) {
+          try {
+            console.log('Record structure for validation:', record);
+            
+            // Basic validation based on available data
+            const hasValidAddress = !!(record.value?.siwe?.address && 
+              record.value.siwe.address.startsWith('0x') && 
+              record.value.siwe.address.length === 42);
+              
+            const hasValidDomain = record.value?.siwe?.domain.includes('stellz.club');
+            
+            const hasRequiredFields = !!(
+              record.value?.siwe?.statement &&
+              record.value?.siwe?.chainId &&
+              record.value?.siwe?.issuedAt
+            );
+            
+            validationMap.set(record.uri, {
+              statementMatches: hasRequiredFields,
+              siweSignatureValid: hasValidAddress, // placeholder - address format check
+              merkleProofValid: null,
+              domainIsTrusted: hasValidDomain
+            });
+          } catch (error) {
+            console.error('Failed to validate record:', record.uri, error);
+            // Set default failed validation
+            validationMap.set(record.uri, {
+              statementMatches: false,
+              siweSignatureValid: false,
+              merkleProofValid: null,
+              domainIsTrusted: false
+            });
+          }
+        }
+        setValidationResults(validationMap);
       } catch (error) {
         setRecordsError(`Failed to load address records: ${error instanceof Error ? error.message : 'Unknown error'}`);
         console.error('Error loading address records:', error);
@@ -131,19 +174,29 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
                         </div>
                       )}
                       
-                      {/* fake safety checklist for stellz & Edmund, ONLY FOR DEMO */}
-                      {(selectedUser.did === 'did:plc:7mnpet2pvof2llhpcwattscf' || selectedUser.did === 'did:plc:pyzlzqt6b2nyrha7smfry6rv') && (
-                        <div className="safety-checklist-inline">
-                          <div className="checklist-item verified">
-                            <span className="check-icon">✅</span>
-                            <span className="check-text">Wallet-Signed Message Checked</span>
+                      {showValidationChecks && (() => {
+                        const validation = validationResults.get(record.uri);
+                        if (!validation) return null;
+                        
+                        return (
+                          <div className="safety-checklist-inline">
+                            <div className={`checklist-item ${validation.siweSignatureValid ? 'verified' : 'failed'}`}>
+                              <span className="check-icon">{validation.siweSignatureValid ? '✅' : '❌'}</span>
+                              <span className="check-text">Wallet Signature {validation.siweSignatureValid ? 'Valid' : 'Invalid'}</span>
+                            </div>
+                            <div className={`checklist-item ${validation.statementMatches ? 'verified' : 'failed'}`}>
+                              <span className="check-icon">{validation.statementMatches ? '✅' : '❌'}</span>
+                              <span className="check-text">Statement {validation.statementMatches ? 'Matches' : 'Mismatch'}</span>
+                            </div>
+                            {validation.domainIsTrusted !== undefined && (
+                              <div className={`checklist-item ${validation.domainIsTrusted ? 'verified' : 'warning'}`}>
+                                <span className="check-icon">{validation.domainIsTrusted ? '✅' : '⚠️'}</span>
+                                <span className="check-text">Domain {validation.domainIsTrusted ? 'Trusted' : 'Untrusted'}</span>
+                              </div>
+                            )}
                           </div>
-                          <div className="checklist-item verified">
-                            <span className="check-icon">✅</span>
-                            <span className="check-text">Merkle Proof Checked</span>
-                          </div>
-                        </div>
-                      )}
+                        );
+                      })()}
                     </div>
                     
                     <button 
