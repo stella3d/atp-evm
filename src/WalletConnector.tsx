@@ -86,6 +86,7 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
           domain: siweMsg.domain,
           nonce: siweMsg.nonce,
           address: siweMsg.address,
+          time: siweMsg.issuedAt
         });
 
         if (!verifyResult) {

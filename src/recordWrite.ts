@@ -17,24 +17,10 @@ export type AddressControlRecord = {
   siwe: SiweLexiconObject;
 };
 
-
 export type AddressControlVerificationResults = {
   statementMatches: boolean | null;
   signatureValid: boolean | null;
   merkleProofChecked: boolean | null;
-}
-
-// deno-lint-ignore require-await
-export const verifyAddressControlRecord = async (
-  _record: AddressControlRecord,
-  _address: EvmAddressString
-): Promise<AddressControlVerificationResults> => {
-  // default case
-  return {
-    statementMatches: null,
-    signatureValid: null,
-    merkleProofChecked: null,
-  }
 }
 
 export const verifyRecordSiweSignature = async (record: AddressControlRecord): Promise<boolean> => {
@@ -82,14 +68,6 @@ export const ADDRESS_CONTROL_LEXICON_TYPE = 'club.stellz.evm.addressControl';
 export type AtprotoBytesField = { "$bytes": string };
 
 const hexToAtpBytes = (hex: string): AtprotoBytesField => ({ "$bytes": hexToBase64(hex) });
-
-export const createAddressControlRecord = (address: EvmAddressString, attestation: SignatureString): OldAddressControlRecord => {
-  return {
-    '$type': ADDRESS_CONTROL_LEXICON_TYPE,
-    address: hexToAtpBytes(address),
-    attestation: hexToAtpBytes(attestation),
-  };
-}
 
 export const serializeSiweAddressControlRecord = (
   address: EvmAddressString, 
