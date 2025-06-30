@@ -1,7 +1,7 @@
-import './App.css'
-import AuthLinker from './shared/AuthLinker.tsx';
+import '../App.css'
+import AuthLinker from '../shared/AuthLinker.tsx';
 
-function App() {
+function LinkerApp() {
   return (
     <>
       <h1>ATProto Wallet Linker</h1>
@@ -14,4 +14,4 @@ function App() {
   );
 }
 
-export default App;
+export default LinkerApp;

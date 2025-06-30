@@ -3,7 +3,7 @@ import { type OAuthSession } from "@atproto/oauth-client-browser";
 
 import { hexToBase64, type EvmAddressString } from "./common.ts";
 import { lexiconFormatSiweMessage, type SiweLexiconObject } from './siwe.ts';
-import { createSiweMessage, SiweMessage, verifySiweMessage } from 'viem/siwe';
+import { createSiweMessage, verifySiweMessage, type SiweMessage } from 'viem/siwe';
 import { createPublicClient, http } from "viem";
 import { chainForId } from "./WalletConnector.tsx";
 

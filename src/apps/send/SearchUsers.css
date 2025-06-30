@@ -1,0 +1,92 @@
+.search-users {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-box {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #1d9bf0;
+}
+
+.users-count {
+  color: #536471;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.users-list {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  background: white;
+}
+
+.user-item {
+  padding: 16px;
+  border-bottom: 1px solid #e1e5e9;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.user-item:last-child {
+  border-bottom: none;
+}
+
+.user-item:hover {
+  background-color: #f7f9fa;
+}
+
+.user-did {
+  font-family: monospace;
+  font-size: 14px;
+  color: #0f1419;
+  word-break: break-all;
+}
+
+.loading, .error, .no-results {
+  padding: 32px;
+  text-align: center;
+  color: #536471;
+}
+
+.error {
+  color: #f4212e;
+}
+
+/* Scrollbar styling */
+.users-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.users-list::-webkit-scrollbar-track {
+  background: #f1f3f4;
+}
+
+.users-list::-webkit-scrollbar-thumb {
+  background: #c1c8cd;
+  border-radius: 4px;
+}
+
+.users-list::-webkit-scrollbar-thumb:hover {
+  background: #a8b3ba;
+}
