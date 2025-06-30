@@ -21,6 +21,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect }) => {
       setError(null);
       try {
         const fetchedUsers = await fetchUsersWithAddressRecord();
+		console.log('Fetched users:', fetchedUsers);
         setUsers(fetchedUsers);
       } catch (err) {
         setError(`Failed to fetch users: ${err instanceof Error ? err.message : 'Unknown error'}`);

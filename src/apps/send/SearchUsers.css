@@ -20,6 +20,8 @@
   border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.2s;
+  background: white;
+  color: #0f1419;
 }
 
 .search-input:focus {
@@ -89,4 +91,63 @@
 
 .users-list::-webkit-scrollbar-thumb:hover {
   background: #a8b3ba;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .search-box {
+    background: #1a1a1a;
+  }
+
+  .search-input {
+    background: #2d2d2d;
+    border-color: #404040;
+    color: #e0e0e0;
+  }
+
+  .search-input:focus {
+    border-color: #0078d4;
+  }
+
+  .users-count {
+    color: #cccccc;
+  }
+
+  .users-list {
+    background: #1a1a1a;
+    border-color: #404040;
+  }
+
+  .user-item {
+    border-bottom-color: #404040;
+  }
+
+  .user-item:hover {
+    background-color: #2d2d2d;
+  }
+
+  .user-did {
+    color: #e0e0e0;
+  }
+
+  .loading, .no-results {
+    color: #cccccc;
+  }
+
+  .error {
+    color: #ff6b6b;
+  }
+
+  /* Dark mode scrollbar */
+  .users-list::-webkit-scrollbar-track {
+    background: #2d2d2d;
+  }
+
+  .users-list::-webkit-scrollbar-thumb {
+    background: #555555;
+  }
+
+  .users-list::-webkit-scrollbar-thumb:hover {
+    background: #777777;
+  }
 }
