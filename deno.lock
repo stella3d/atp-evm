@@ -4,6 +4,8 @@
     "npm:@atproto/api@~0.15.16": "0.15.16",
     "npm:@atproto/oauth-client-browser@~0.3.25": "0.3.25",
     "npm:@eslint/js@^9.25.0": "9.29.0",
+    "npm:@ipld/car@^5.4.2": "5.4.2",
+    "npm:@ipld/dag-cbor@^9.2.4": "9.2.4",
     "npm:@rainbow-me/rainbowkit@^2.2.7": "2.2.8_@tanstack+react-query@5.80.7__react@19.1.0_react@19.1.0_react-dom@19.1.0__react@19.1.0_viem@2.31.4__ws@8.18.2_wagmi@2.15.6__@tanstack+react-query@5.80.7___react@19.1.0__react@19.1.0__viem@2.31.4___ws@8.18.2__@wagmi+core@2.17.3___viem@2.31.4____ws@8.18.2___@types+react@19.1.8___react@19.1.0___use-sync-external-store@1.4.0____react@19.1.0__@types+react@19.1.8__use-sync-external-store@1.4.0___react@19.1.0_@vanilla-extract+css@1.17.3_@types+react@19.1.8",
     "npm:@tanstack/react-query@^5.80.7": "5.80.7_react@19.1.0",
     "npm:@types/react-dom@^19.1.2": "19.1.6_@types+react@19.1.8",
@@ -13,6 +15,7 @@
     "npm:eslint-plugin-react-refresh@~0.4.19": "0.4.20_eslint@9.29.0",
     "npm:eslint@^9.25.0": "9.29.0",
     "npm:globals@16": "16.2.0",
+    "npm:multiformats@^13.3.7": "13.3.7",
     "npm:react-dom@^19.1.0": "19.1.0_react@19.1.0",
     "npm:react@^19.1.0": "19.1.0",
     "npm:typescript-eslint@^8.30.1": "8.35.0_eslint@9.29.0_typescript@5.8.3_@typescript-eslint+parser@8.35.0__eslint@9.29.0__typescript@5.8.3",
@@ -85,7 +88,7 @@
         "@atproto/syntax",
         "@atproto/xrpc",
         "await-lock",
-        "multiformats",
+        "multiformats@9.9.0",
         "tlds",
         "zod@3.25.64"
       ]
@@ -94,7 +97,7 @@
       "integrity": "sha512-vrXwGNoFGogodjQvJDxAeP3QbGtawgZute2ed1XdRO0wMixLk3qewtikZm06H259QDJVu6voKC5mubml+WgQUw==",
       "dependencies": [
         "graphemer",
-        "multiformats",
+        "multiformats@9.9.0",
         "uint8arrays@3.0.0",
         "zod@3.25.64"
       ]
@@ -123,7 +126,7 @@
     "@atproto/jwk@0.4.0": {
       "integrity": "sha512-tvp4iZrzqEzKCeTOKz50/o6WdsZzOuWmWjF6On5QAp04fLwLpsFu2Hixgx/lA1KBO0O4sns7YSGcAqSSX6Rdog==",
       "dependencies": [
-        "multiformats",
+        "multiformats@9.9.0",
         "zod@3.25.64"
       ]
     },
@@ -133,7 +136,7 @@
         "@atproto/common-web",
         "@atproto/syntax",
         "iso-datestring-validator",
-        "multiformats",
+        "multiformats@9.9.0",
         "zod@3.25.64"
       ]
     },
@@ -163,7 +166,7 @@
         "@atproto/jwk",
         "@atproto/oauth-types",
         "@atproto/xrpc",
-        "multiformats",
+        "multiformats@9.9.0",
         "zod@3.25.64"
       ]
     },
@@ -584,6 +587,22 @@
     },
     "@humanwhocodes/retry@0.4.3": {
       "integrity": "sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ=="
+    },
+    "@ipld/car@5.4.2": {
+      "integrity": "sha512-gfyrJvePyXnh2Fbj8mPg4JYvEZ3izhk8C9WgAle7xIYbrJNSXmNQ6BxAls8Gof97vvGbCROdxbTWRmHJtTCbcg==",
+      "dependencies": [
+        "@ipld/dag-cbor",
+        "cborg",
+        "multiformats@13.3.7",
+        "varint"
+      ]
+    },
+    "@ipld/dag-cbor@9.2.4": {
+      "integrity": "sha512-GbDWYl2fdJgkYtIJN0HY9oO0o50d1nB4EQb7uYWKUd2ztxCjxiEW3PjwGG0nqUpN1G4Cug6LX8NzbA7fKT+zfA==",
+      "dependencies": [
+        "cborg",
+        "multiformats@13.3.7"
+      ]
     },
     "@jridgewell/gen-mapping@0.3.8": {
       "integrity": "sha512-imAbBGkb+ebQyxKgzv5Hu2nmROxoDOXHh80evxdoXNOrvAnVx7zimzc1Oo5h9RlfV4vPXaE2iM5pOFbvOCClWA==",
@@ -1845,6 +1864,10 @@
     "caniuse-lite@1.0.30001723": {
       "integrity": "sha512-1R/elMjtehrFejxwmexeXAtae5UO9iSyFn6G/I806CYC/BLyyBk1EPhrKBkWhy6wM6Xnm47dSJQec+tLJ39WHw=="
     },
+    "cborg@4.2.12": {
+      "integrity": "sha512-z126yLoavS75cdTuiKu61RC3Y3trqtDAgQRa5Q0dpHn1RmqhIedptWXKnk0lQ5yo/GmcV9myvIkzFgZ8GnqSog==",
+      "bin": true
+    },
     "chalk@4.1.2": {
       "integrity": "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==",
       "dependencies": [
@@ -2720,6 +2743,9 @@
     "ms@2.1.3": {
       "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="
     },
+    "multiformats@13.3.7": {
+      "integrity": "sha512-meL9DERHj+fFVWoOX9fXqfcYcSpUfSYJPcFvDPKrxitICbwAoWR+Ut4j5NO9zAT917HUHLQmqzQbAsGNHlDcxQ=="
+    },
     "multiformats@9.9.0": {
       "integrity": "sha512-HoMUjhH9T8DDBNT+6xzkrd9ga/XiBI4xLr58LJACwK6G3HTOPeMz4nB4KJs33L2BelrIJa7P0VuNaVF3hMYfjg=="
     },
@@ -3320,13 +3346,13 @@
     "uint8arrays@3.0.0": {
       "integrity": "sha512-HRCx0q6O9Bfbp+HHSfQQKD7wU70+lydKVt4EghkdOvlK/NlrF90z+eXV34mUd48rNvVJXwkrMSPpCATkct8fJA==",
       "dependencies": [
-        "multiformats"
+        "multiformats@9.9.0"
       ]
     },
     "uint8arrays@3.1.0": {
       "integrity": "sha512-ei5rfKtoRO8OyOIor2Rz5fhzjThwIHJZ3uyDPnDHTXbP0aMQ1RN/6AI5B5d9dBxJOU+BvOAk7ZQ1xphsX8Lrog==",
       "dependencies": [
-        "multiformats"
+        "multiformats@9.9.0"
       ]
     },
     "uncrypto@0.1.3": {
@@ -3440,6 +3466,9 @@
         "@types/react",
         "react"
       ]
+    },
+    "varint@6.0.0": {
+      "integrity": "sha512-cXEIW6cfr15lFv563k4GuVuW/fiwjknytD37jIOLSdSWuOI6WnO/oKwmP2FQTU2l01LP8/M5TSAJpzUaGe3uWg=="
     },
     "viem@2.23.2_ws@8.18.0": {
       "integrity": "sha512-NVmW/E0c5crMOtbEAqMF0e3NmvQykFXhLOc/CkLIXOlzHSA6KXVz3CYVmaKqBF8/xtjsjHAGjdJN3Ru1kFJLaA==",
@@ -3649,6 +3678,8 @@
         "npm:@atproto/api@~0.15.16",
         "npm:@atproto/oauth-client-browser@~0.3.25",
         "npm:@eslint/js@^9.25.0",
+        "npm:@ipld/car@^5.4.2",
+        "npm:@ipld/dag-cbor@^9.2.4",
         "npm:@rainbow-me/rainbowkit@^2.2.7",
         "npm:@tanstack/react-query@^5.80.7",
         "npm:@types/react-dom@^19.1.2",
@@ -3658,6 +3689,7 @@
         "npm:eslint-plugin-react-refresh@~0.4.19",
         "npm:eslint@^9.25.0",
         "npm:globals@16",
+        "npm:multiformats@^13.3.7",
         "npm:react-dom@^19.1.0",
         "npm:react@^19.1.0",
         "npm:typescript-eslint@^8.30.1",

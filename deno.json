@@ -9,8 +9,10 @@
   "imports": {
     "@atproto/api": "npm:@atproto/api@^0.15.16",
     "@atproto/oauth-client-browser": "npm:@atproto/oauth-client-browser@^0.3.25",
+    "@ipld/car": "npm:@ipld/car@^5.4.2",
     "@rainbow-me/rainbowkit": "npm:@rainbow-me/rainbowkit@^2.2.7",
     "@tanstack/react-query": "npm:@tanstack/react-query@^5.80.7",
+    "multiformats": "npm:multiformats@^13.1.0",
     "react": "npm:react@^19.1.0",
     "react-dom": "npm:react-dom@^19.1.0",
     "viem": "npm:viem@^2.31.2",
