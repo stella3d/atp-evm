@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { OAuthSession } from "@atproto/oauth-client-browser";
 import { fetchUsersWithAddressRecord } from '../../shared/fetch.ts';
 import './SearchUsers.css';
 import type { DefinedDidString } from "../../shared/common.ts";
@@ -20,7 +19,6 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect }) => {
       setError(null);
       try {
         const fetchedUsers = await fetchUsersWithAddressRecord();
-		console.log('Fetched users:', fetchedUsers);
         setUsers(fetchedUsers);
       } catch (err) {
         setError(`Failed to fetch users: ${err instanceof Error ? err.message : 'Unknown error'}`);
