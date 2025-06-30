@@ -47,6 +47,10 @@ export const checkLinkValidity = async (
 		results.merkleProofValid = await verifyMerkleProof(recordCid, blocks);
 	}
 
+  // check 4: for purposes of our demo, we are only trusting records made via "stellz.club"
+
+  results.domainIsTrusted = (record.siwe.domain === "stellz.club");
+
 	return results;
 }
 
