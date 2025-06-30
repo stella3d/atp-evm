@@ -3,16 +3,12 @@ import { type OAuthSession } from "@atproto/oauth-client-browser";
 
 import { hexToBase64, type EvmAddressString } from "./common.ts";
 import { lexiconFormatSiweMessage, type SiweLexiconObject } from './siwe.ts';
-import { SiweMessage } from 'viem/siwe';
+import { createSiweMessage, SiweMessage, verifySiweMessage } from 'viem/siwe';
+import { createPublicClient, http } from "viem";
+import { chainForId } from "./WalletConnector.tsx";
 
 
 type SignatureString = `0x${string}`;
-
-export type OldAddressControlRecord = {
-  '$type': 'club.stellz.evm.addressControl',
-  address: AtprotoBytesField;
-  attestation: AtprotoBytesField;
-};
 
 export type AddressControlRecord = {
   '$type': 'club.stellz.evm.addressControl',
@@ -42,7 +38,7 @@ export const verifyAddressControlRecord = async (
 }
 
 export const verifyRecordSiweSignature = async (record: AddressControlRecord): Promise<boolean> => {
-  const reconstructedMsg: SiweMessage = new SiweMessage({
+  const reconstructedMsg: SiweMessage = {
     domain: record.siwe.domain,
     address: record.siwe.address,
     statement: record.siwe.statement,
@@ -50,20 +46,30 @@ export const verifyRecordSiweSignature = async (record: AddressControlRecord): P
     chainId: record.siwe.chainId,
     nonce: record.siwe.nonce,
     uri: record.siwe.uri,
-    issuedAt: record.siwe.issuedAt,
-  });
+    issuedAt: new Date(record.siwe.issuedAt),
+  }
+
+  const message: string = createSiweMessage(reconstructedMsg);
 
   try {
     const sigBase64 = record.signature["$bytes"];
     const bytes = Uint8Array.from(atob(sigBase64), c => c.charCodeAt(0));
-    const sigHex = '0x' + bytes.reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0'), '');
+    const sigHex: `0x${string}` = ('0x' + bytes.reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0'), '')) as `0x${string}`;
 
-    const verifyResult = await reconstructedMsg.verify({
+    const ethClient = createPublicClient({
+      chain: chainForId(record.siwe.chainId),
+      transport: http()
+    });
+
+    const verifyResult: boolean = await verifySiweMessage(ethClient, {
+      message,
       signature: sigHex,
       domain: reconstructedMsg.domain,
+      nonce: reconstructedMsg.nonce,
+      address: reconstructedMsg.address,
     });
     console.log("verifyResult:", verifyResult);
-    return verifyResult.success;
+    return verifyResult;
   } catch (e) {
     console.error("error verifying Sign in With Ethereum signature in record:", e);
   }

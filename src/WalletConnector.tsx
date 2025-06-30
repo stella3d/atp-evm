@@ -22,7 +22,6 @@ import { useState } from 'react';
 import type { SiweStatementString } from './siwe.ts';
 import AtUriLink from './AtUriLink.tsx'; // added import for the new component
 import { createSiweMessage, verifySiweMessage, type SiweMessage } from 'viem/siwe';
-import { getClient } from 'wagmi/actions';
 import { createPublicClient, http } from 'viem';
 
 
@@ -188,6 +187,6 @@ export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticat
   );
 }
 
-function chainForId(chainId: number): (typeof config)['chains'][number] | undefined{
+export function chainForId(chainId: number): (typeof config)['chains'][number] | undefined{
   return config.chains.find(chain => chain.id === chainId)
 }
