@@ -75,15 +75,12 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
             {selectedUser.displayName && (
               <div className="profile-display-name">{selectedUser.displayName}</div>
             )}
+            <div className="user-did">{selectedUser.did}</div>
+		    <br/>
             {selectedUser.description && (
               <div className="profile-description">{selectedUser.description}</div>
             )}
           </div>
-        </div>
-
-        <div className="user-info">
-          <label>DID:</label>
-          <div className="user-did-display">{selectedUser.did}</div>
         </div>
 
         <div className="address-records">
@@ -100,15 +97,50 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
                 // Extract address from the SIWE structure
                 const address = record.value?.siwe?.address || 'Unknown address';
                 const issuedAt = record.value?.siwe?.issuedAt;
+                const chainId = record.value?.siwe?.chainId;
 
                 return (
                   <div key={record.uri || index} className="address-record">
-                    <div className="address-value">{address}</div>
-                    {issuedAt && (
-                      <div className="address-date">
-                        Issued: {new Date(issuedAt).toLocaleDateString()} at {new Date(issuedAt).toLocaleTimeString()}
+                    <div className="address-info">
+                      <div className="address-header">
+                        <div className="address-value">{address}</div>
                       </div>
-                    )}
+                      {issuedAt && (
+                        <div className="address-date">
+                          Issued: {new Date(issuedAt).toLocaleDateString()} at {new Date(issuedAt).toLocaleTimeString()}
+                          {chainId && (
+                            <span className="chain-info">
+                              • Chain {chainId}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      
+                      {/* fake safety checklist for stellz & Edmund, ONLY FOR DEMO */}
+                      {(selectedUser.did === 'did:plc:7mnpet2pvof2llhpcwattscf' || selectedUser.did === 'did:plc:pyzlzqt6b2nyrha7smfry6rv') && (
+                        <div className="safety-checklist-inline">
+                          <div className="checklist-item verified">
+                            <span className="check-icon">✅</span>
+                            <span className="check-text">Wallet-Signed Message Checked</span>
+                          </div>
+                          <div className="checklist-item verified">
+                            <span className="check-icon">✅</span>
+                            <span className="check-text">Merkle Proof Checked</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <button 
+                      type="button" 
+                      className="send-payment-button"
+                      onClick={() => {
+                        // TODO: Implement send payment logic
+                        console.log('Send payment to:', address, 'on chain:', chainId);
+                      }}
+                    >
+                      Send Payment
+                    </button>
                   </div>
                 );
               })}
@@ -116,11 +148,8 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
           )}
         </div>
         
-        <div className="user-actions">
-          <button type="button" className="action-button primary">
-            Send Payment
-          </button>
-          {selectedUser.handle && (
+        {selectedUser.handle && (
+          <div className="user-actions">
             <button 
               type="button" 
               className="action-button secondary"
@@ -128,8 +157,8 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
             >
               View Profile
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

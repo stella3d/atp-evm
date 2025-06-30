@@ -8,8 +8,9 @@ export interface AddressControlRecord {
   uri: string;
   value: {
     siwe: {
-      address: EvmAddressString;
-      issuedAt?: string;
+      address: string;
+      issuedAt: string;
+      chainId: number;
       [key: string]: unknown;
     };
     [key: string]: unknown;

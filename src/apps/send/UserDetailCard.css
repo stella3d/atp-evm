@@ -179,10 +179,27 @@
 }
 
 .address-record {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   background: #f7f9fa;
   border: 1px solid #e1e5e9;
   border-radius: 6px;
   padding: 12px;
+}
+
+.address-info {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.address-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
 }
 
 .address-value {
@@ -191,12 +208,72 @@
   font-weight: 600;
   color: #0f1419;
   word-break: break-all;
-  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.chain-info {
+  color: #1d9bf0;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 8px;
 }
 
 .address-date {
   font-size: 12px;
   color: #536471;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.send-payment-button {
+  background: #1d9bf0;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.send-payment-button:hover {
+  background: #106ebe;
+}
+
+.safety-checklist-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.safety-checklist-inline .checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  width: fit-content;
+}
+
+.safety-checklist-inline .check-icon {
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.safety-checklist-inline .check-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: #0f1419;
+  white-space: nowrap;
 }
 
 /* Dark mode styles */
@@ -277,8 +354,20 @@
     color: #e0e0e0;
   }
 
+  .chain-info {
+    color: #0078d4;
+  }
+
   .address-date {
     color: #999999;
+  }
+
+  .send-payment-button {
+    background: #0078d4;
+  }
+
+  .send-payment-button:hover {
+    background: #106ebe;
   }
 
   .action-button.primary {
@@ -297,5 +386,14 @@
 
   .action-button.secondary:hover {
     background: #404040;
+  }
+
+  .safety-checklist-inline .checklist-item {
+    background: #1a2e1a;
+    border-color: #16a34a;
+  }
+
+  .safety-checklist-inline .check-text {
+    color: #e0e0e0;
   }
 }
