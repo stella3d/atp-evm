@@ -35,8 +35,23 @@
   font-weight: 500;
 }
 
+.enriching-indicator {
+  color: #1d9bf0;
+  font-size: 12px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
 .users-list {
-  max-height: 270px;
+  max-height: 400px;
   overflow-y: auto;
   border: 1px solid #e1e5e9;
   border-radius: 8px;
@@ -44,7 +59,10 @@
 }
 
 .user-item {
-  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 16px 8px 16px;
   border-bottom: 1px solid #e1e5e9;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -58,11 +76,58 @@
   background-color: #f7f9fa;
 }
 
+.user-avatar {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.user-info {
+  flex-grow: 1;
+  min-width: 0; /* Allows text to truncate */
+}
+
+.user-handle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f1419;
+  margin-bottom: 2px;
+}
+
+.user-display-name {
+  font-size: 14px;
+  color: #536471;
+  margin-bottom: 4px;
+}
+
 .user-did {
   font-family: monospace;
-  font-size: 14px;
-  color: #0f1419;
+  font-size: 12px;
+  color: #8b98a5;
   word-break: break-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .loading, .error, .no-results {
@@ -113,6 +178,10 @@
     color: #cccccc;
   }
 
+  .enriching-indicator {
+    color: #0078d4;
+  }
+
   .users-list {
     background: #1a1a1a;
     border-color: #404040;
@@ -126,8 +195,16 @@
     background-color: #2d2d2d;
   }
 
-  .user-did {
+  .user-handle {
     color: #e0e0e0;
+  }
+
+  .user-display-name {
+    color: #cccccc;
+  }
+
+  .user-did {
+    color: #999999;
   }
 
   .loading, .no-results {

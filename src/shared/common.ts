@@ -3,6 +3,21 @@ export type EvmAddressString = `0x${string}`;
 export type DidString = `did:plc:${string}` | `did:web:${string}` | undefined;
 export type DefinedDidString = Exclude<DidString, undefined>;
 
+// Enriched user data with handle and profile information
+export interface EnrichedUser {
+  did: DefinedDidString;
+  handle?: string;
+  displayName?: string;
+  avatar?: string;
+  description?: string;
+}
+
+// Cache entry for enriched user data
+export interface EnrichedUserCacheEntry {
+  data: EnrichedUser[];
+  timestamp: number;
+}
+
 declare global {
   interface Uint8Array {
     toBase64(): string;
