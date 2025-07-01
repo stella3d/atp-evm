@@ -72,8 +72,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   }
 
   const extractCurrentChainIdFromError = (errorMessage: string): number | null => {
+    // Match against "The current chain of the wallet (id: 8453) does not match the target chain for the transaction (id: 1"
+    let match = errorMessage.match(/The current chain of the wallet \(id: (\d+)\)/i);
+    if (match) {
+      console.log('matched wallet chain id:', match);
+      return parseInt(match[1]);
+    }
+    
     // match against like "Your wallet is connected to Base (Chain 8453)"
-    const match = errorMessage.match(/Your wallet is connected to [^(]+ \(Chain (\d+)\)/i);
+    match = errorMessage.match(/Your wallet is connected to [^(]+ \(Chain (\d+)\)/i);
     if (match) {
       console.log('matched wrapper chainId:', match);
       return parseInt(match[1]);
@@ -92,7 +99,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       };
     }
     
-    if (msg.includes('wrong chain') || msg.includes('chain mismatch') || msg.includes('unsupported chain') || msg.includes('switch chain')) {
+    if (msg.includes('wrong chain') || msg.includes('chain mismatch') || msg.includes('unsupported chain') || msg.includes('switch chain') || msg.includes('does not match the target chain')) {
       // Try to extract current chain from error message and compare with expected
       const currentChainId = extractCurrentChainIdFromError(errorMessage);
       if (currentChainId !== null && currentChainId !== chainId) {
