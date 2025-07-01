@@ -292,31 +292,21 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 )}
               </div>
 
-              {selectedToken && (
-                <div className="amount-input">
-                  <label>Amount to send:</label>
-                  <div className="amount-row">
-                    <input
-                      type="number"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      placeholder="0.0"
-                      step="any"
-                      max={selectedToken.balance}
-                    />
-                    <span className="token-symbol">{selectedToken.symbol}</span>
-                  </div>
-                  <div className="max-button-container">
-                    <button 
-                      type="button" 
-                      className="max-button"
-                      onClick={() => setAmount(selectedToken.balance)}
-                    >
-                      Max
-                    </button>
-                  </div>
+              <div className={`amount-input ${!selectedToken ? 'disabled' : ''}`}>
+                <label>Amount to send:</label>
+                <div className="amount-row">
+                  <input
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder={selectedToken ? "0.0" : "Select a token first"}
+                    step="any"
+                    max={selectedToken?.balance}
+                    disabled={!selectedToken}
+                  />
+                  <span className="token-symbol">{selectedToken?.symbol || '---'}</span>
                 </div>
-              )}
+              </div>
 
               <div className="modal-actions">
                 <button 
