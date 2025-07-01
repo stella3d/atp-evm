@@ -21,12 +21,12 @@ export const AddressLink: React.FC<AddressLinkProps> = ({
     return <span className={className}>{children || address}</span>;
   }
 
-  const ondoraUrl = `https://www.ondora.xyz/accounts/${address}/all`;
+  const doraUrl = `https://ondora.xyz/accounts/${address}/all`;
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    globalThis.open(ondoraUrl, '_blank');
+    globalThis.open(doraUrl, '_blank');
   };
 
   const displayText = children || (showFullAddress ? address : `${address.slice(0, 6)}...${address.slice(-4)}`);
@@ -39,12 +39,12 @@ export const AddressLink: React.FC<AddressLinkProps> = ({
 
   return (
     <a
-      href={ondoraUrl}
+      href={doraUrl}
       target="_blank"
       rel="noopener noreferrer"
       className={`address-link ${className}`}
       onClick={handleClick}
-      title={`View ${address} on Ondora`}
+      title={`view ${address}'s profile on Dora`}
     >
       {content}
     </a>
