@@ -268,7 +268,9 @@
   border: 1px solid #d0e7ff;
   border-radius: 6px;
   font-size: 0.9rem;
-  margin: 0;
+  margin: 0 auto;
+  width: fit-content;
+  min-width: 50%;
 }
 
 .ens-label {
@@ -288,7 +290,7 @@
 .recipient-name {
   margin-top: 8px;
   color: #666;
-  font-size: 0.9rem;
+  font-size: 1.05rem;
 }
 
 /* Dark mode styles */
@@ -1026,7 +1028,7 @@
 }
 
 .recipient-name {
-  font-size: 1.14rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: #333;
   line-height: 1.1;
@@ -1035,7 +1037,7 @@
 }
 
 .recipient-handle {
-  font-size: 0.96rem;
+  font-size: 1.2rem;
   color: #666;
   line-height: 1.1;
   text-align: left;
@@ -1109,11 +1111,6 @@
   .ens-header {
     font-size: 0.7rem;
     margin-bottom: 4px;
-  }
-  
-  .ens-name {
-    font-size: 0.8rem;
-    padding: 2px 8px;
   }
   
   .ens-label {

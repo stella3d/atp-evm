@@ -401,7 +401,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </div>
 
               <div className="recipient-section">
-                <label>Recipient Address on<span className={`chain-indicator ${getChainClass(chainId)}`}>{getChainName(chainId)}</span></label>
+                <label>Recipient on<span className={`chain-indicator ${getChainClass(chainId)}`}>{getChainName(chainId)}</span></label>
                 <div className="recipient-address-display">
                   <AddressLink address={customRecipient} className="recipient-input" />
                 </div>
