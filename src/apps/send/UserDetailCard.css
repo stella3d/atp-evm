@@ -569,6 +569,10 @@
   .address-header code {
     font-size: 15px;
   }
+
+  .recipient-address-display .address-link {
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 442px) {
@@ -578,6 +582,10 @@
   
   .address-header code {
     font-size: 14px;
+  }
+  
+  .recipient-address-display .address-link {
+    font-size: 13px;
   }
 }
 
@@ -589,6 +597,10 @@
   .address-header code {
     font-size: 13px;
   }
+  
+  .recipient-address-display .address-link {
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 400px) {
@@ -598,5 +610,9 @@
   
   .address-header code {
     font-size: 12px;
+  }
+  
+  .recipient-address-display .address-link {
+    font-size: 11px;
   }
 }

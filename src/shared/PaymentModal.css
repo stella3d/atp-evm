@@ -1285,18 +1285,40 @@
   }
 }
 
+@media (max-width: 492px) {
+  .recipient-address-display .address-link {
+    font-size: 12px
+  }
+}
+
 /* Responsive font size adjustments for AddressLink components */
 @media (max-width: 470px) {
   .address-value.address-link {
     font-size: 14px;
   }
   
-  .address-header {
-    font-size: 0.85rem;
+  .recipient-address-display .address-link {
+    font-size: 12px
+  }
+}
+
+@media (max-width: 442px) {
+  .address-value.address-link {
+    font-size: 14px !important;
   }
   
   .recipient-address-display .address-link {
-    font-size: 0.85rem;
+    font-size: 11px
+  }
+}
+
+@media (max-width: 422px) {
+  .address-value.address-link {
+    font-size: 13px !important;
+  }
+  
+  .recipient-address-display .address-link {
+    font-size: 10px
   }
 }
 
@@ -1311,6 +1333,10 @@
   
   .recipient-address-display .address-link {
     font-size: 0.8rem;
+  }
+  
+  .recipient-address-display {
+    font-size: 0.7rem;
   }
 }
 
