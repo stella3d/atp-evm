@@ -1285,6 +1285,35 @@
   }
 }
 
+/* Responsive font size adjustments for AddressLink components */
+@media (max-width: 470px) {
+  .address-value.address-link {
+    font-size: 14px;
+  }
+  
+  .address-header {
+    font-size: 0.85rem;
+  }
+  
+  .recipient-address-display .address-link {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .address-link {
+    font-size: 0.8rem;
+  }
+  
+  .address-header {
+    font-size: 0.8rem;
+  }
+  
+  .recipient-address-display .address-link {
+    font-size: 0.8rem;
+  }
+}
+
 /* Utility classes */
 .hidden {
   display: none;

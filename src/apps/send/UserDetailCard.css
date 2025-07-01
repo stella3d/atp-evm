@@ -559,3 +559,44 @@
     color: #e0e0e0;
   }
 }
+
+/* Responsive font size adjustments for AddressLink components */
+@media (max-width: 470px) {
+  .address-value.address-link {
+    font-size: 15px !important;
+  }
+  
+  .address-header code {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 442px) {
+  .address-value.address-link {
+    font-size: 14px !important;
+  }
+  
+  .address-header code {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 422px) {
+  .address-value.address-link {
+    font-size: 13px !important;
+  }
+  
+  .address-header code {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 400px) {
+  .address-value.address-link {
+    font-size: 12px !important;
+  }
+  
+  .address-header code {
+    font-size: 12px;
+  }
+}
