@@ -585,8 +585,9 @@
 
 .amount-input label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   font-weight: 600;
+  font-size: 1.1rem;
 }
 
 .amount-row {
@@ -600,13 +601,59 @@
   flex: 1;
   border: 1px solid #ddd;
   border-radius: 6px;
-  font-size: 1rem;
+  font-size: 1.3rem;
+  padding: 12px 16px;
+  font-weight: 500;
 }
 
 .amount-row .token-symbol {
   font-weight: 600;
   color: #333;
-  min-width: 40px;
+  min-width: 50px;
+  font-size: 1.1rem;
+}
+
+.amount-token-display {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 50px;
+}
+
+.amount-token-logo-container {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.amount-token-logo {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.amount-token-logo-placeholder {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 8px;
+  flex-shrink: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .max-button-container {
@@ -662,6 +709,9 @@
     background: #2a2a2a;
     border: 1px solid #555;
     color: #fff;
+    padding: 12px 16px;
+    font-size: 1.3rem;
+    font-weight: 500;
   }
 
   .amount-row input:focus {
@@ -670,6 +720,11 @@
   }
 
   .amount-row .token-symbol {
+    color: #fff;
+    font-size: 1.1rem;
+  }
+
+  .amount-token-display {
     color: #fff;
   }
 
@@ -1079,6 +1134,23 @@
   /* Amount input adjustments */
   .amount-row input {
     font-size: 0.9rem;
+  }
+  
+  /* Amount token display adjustments for mobile */
+  .amount-token-logo-container {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .amount-token-logo,
+  .amount-token-logo-placeholder {
+    width: 16px;
+    height: 16px;
+    font-size: 7px;
+  }
+  
+  .amount-token-display {
+    gap: 4px;
   }
   
   /* Payment summary more compact */

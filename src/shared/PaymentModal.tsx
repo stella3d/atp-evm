@@ -468,7 +468,35 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     max={selectedToken?.balance}
                     disabled={!selectedToken}
                   />
-                  <span className="token-symbol">{selectedToken?.symbol || '---'}</span>
+                  <div className="amount-token-display">
+                    {selectedToken && selectedToken.logoUrl && (
+                      <div className="amount-token-logo-container">
+                        <img 
+                          src={selectedToken.logoUrl} 
+                          alt={`${selectedToken.symbol} logo`}
+                          className="amount-token-logo"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const placeholder = e.currentTarget.parentElement?.querySelector('.amount-token-logo-placeholder') as HTMLElement;
+                            if (placeholder) {
+                              placeholder.classList.remove('hidden');
+                            }
+                          }}
+                        />
+                        <div className={`amount-token-logo-placeholder ${selectedToken.logoUrl ? 'hidden' : ''}`}>
+                          {selectedToken.symbol.charAt(0)}
+                        </div>
+                      </div>
+                    )}
+                    {selectedToken && !selectedToken.logoUrl && (
+                      <div className="amount-token-logo-container">
+                        <div className="amount-token-logo-placeholder">
+                          {selectedToken.symbol.charAt(0)}
+                        </div>
+                      </div>
+                    )}
+                    <span className="token-symbol">{selectedToken?.symbol || '---'}</span>
+                  </div>
                 </div>
               </div>
 
