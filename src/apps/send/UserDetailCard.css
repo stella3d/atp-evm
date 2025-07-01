@@ -20,6 +20,7 @@
     max-width: calc(100vw - 4px);
     margin-left: 2px;
     margin-right: 2px;
+    padding: 10px;
   }
 }
 
@@ -279,6 +280,10 @@
     gap: 12px;
   }
 
+  .address-value {
+    font-size: 15px;
+    word-break: break-word;
+  }
   
   
   .address-info {
@@ -296,7 +301,7 @@
 @media (max-width: 480px) {
   /* Make address values smaller and more readable on mobile */
   .address-value {
-    font-size: 12px;
+    font-size: 13px;
   }
   
   /* Make other elements more compact too */
@@ -334,7 +339,7 @@
 @media (max-width: 428px) {
   /* Make address values smaller and more readable on mobile */
   .address-value {
-    font-size: 10px;
+    font-size: 11px;
   }
   .address-date {
     font-size: 11px;
