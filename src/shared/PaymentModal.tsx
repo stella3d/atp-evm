@@ -3,6 +3,7 @@ import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionRec
 import { parseUnits, isAddress } from 'viem';
 import { SimpleWalletConnector } from './SimpleWalletConnector.tsx';
 import { useTokenBalances, type TokenBalance } from './useTokenBalances.ts';
+import { getChainName } from './common.ts';
 import './PaymentModal.css';
 
 // ERC20 ABI for transfer function
@@ -181,7 +182,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             <div className="step-select">
               <div className="wallet-info">
                 <div className="wallet-status">
-                  <p>✅ Connected as: <code>{address}</code></p>
+                  <p>✅ Connected on <span className="chain-name">{getChainName(chainId)}</span> as: <code>{address}</code></p>
                   <button type="button" className="disconnect-btn" onClick={() => disconnect()}>
                     Change Wallet
                   </button>
@@ -189,7 +190,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </div>
 
               <div className="recipient-section">
-                <label>Recipient Address:</label>
+                <label>Recipient Address on<span className="chain-indicator">{getChainName(chainId)}</span></label>
                 <input 
                   type="text"
                   value={customRecipient}
