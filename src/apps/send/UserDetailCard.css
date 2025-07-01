@@ -2,13 +2,12 @@
   background: white;
   border: 1px solid #e1e5e9;
   border-radius: 12px;
-  padding: 6px 10px 6px 10x;
+  padding: 6px 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-top: 16px;
   animation: slideIn 0.2s ease-out;
   max-width: min(920px, calc(100vw - 8px));
   min-width: 250px;
-  width: 100%;
   margin-left: 4px;
   margin-right: 4px;
   box-sizing: border-box;
@@ -80,11 +79,12 @@
 
 .user-profile {
   display: flex;
-  gap: 16px;
+  gap: 8px;
   align-items: flex-start;
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
+  justify-content: center;
 }
 
 .profile-avatar {
@@ -114,8 +114,10 @@
 }
 
 .profile-info {
-  flex-grow: 1;
   min-width: 0;
+  max-width: 70%;
+  min-width: 40%;
+  text-align: center;
 }
 
 .profile-handle {
@@ -152,6 +154,7 @@
   color: #536471;
   word-break: break-all;
   margin-bottom: 4px;
+  text-align: center !important;
 }
 
 .user-did-display {
