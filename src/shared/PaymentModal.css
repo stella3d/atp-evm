@@ -115,7 +115,7 @@
 }
 
 .wallet-info {
-  padding: 12px;
+  padding: 8px 6px 8px 6px;
   background: #f8f9fa;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -162,7 +162,7 @@
 
 .recipient-section label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   font-weight: 600;
 }
 
@@ -1007,7 +1007,7 @@
   }
 }
 
-@media (max-width: 352px) {
+@media (max-width: 340px) {
   .recipient-section input {
     font-size: 10px;
   }
@@ -1017,25 +1017,22 @@
   
 }
 
-@media (max-width: 324px) {
+@media (max-width: 312px) {
   .recipient-section input {
     font-size: 9px;
   }
+  .wallet-status code {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 308px) {
   .recipient-section label {
     font-size: 14px
   }
 }
 
-@media (max-width: 324px) {
-  .recipient-section input {
-    font-size: 9px;
-  }
-  .wallet-status code {
-    font-size: 9px;
-  }
-}
-
-@media (max-width: 294px) {
+@media (max-width: 286px) {
   .recipient-section input {
     font-size: 8px;
   }
@@ -1044,7 +1041,7 @@
   }
 }
 
-@media (max-width: 268px) {
+@media (max-width: 250px) {
   .recipient-section input {
     font-size: 7px;
   }

@@ -238,7 +238,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </div>
 
               <div className="token-selection">
-                <label>Select Token & Amount:</label>
+                <label>Select Token</label>
                 {loadingBalances ? (
                   <div className="loading">Loading token balances...</div>
                 ) : tokenBalances.length === 0 ? (
