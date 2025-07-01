@@ -21,24 +21,27 @@ const USDC_LOGO_URL = `${prefix}/token_logos/usdc.png`;
 const USDT_LOGO_URL = `${prefix}/token_logos/usdt.png`;
 
 // Common ERC20 tokens for each chain (you can expand this)
-const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: string, name: string, logoUrl: string}>> = {
+const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: string, name: string, decimals: number, logoUrl: string}>> = {
   1: [ // Ethereum mainnet
     { 
       address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 
       symbol: 'USDC', 
       name: 'USD Coin',
+      decimals: 6,
       logoUrl: USDC_LOGO_URL
     },
     { 
       address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', 
       symbol: 'USDT', 
       name: 'Tether USD',
+      decimals: 6,
       logoUrl: USDT_LOGO_URL
     },
     { 
       address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', 
       symbol: 'DAI', 
       name: 'Dai Stablecoin',
+      decimals: 18,
       logoUrl: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png'
     },
   ],
@@ -47,12 +50,14 @@ const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: strin
       address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', 
       symbol: 'USDC', 
       name: 'USD Coin',
+      decimals: 6,
       logoUrl: USDC_LOGO_URL
     },
     { 
       address: '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed', 
       symbol: 'DEGEN', 
       name: 'Degen',
+      decimals: 18,
       logoUrl: 'https://assets.coingecko.com/coins/images/34515/small/degen.png'
     },
   ],
@@ -61,12 +66,14 @@ const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: strin
       address: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85', 
       symbol: 'USDC', 
       name: 'USD Coin',
+      decimals: 6,
       logoUrl: USDC_LOGO_URL
     },
     { 
       address: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58', 
       symbol: 'USDT', 
       name: 'Tether USD',
+      decimals: 6,
       logoUrl: USDT_LOGO_URL
     },
   ],
@@ -75,12 +82,14 @@ const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: strin
       address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', 
       symbol: 'USDC', 
       name: 'USD Coin',
+      decimals: 6,
       logoUrl: USDC_LOGO_URL
     },
     { 
       address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9', 
       symbol: 'USDT', 
       name: 'Tether USD',
+      decimals: 6,
       logoUrl: USDT_LOGO_URL
     },
   ],
@@ -150,40 +159,24 @@ export const useTokenBalances = (chainId?: number) => {
         
         for (const token of tokens) {
           try {
-            const [balance, decimals, symbol, name] = await Promise.all([
-              client.readContract({
-                address: token.address,
-                abi: erc20Abi,
-                functionName: 'balanceOf',
-                args: [address],
-              }),
-              client.readContract({
-                address: token.address,
-                abi: erc20Abi,
-                functionName: 'decimals',
-              }),
-              client.readContract({
-                address: token.address,
-                abi: erc20Abi,
-                functionName: 'symbol',
-              }),
-              client.readContract({
-                address: token.address,
-                abi: erc20Abi,
-                functionName: 'name',
-              }),
-            ]);
+            // Only fetch balance - use token metadata from COMMON_TOKENS
+            const balance = await client.readContract({
+              address: token.address,
+              abi: erc20Abi,
+              functionName: 'balanceOf',
+              args: [address],
+            });
 
-            const formattedBalance = formatUnits(balance as bigint, decimals as number);
+            const formattedBalance = formatUnits(balance as bigint, token.decimals);
             
             // Only include tokens with non-zero balance
             if (parseFloat(formattedBalance) > 0) {
               balances.push({
                 address: token.address,
-                symbol: symbol as string,
-                name: name as string,
+                symbol: token.symbol,
+                name: token.name,
                 balance: formattedBalance,
-                decimals: decimals as number,
+                decimals: token.decimals,
                 chainId,
                 logoUrl: token.logoUrl,
               });

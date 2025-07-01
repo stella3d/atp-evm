@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionReceipt, useWriteContract, useEnsName } from 'wagmi';
 import { parseUnits, isAddress } from 'viem';
 import { SimpleWalletConnector } from './SimpleWalletConnector.tsx';
 import { useTokenBalances, type TokenBalance } from './useTokenBalances.ts';
@@ -194,7 +194,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 {(recipientName || recipientHandle) && (
                   <div className="recipient-info">
                     <div className="recipient-header">which is controlled by</div>
-                    <div className="recipient-profile">
+                    <div 
+                      className={`recipient-profile ${recipientHandle ? 'clickable' : ''}`}
+                      onClick={() => {
+                        if (recipientHandle) {
+                          globalThis.open(`https://bsky.app/profile/${recipientHandle}`, '_blank');
+                        }
+                      }}
+                      title={recipientHandle ? `View @${recipientHandle} on Bluesky` : undefined}
+                    >
                       {recipientAvatar ? (
                         <img 
                           src={recipientAvatar} 
