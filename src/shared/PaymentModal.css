@@ -278,24 +278,24 @@
 }
 
 .token-selection {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .token-selection label {
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   font-weight: 600;
 }
 
 .loading {
   text-align: center;
-  padding: 20px;
+  padding: 16px;
   color: #666;
 }
 
 .no-tokens {
   text-align: center;
-  padding: 20px;
+  padding: 16px;
   color: #999;
   font-style: italic;
 }
@@ -310,7 +310,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 8px 12px;
   cursor: pointer;
   transition: background-color 0.2s;
   border-bottom: 1px solid #eee;
@@ -337,13 +337,13 @@
 .token-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .token-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .token-logo-container {
@@ -398,7 +398,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 2px;
+  gap: 1px;
 }
 
 .token-balance-label {
