@@ -49,6 +49,29 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [errorType, setErrorType] = useState<'user_rejected' | 'wrong_chain' | 'insufficient_funds' | 'other' | null>(null);
+  const [amountError, setAmountError] = useState<string | null>(null);
+
+  // Helper function to validate amount
+  const validateAmount = (value: string, token: TokenBalance | null) => {
+    if (!token || !value) {
+      setAmountError(null);
+      return;
+    }
+
+    const numericAmount = parseFloat(value);
+    const tokenBalance = parseFloat(token.balance);
+
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      setAmountError(null);
+      return;
+    }
+
+    if (numericAmount > tokenBalance) {
+      setAmountError(`amount exceeds your balance of ${token.balance} ${token.symbol}`);
+    } else {
+      setAmountError(null);
+    }
+  };
 
   const isWrongChainErr = (err: {
     type: "user_rejected" | "wrong_chain" | "insufficient_funds" | "other";
@@ -278,6 +301,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       setTxHash(null);
       setError(null);
       setErrorType(null);
+      setAmountError(null);
     }
   }, [isOpen, recipientAddress]);
 
@@ -286,6 +310,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     setCustomRecipient(recipientAddress);
   }, [recipientAddress]);
 
+  // Validate amount when selected token changes
+  React.useEffect(() => {
+    if (selectedToken && amount) {
+      validateAmount(amount, selectedToken);
+    } else {
+      setAmountError(null);
+    }
+  }, [selectedToken, amount]);
+
   const handleSendPayment = () => {
     if (!selectedToken || !amount || !customRecipient) return;
 
@@ -293,6 +326,16 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       const categorized = categorizeError('Invalid recipient address');
       setError(categorized.message);
       setErrorType(categorized.type);
+      setStep('error');
+      return;
+    }
+
+    // Check if amount exceeds balance
+    const numericAmount = parseFloat(amount);
+    const tokenBalance = parseFloat(selectedToken.balance);
+    if (numericAmount > tokenBalance) {
+      setError(`Amount ${amount} ${selectedToken.symbol} exceeds your balance of ${selectedToken.balance} ${selectedToken.symbol}`);
+      setErrorType('insufficient_funds');
       setStep('error');
       return;
     }
@@ -462,8 +505,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   <input
                     type="number"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder={selectedToken ? "0.0" : "Select a token first"}
+                    onChange={(e) => {
+                      setAmount(e.target.value);
+                      validateAmount(e.target.value, selectedToken);
+                    }}
+                    placeholder={selectedToken ? "0.0" : "select a token first"}
                     step="any"
                     max={selectedToken?.balance}
                     disabled={!selectedToken}
@@ -498,13 +544,18 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     <span className="token-symbol">{selectedToken?.symbol || '---'}</span>
                   </div>
                 </div>
+                {amountError && (
+                  <div className="amount-error">
+                    {amountError}
+                  </div>
+                )}
               </div>
 
               <div className="modal-actions">
                 <button 
                   type="button" 
                   className="confirm-button"
-                  disabled={!selectedToken || !amount || !customRecipient || parseFloat(amount) <= 0 || isTransactionPending}
+                  disabled={!selectedToken || !amount || !customRecipient || parseFloat(amount) <= 0 || isTransactionPending || !!amountError}
                   onClick={handleSendPayment}
                 >
                   {isTransactionPending ? 'Sending...' : `Send ${selectedToken?.symbol || 'Payment'}`}

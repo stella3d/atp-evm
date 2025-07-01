@@ -14,7 +14,7 @@
 .payment-modal {
   background: white;
   border-radius: 12px;
-  max-width: 500px;
+  max-width: 440px;
   min-width: 250px;
   width: 90vw;
   max-height: 94vh;
@@ -593,13 +593,13 @@
 .amount-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   margin: 0 20% 8px 20%;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .amount-row input {
-  flex: 1;
+  width: 70%;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 1.3rem;
@@ -703,6 +703,15 @@
 
 .amount-input.disabled .max-button:hover {
   background: #ccc;
+}
+
+/* Wider input when no token is selected to accommodate placeholder */
+.amount-input.disabled .amount-row {
+  margin: 0 15% 8px 15%;
+}
+
+.amount-input.disabled .amount-row input {
+  width: 85%;
 }
 
 /* Dark mode styles */
@@ -1517,5 +1526,55 @@
 
   .recipient-name {
     color: #fff;
+  }
+}
+
+.amount-error {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* Dark mode styles for amount error */
+@media (prefers-color-scheme: dark) {
+  .amount-error {
+    color: #ff6b6b;
+  }
+}
+
+/* Responsive styles for amount input under 540px */
+@media (max-width: 540px) {
+  .amount-input label {
+    font-size: 1.05rem;
+  }
+  
+  .amount-row input {
+    font-size: 1.2rem;
+    padding: 10px 14px;
+  }
+  
+  .amount-row .token-symbol {
+    font-size: 1.05rem;
+  }
+  
+  .amount-token-logo-container {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .amount-token-logo,
+  .amount-token-logo-placeholder {
+    width: 18px;
+    height: 18px;
+    font-size: 7px;
+  }
+}
+
+/* Responsive modal width adjustments */
+@media (max-width: 464px) {
+  .payment-modal {
+    max-width: 380px;
+    width: 92vw;
   }
 }
