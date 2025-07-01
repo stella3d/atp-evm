@@ -13,9 +13,12 @@ export interface TokenBalance {
   logoUrl?: string;
 }
 
-const ETH_LOGO_URL = '/public/token_logos/eth.png';
-const USDC_LOGO_URL = '/public/token_logos/usdc.png';
-const USDT_LOGO_URL = '/public/token_logos/usdt.png';
+const isProd = import.meta.env.PROD;
+const prefix = isProd ? '' : '/public';
+
+const ETH_LOGO_URL = `${prefix}/token_logos/eth.png`;
+const USDC_LOGO_URL = `${prefix}/token_logos/usdc.png`;
+const USDT_LOGO_URL = `${prefix}/token_logos/usdt.png`;
 
 // Common ERC20 tokens for each chain (you can expand this)
 const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: string, name: string, logoUrl: string}>> = {

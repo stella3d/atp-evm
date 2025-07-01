@@ -258,8 +258,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                             <div className="token-name">{token.name}</div>
                           </div>
                         </div>
-                        <div className="token-balance">
-                          {parseFloat(token.balance).toFixed(6)} {token.symbol}
+                        <div className="token-balance-section">
+                          <div className="token-balance-label">Balance</div>
+                          <div className="token-balance">
+                            {parseFloat(token.balance).toFixed(6)} {token.symbol}
+                          </div>
                         </div>
                       </div>
                     ))}

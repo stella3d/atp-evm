@@ -334,6 +334,21 @@
   color: #666;
 }
 
+.token-balance-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.token-balance-label {
+  font-size: 0.7rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
 .token-balance {
   font-family: monospace;
   font-size: 0.9rem;
@@ -369,6 +384,10 @@
 
   .token-name {
     color: #ccc;
+  }
+
+  .token-balance-label {
+    color: #aaa;
   }
 
   .token-balance {
@@ -740,6 +759,10 @@
   
   .token-balance {
     font-size: 0.8rem;
+  }
+  
+  .token-balance-label {
+    font-size: 0.6rem;
   }
   
   /* Amount input adjustments */
