@@ -6,8 +6,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-top: 16px;
   animation: slideIn 0.2s ease-out;
-  max-width: min(84vw);
+  max-width: min(920px, calc(100vw - 8px));
+  min-width: 250px;
   width: 100%;
+  margin-left: 4px;
+  margin-right: 4px;
+  box-sizing: border-box;
 }
 
 @keyframes slideIn {
@@ -258,13 +262,15 @@
 }
 
 /* Layout changes for screens up to 600px (phones, small tablets) */
-@media (max-width: 600px) {
+@media (max-width: 606px) {
   /* Fix address record layout to prevent button overlap */
   .address-record {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
   }
+
+  
   
   .address-info {
     width: 100%;
@@ -290,7 +296,7 @@
   }
   
   .address-record {
-    padding: 12px;
+    padding: 4px;
   }
   
   .address-date {
@@ -304,11 +310,11 @@
   
   /* Card content padding adjustments */
   .card-content {
-    padding: 16px;
+    padding: 4px;
   }
   
   .card-header {
-    padding: 16px;
+    padding: 8px;
   }
   
   .card-header h3 {
@@ -353,6 +359,13 @@
   
   .address-record {
     padding: 8px;
+  }
+}
+
+@media (max-width: 336px) {
+  /* Make address values smaller and more readable on very small screens */
+  .address-value {
+    font-size: 9px;
   }
 }
 

@@ -1,16 +1,22 @@
 .search-users {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 600px;
+  gap: 12px;
+  max-width: min(920px, calc(100vw - 8px));
+  min-width: 250px;
+  width: 100%;
   margin: 0 auto;
+  margin-left: 4px;
+  margin-right: 4px;
+  box-sizing: border-box;
 }
 
 .search-box {
   position: sticky;
   top: 0;
-  background: white;
+  background: transparent;
   z-index: 10;
+  padding: 0 3%;
 }
 
 .search-input {
@@ -22,6 +28,7 @@
   transition: border-color 0.2s;
   background: white;
   color: #0f1419;
+  box-sizing: border-box;
 }
 
 .search-input:focus {
@@ -161,7 +168,7 @@
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .search-box {
-    background: #1a1a1a;
+    background: transparent;
   }
 
   .search-input {

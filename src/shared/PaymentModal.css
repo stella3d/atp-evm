@@ -15,6 +15,7 @@
   background: white;
   border-radius: 12px;
   max-width: 500px;
+  min-width: 250px;
   width: 90vw;
   max-height: 80vh;
   overflow-y: auto;
@@ -825,5 +826,70 @@
   .cancel-button {
     padding: 10px 12px;
     font-size: 0.85rem;
+  }
+}
+
+/* Additional breakpoint for recipient input at smaller screens */
+@media (max-width: 432px) {
+  .recipient-section input {
+    font-size: 11px;
+  }
+  .wallet-status code {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 392px) {
+  .wallet-status code {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 352px) {
+  .recipient-section input {
+    font-size: 10px;
+  }
+  .wallet-status code {
+    font-size: 10px;
+  }
+  
+}
+
+@media (max-width: 324px) {
+  .recipient-section input {
+    font-size: 9px;
+  }
+  .recipient-section label {
+    font-size: 14px
+  }
+}
+
+@media (max-width: 324px) {
+  .recipient-section input {
+    font-size: 9px;
+  }
+  .wallet-status code {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 294px) {
+  .recipient-section input {
+    font-size: 8px;
+  }
+  .wallet-status code {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 268px) {
+  .recipient-section input {
+    font-size: 7px;
+  }
+  .wallet-status code {
+    font-size: 7px;
+  }
+  .recipient-section label {
+    font-size: 13px
   }
 }
