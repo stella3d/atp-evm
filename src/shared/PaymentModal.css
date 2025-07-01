@@ -282,6 +282,48 @@
   gap: 4px;
 }
 
+.token-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.token-logo-container {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.token-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.token-logo-placeholder {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 10px;
+  flex-shrink: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .token-symbol {
   font-weight: 600;
   font-size: 1rem;
@@ -892,4 +934,9 @@
   .recipient-section label {
     font-size: 13px
   }
+}
+
+/* Utility classes */
+.hidden {
+  display: none;
 }

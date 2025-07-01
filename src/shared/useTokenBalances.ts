@@ -10,27 +10,88 @@ export interface TokenBalance {
   balance: string;
   decimals: number;
   chainId: number;
+  logoUrl?: string;
 }
 
+const ETH_LOGO_URL = '/public/token_logos/eth.png';
+const USDC_LOGO_URL = '/public/token_logos/usdc.png';
+const USDT_LOGO_URL = '/public/token_logos/usdt.png';
+
 // Common ERC20 tokens for each chain (you can expand this)
-const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: string, name: string}>> = {
+const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: string, name: string, logoUrl: string}>> = {
   1: [ // Ethereum mainnet
-    { address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', symbol: 'USDC', name: 'USD Coin' },
-    { address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', symbol: 'USDT', name: 'Tether USD' },
-    { address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', symbol: 'DAI', name: 'Dai Stablecoin' },
+    { 
+      address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 
+      symbol: 'USDC', 
+      name: 'USD Coin',
+      logoUrl: USDC_LOGO_URL
+    },
+    { 
+      address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', 
+      symbol: 'USDT', 
+      name: 'Tether USD',
+      logoUrl: USDT_LOGO_URL
+    },
+    { 
+      address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', 
+      symbol: 'DAI', 
+      name: 'Dai Stablecoin',
+      logoUrl: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png'
+    },
   ],
   8453: [ // Base
-    { address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', symbol: 'USDC', name: 'USD Coin' },
-    { address: '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed', symbol: 'DEGEN', name: 'Degen' },
+    { 
+      address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', 
+      symbol: 'USDC', 
+      name: 'USD Coin',
+      logoUrl: USDC_LOGO_URL
+    },
+    { 
+      address: '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed', 
+      symbol: 'DEGEN', 
+      name: 'Degen',
+      logoUrl: 'https://assets.coingecko.com/coins/images/34515/small/degen.png'
+    },
   ],
   10: [ // Optimism
-    { address: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85', symbol: 'USDC', name: 'USD Coin' },
-    { address: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58', symbol: 'USDT', name: 'Tether USD' },
+    { 
+      address: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85', 
+      symbol: 'USDC', 
+      name: 'USD Coin',
+      logoUrl: USDC_LOGO_URL
+    },
+    { 
+      address: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58', 
+      symbol: 'USDT', 
+      name: 'Tether USD',
+      logoUrl: USDT_LOGO_URL
+    },
   ],
   42161: [ // Arbitrum
-    { address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', symbol: 'USDC', name: 'USD Coin' },
-    { address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9', symbol: 'USDT', name: 'Tether USD' },
+    { 
+      address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', 
+      symbol: 'USDC', 
+      name: 'USD Coin',
+      logoUrl: USDC_LOGO_URL
+    },
+    { 
+      address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9', 
+      symbol: 'USDT', 
+      name: 'Tether USD',
+      logoUrl: USDT_LOGO_URL
+    },
   ],
+};
+
+// Helper function to get native token logos
+const getNativeTokenLogo = (chainId: number): string => {
+  const logoMap: Record<number, string> = {
+    1: ETH_LOGO_URL, // Ethereum
+    8453: ETH_LOGO_URL, // Base (uses ETH)
+    10: ETH_LOGO_URL, // Optimism (uses ETH)
+    42161: ETH_LOGO_URL, // Arbitrum (uses ETH)
+  };
+  return logoMap[chainId] || ETH_LOGO_URL;
 };
 
 export const useTokenBalances = (chainId?: number) => {
@@ -77,6 +138,7 @@ export const useTokenBalances = (chainId?: number) => {
             balance: formatUnits(nativeBalance.value, nativeBalance.decimals),
             decimals: nativeBalance.decimals,
             chainId,
+            logoUrl: getNativeTokenLogo(chainId),
           });
         }
 
@@ -120,6 +182,7 @@ export const useTokenBalances = (chainId?: number) => {
                 balance: formattedBalance,
                 decimals: decimals as number,
                 chainId,
+                logoUrl: token.logoUrl,
               });
             }
           } catch (tokenError) {

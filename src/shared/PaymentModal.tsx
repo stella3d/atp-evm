@@ -229,9 +229,34 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         className={`token-item ${selectedToken === token ? 'selected' : ''}`}
                         onClick={() => setSelectedToken(token)}
                       >
-                        <div className="token-info">
-                          <div className="token-symbol">{token.symbol}</div>
-                          <div className="token-name">{token.name}</div>
+                        <div className="token-header">
+                          <div className="token-logo-container">
+                            {token.logoUrl && (
+                              <img 
+                                src={token.logoUrl} 
+                                alt={`${token.symbol} logo`}
+                                className="token-logo"
+                                onLoad={() => {
+                                  console.log(`Token logo loaded for ${token.symbol}:`, token.logoUrl);
+                                }}
+                                onError={(e) => {
+                                  console.log(`Token logo failed to load for ${token.symbol}:`, token.logoUrl);
+                                  e.currentTarget.style.display = 'none';
+                                  const placeholder = e.currentTarget.parentElement?.querySelector('.token-logo-placeholder') as HTMLElement;
+                                  if (placeholder) {
+                                    placeholder.classList.remove('hidden');
+                                  }
+                                }}
+                              />
+                            )}
+                            <div className={`token-logo-placeholder ${token.logoUrl ? 'hidden' : ''}`}>
+                              {token.symbol.charAt(0)}
+                            </div>
+                          </div>
+                          <div className="token-info">
+                            <div className="token-symbol">{token.symbol}</div>
+                            <div className="token-name">{token.name}</div>
+                          </div>
                         </div>
                         <div className="token-balance">
                           {parseFloat(token.balance).toFixed(6)} {token.symbol}
