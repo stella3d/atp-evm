@@ -15,7 +15,7 @@ export interface TokenBalance {
 // Common ERC20 tokens for each chain (you can expand this)
 const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: string, name: string}>> = {
   1: [ // Ethereum mainnet
-    { address: '0xA0b86a33E6441C44D0c3b4D00b4e10E9a76e54Cf', symbol: 'USDC', name: 'USD Coin' },
+    { address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', symbol: 'USDC', name: 'USD Coin' },
     { address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', symbol: 'USDT', name: 'Tether USD' },
     { address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', symbol: 'DAI', name: 'Dai Stablecoin' },
   ],
