@@ -95,6 +95,26 @@
   color: #000;
 }
 
+.change-wallet-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  transform: translateY(-50%);
+}
+
+.change-wallet-btn:hover {
+  background: #5a6268;
+}
+
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .modal-header {
@@ -109,6 +129,15 @@
     background: #333;
     color: #fff;
   }
+
+  .change-wallet-btn {
+    background: #495057;
+    color: #fff;
+  }
+
+  .change-wallet-btn:hover {
+    background: #6c757d;
+  }
 }
 
 .modal-content {
@@ -120,29 +149,32 @@
 }
 
 .wallet-info {
-  padding: 4px 6px 4px 6px;
+  padding: 3px 5px;
   background: #f8f9fa;
-  border-radius: 8px;
-  margin-bottom: 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  opacity: 0.9;
 }
 
 .wallet-status {
   display: flex;
   flex-direction: column;
-  gap: 12px;
   align-items: center;
 }
 
 .wallet-status p {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  color: #666;
+  opacity: 0.8;
 }
 
 .chain-name {
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  opacity: 0.8;
 }
 
 /* Chain-specific colors for chain-name */
@@ -297,6 +329,7 @@
 @media (prefers-color-scheme: dark) {
   .wallet-info {
     background: #2a2a2a;
+    opacity: 0.9;
   }
 
   .wallet-info code {
@@ -304,9 +337,15 @@
     color: #fff;
   }
 
+  .wallet-status p {
+    color: #aaa;
+    opacity: 0.8;
+  }
+
   .chain-name {
     color: #4da6ff;
     background: #1e3a8a;
+    opacity: 0.8;
   }
 
   /* Dark mode chain-specific colors for chain-name */
@@ -1083,6 +1122,11 @@
   
   .modal-header h3 {
     font-size: 1.2rem;
+  }
+  
+  .change-wallet-btn {
+    font-size: 0.7rem;
+    padding: 3px 6px;
   }
   
   .modal-content {

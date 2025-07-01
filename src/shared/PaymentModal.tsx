@@ -378,6 +378,23 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       <div className="payment-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>Send Payment</h3>
+          {step === 'select' && (
+            <button type="button" className="change-wallet-btn" onClick={() => {
+              // Clear all account-related state
+              setSelectedToken(null);
+              setAmount('');
+              setTxHash(null);
+              setError(null);
+              setErrorType(null);
+              setAmountError(null);
+              setStep('connect');
+              // Disconnect wallet and close modal
+              disconnect();
+              onClose();
+            }}>
+              Switch 👛
+            </button>
+          )}
           <button type="button" className="close-button" onClick={onClose}>×</button>
         </div>
 
@@ -394,9 +411,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               <div className="wallet-info">
                 <div className="wallet-status">
                   <p>✅ Connected on <span className="chain-name">{getChainName(chainId)}</span> as: {address ? <AddressLink address={address} /> : <code>No address</code>}</p>
-                  <button type="button" className="disconnect-btn" onClick={() => disconnect()}>
-                    Change Wallet
-                  </button>
                 </div>
               </div>
 
