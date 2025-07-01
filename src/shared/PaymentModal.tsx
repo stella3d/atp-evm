@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionReceipt, useWriteContract, useEnsName } from 'wagmi';
-import { parseUnits, isAddress } from 'viem';
+import { isAddress, parseUnits } from 'viem';
 import { SimpleWalletConnector } from './SimpleWalletConnector.tsx';
 import { useTokenBalances, type TokenBalance } from './useTokenBalances.ts';
-import { getChainName } from './common.ts';
+import { getChainName, getChainClass } from './common.ts';
 import './PaymentModal.css';
 
 // ERC20 ABI for transfer function
@@ -190,7 +190,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </div>
 
               <div className="recipient-section">
-                <label>Recipient Address on<span className="chain-indicator">{getChainName(chainId)}</span></label>
+                <label>Recipient Address on<span className={`chain-indicator ${getChainClass(chainId)}`}>{getChainName(chainId)}</span></label>
                 <input 
                   type="text"
                   value={customRecipient}

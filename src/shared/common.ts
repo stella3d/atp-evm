@@ -96,3 +96,13 @@ export const CHAIN_NAMES: Record<number, string> = {
 export function getChainName(chainId: number): string {
   return CHAIN_NAMES[chainId] || `Chain ${chainId}`;
 }
+
+export function getChainClass(chainId: number): string {
+  const chainClassMap: Record<number, string> = {
+    1: 'ethereum',
+    8453: 'base', 
+    10: 'optimism',
+    42161: 'arbitrum'
+  };
+  return chainClassMap[chainId] || 'ethereum'; // default to ethereum styling
+}

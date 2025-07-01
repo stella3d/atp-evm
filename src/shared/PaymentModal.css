@@ -140,11 +140,35 @@
 
 .chain-name {
   font-weight: 600;
-  color: #0066cc;
-  background: #e3f2fd;
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.85rem;
+}
+
+/* Chain-specific colors for chain-name */
+.chain-name.ethereum {
+  color: #4a90e2;
+  background: #f0f8ff;
+  opacity: 0.8;
+}
+
+.chain-name.base {
+  color: #0052cc;
+  background: #1976d2;
+  color: white;
+  opacity: 0.8;
+}
+
+.chain-name.arbitrum {
+  color: #e85a4f;
+  background: #fff5f5;
+  opacity: 0.8;
+}
+
+.chain-name.optimism {
+  color: #cc0066;
+  background: #fce4ec;
+  opacity: 0.8;
 }
 
 .wallet-status button {
@@ -190,11 +214,30 @@
 
 .chain-indicator {
   font-weight: 500;
-  color: #0066cc;
-  background: #e3f2fd;
   padding: 1px 4px;
   border-radius: 3px;
   margin-left: 4px;
+}
+
+/* Chain-specific colors for chain-indicator */
+.chain-indicator.ethereum {
+  color: #4a90e2;
+  background: rgba(240, 248, 255, 0.8);
+}
+
+.chain-indicator.base {
+  color: white;
+  background: rgba(25, 118, 210, 0.8);
+}
+
+.chain-indicator.arbitrum {
+  color: #e85a4f;
+  background: rgba(255, 245, 245, 0.8);
+}
+
+.chain-indicator.optimism {
+  color: #cc0066;
+  background: rgba(252, 228, 236, 0.8);
 }
 
 .recipient-input {
@@ -264,6 +307,27 @@
     background: #1e3a8a;
   }
 
+  /* Dark mode chain-specific colors for chain-name */
+  .chain-name.ethereum {
+    color: #93c5fd;
+    background: #1e3a8a;
+  }
+
+  .chain-name.base {
+    color: #93c5fd;
+    background: #1e3a8a;
+  }
+
+  .chain-name.arbitrum {
+    color: #fdba74;
+    background: #92400e;
+  }
+
+  .chain-name.optimism {
+    color: #f9a8d4;
+    background: #831843;
+  }
+
   .disconnect-btn {
     background: #495057;
   }
@@ -286,6 +350,27 @@
   .chain-indicator {
     color: #4da6ff;
     background: #1e3a8a;
+  }
+
+  /* Dark mode chain-specific colors for chain-indicator */
+  .chain-indicator.ethereum {
+    color: #93c5fd;
+    background: rgba(30, 58, 138, 0.6);
+  }
+
+  .chain-indicator.base {
+    color: #93c5fd;
+    background: rgba(30, 58, 138, 0.7);
+  }
+
+  .chain-indicator.arbitrum {
+    color: #fdba74;
+    background: rgba(146, 64, 14, 0.6);
+  }
+
+  .chain-indicator.optimism {
+    color: #f9a8d4;
+    background: rgba(131, 24, 67, 0.6);
   }
 
   .recipient-name {
