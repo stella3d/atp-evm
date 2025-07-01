@@ -457,7 +457,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </div>
 
               <div className={`amount-input ${!selectedToken ? 'disabled' : ''}`}>
-                <label>Amount to send:</label>
+                <label>Amount to Send</label>
                 <div className="amount-row">
                   <input
                     type="number"
