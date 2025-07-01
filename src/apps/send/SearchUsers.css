@@ -11,6 +11,15 @@
   box-sizing: border-box;
 }
 
+/* Make wider on smaller screens */
+@media (max-width: 600px) {
+  .search-users {
+    max-width: calc(98vw - 4px);
+    margin-left: 2px;
+    margin-right: 2px;
+  }
+}
+
 .search-box {
   position: sticky;
   top: 0;

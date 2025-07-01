@@ -14,6 +14,15 @@
   box-sizing: border-box;
 }
 
+/* Make wider on smaller screens */
+@media (max-width: 600px) {
+  .user-detail-card {
+    max-width: calc(100vw - 4px);
+    margin-left: 2px;
+    margin-right: 2px;
+  }
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
