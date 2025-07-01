@@ -44,11 +44,38 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
       try {
         const records = await fetchAddressControlRecords(selectedUser.did, selectedUser.pds);
         console.log('Raw address records:', records);
-        setAddressRecords(records);
+        
+        // Deduplicate records by address, keeping the most recent one for each unique address
+        const addressMap = new Map<string, AddressControlRecord>();
+        
+        for (const record of records) {
+          const address = record.value?.siwe?.address?.toLowerCase();
+          if (!address) continue; // Skip records without valid addresses
+          
+          const existingRecord = addressMap.get(address);
+          if (!existingRecord) {
+            // First time seeing this address
+            addressMap.set(address, record);
+          } else {
+            // Address already exists, keep the more recent one
+            const currentDate = new Date(record.value?.siwe?.issuedAt || 0);
+            const existingDate = new Date(existingRecord.value?.siwe?.issuedAt || 0);
+            
+            if (currentDate > existingDate) {
+              addressMap.set(address, record);
+            }
+          }
+        }
+        
+        // Convert back to array
+        const deduplicatedRecords = Array.from(addressMap.values());
+        console.log(`Deduplicated from ${records.length} to ${deduplicatedRecords.length} records`);
+        
+        setAddressRecords(deduplicatedRecords);
 
         // Validate each record
         const validationMap = new Map<string, AddressControlVerificationChecks>();
-        for (const record of records) {
+        for (const record of deduplicatedRecords) {
           try {
             console.log('Record structure for validation:', record);
             
@@ -166,6 +193,7 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
                       </div>
                       {issuedAt && (
 						<div className="address-metadata">
+
 							<div className="address-date">
 							{new Date(issuedAt).toLocaleDateString()} at {new Date(issuedAt).toLocaleTimeString()}
 							</div>
