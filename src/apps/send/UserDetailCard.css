@@ -418,23 +418,23 @@
   
   /* Shrink address header text by 1px on very small screens */
   .records-list .address-header {
-    font-size: 13px;
+    font-size: 11px;
   }
   
   /* Extra compact spacing */
   .card-content {
-    padding: 12px;
+    padding: 6px;
   }
   
   .address-record {
-    padding: 8px;
+    padding: 4px;
   }
 }
 
 @media (max-width: 350px) {
   /* Shrink address header code text by 10% on very small screens */
   .address-record .address-header code {
-    font-size: 11px;
+    font-size: 10px;
   }
   /* Shrink user DID text on very small screens */
   .user-did {
@@ -632,11 +632,11 @@
 
 @media (max-width: 400px) {
   .address-value.address-link {
-    font-size: 12px !important;
+    font-size: 12px;
   }
   
   .address-header code {
-    font-size: 12px;
+    font-size: 11px;
   }
   
   .recipient-address-display .address-link {
