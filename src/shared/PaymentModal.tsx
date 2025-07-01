@@ -4,6 +4,7 @@ import { isAddress, parseUnits } from 'viem';
 import { SimpleWalletConnector } from './SimpleWalletConnector.tsx';
 import { useTokenBalances, type TokenBalance } from './useTokenBalances.ts';
 import { getChainName, getChainClass } from './common.ts';
+import { AddressLink } from './AddressLink.tsx';
 import './PaymentModal.css';
 
 // ERC20 ABI for transfer function
@@ -182,7 +183,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             <div className="step-select">
               <div className="wallet-info">
                 <div className="wallet-status">
-                  <p>✅ Connected on <span className="chain-name">{getChainName(chainId)}</span> as: <code>{address}</code></p>
+                  <p>✅ Connected on <span className="chain-name">{getChainName(chainId)}</span> as: {address ? <AddressLink address={address} /> : <code>No address</code>}</p>
                   <button type="button" className="disconnect-btn" onClick={() => disconnect()}>
                     Change Wallet
                   </button>
@@ -191,13 +192,19 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
               <div className="recipient-section">
                 <label>Recipient Address on<span className={`chain-indicator ${getChainClass(chainId)}`}>{getChainName(chainId)}</span></label>
-                <input 
-                  type="text"
-                  value={customRecipient}
-                  onChange={(e) => setCustomRecipient(e.target.value as `0x${string}`)}
-                  placeholder="0x..."
-                  className="recipient-input"
-                />
+                {isAddress(customRecipient) ? (
+                  <div className="recipient-address-display">
+                    <AddressLink address={customRecipient} className="recipient-input" />
+                  </div>
+                ) : (
+                  <input 
+                    type="text"
+                    value={customRecipient}
+                    onChange={(e) => setCustomRecipient(e.target.value as `0x${string}`)}
+                    placeholder="0x..."
+                    className="recipient-input"
+                  />
+                )}
                 {ensName && (
                   <div className="ens-info">
                     <div className="ens-header">also known as</div>
