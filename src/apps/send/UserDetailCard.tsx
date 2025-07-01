@@ -165,7 +165,7 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
                       </div>
                       {issuedAt && (
                         <div className="address-date">
-                          Issued: {new Date(issuedAt).toLocaleDateString()} at {new Date(issuedAt).toLocaleTimeString()}
+                          {new Date(issuedAt).toLocaleDateString()} at {new Date(issuedAt).toLocaleTimeString()}
                           {chainId && (
                             <span className="chain-info">
                               • Chain {chainId}

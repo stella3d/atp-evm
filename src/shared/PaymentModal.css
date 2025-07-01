@@ -642,3 +642,188 @@
     color: #ccc;
   }
 }
+
+/* Mobile responsive styles for medium phone screens (typically 375px-480px) */
+@media (max-width: 480px) {
+  /* Make modal content more compact */
+  .modal-header {
+    padding: 16px;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .modal-content {
+    padding: 16px;
+  }
+  
+  /* Reduce text sizes throughout */
+  .wallet-status p {
+    font-size: 0.8rem;
+  }
+  
+  .wallet-info code {
+    font-size: 0.8rem;
+  }
+  
+  .recipient-section label,
+  .token-selection label,
+  .amount-input label {
+    font-size: 0.9rem;
+  }
+  
+  .recipient-input {
+    font-size: 0.8rem;
+    padding: 8px;
+  }
+  
+  .recipient-name {
+    font-size: 0.8rem;
+  }
+  
+  /* Token list items more compact */
+  .token-item {
+    padding: 10px 12px;
+  }
+  
+  .token-symbol {
+    font-size: 0.9rem;
+  }
+  
+  .token-name {
+    font-size: 0.75rem;
+  }
+  
+  .token-balance {
+    font-size: 0.8rem;
+  }
+  
+  /* Amount input adjustments */
+  .amount-row input {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+  
+  /* Payment summary more compact */
+  .payment-summary {
+    padding: 12px;
+    font-size: 0.85rem;
+  }
+  
+  /* Recipient profile more compact */
+  .recipient-profile {
+    padding: 10px;
+  }
+  
+  .recipient-avatar,
+  .recipient-avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .recipient-name {
+    font-size: 0.85rem;
+  }
+  
+  .recipient-handle {
+    font-size: 0.75rem;
+  }
+  
+  .recipient-header {
+    font-size: 0.8rem;
+  }
+  
+  /* Make action buttons stack vertically and full width on very small screens */
+  .modal-actions {
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  
+  .confirm-button, 
+  .send-button, 
+  .done-button,
+  .back-button, 
+  .cancel-button {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    /* Prevent text overflow and ensure button stays readable */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Disconnect button adjustments */
+  .disconnect-btn {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+  }
+  
+  /* Max button adjustments */
+  .max-button {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+  }
+  
+  /* Transaction hash display */
+  .tx-hash {
+    font-size: 0.75rem;
+    padding: 6px;
+  }
+  
+  /* Loading and status text */
+  .loading {
+    font-size: 0.85rem;
+    padding: 16px;
+  }
+  
+  .no-tokens {
+    font-size: 0.85rem;
+    padding: 16px;
+  }
+  
+  .step-sending,
+  .step-success,
+  .step-error {
+    padding: 16px 0;
+  }
+  
+  .step-sending p,
+  .step-success p,
+  .step-error p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Additional styles for very small screens (320px-375px) */
+@media (max-width: 375px) {
+  .payment-modal {
+    width: 95vw;
+    margin: 10px;
+  }
+  
+  .modal-header {
+    padding: 12px;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .modal-content {
+    padding: 12px;
+  }
+  
+  /* Even more compact buttons */
+  .confirm-button, 
+  .send-button, 
+  .done-button,
+  .back-button, 
+  .cancel-button {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+}
