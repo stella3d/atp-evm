@@ -45,6 +45,13 @@ const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: strin
       decimals: 18,
       logoUrl: DAI_LOGO_URL
     },
+	{
+		address: '0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c',
+		symbol: 'EURC',
+		name: 'Euro Coin',
+		decimals: 6,
+		logoUrl: `${prefix}/token_logos/eurc.png`
+	}
   ],
   8453: [ // Base
     { 
