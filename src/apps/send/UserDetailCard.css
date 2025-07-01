@@ -413,11 +413,6 @@
     font-size: 10px;
   }
   
-  /* Shrink address header code text by 10% on very small screens */
-  .address-record .address-header code {
-    font-size: 9px;
-  }
-  
   /* Shrink address header text by 1px on very small screens */
   .records-list .address-header {
     font-size: 13px;
@@ -434,6 +429,10 @@
 }
 
 @media (max-width: 350px) {
+  /* Shrink address header code text by 10% on very small screens */
+  .address-record .address-header code {
+    font-size: 11px;
+  }
   /* Shrink user DID text on very small screens */
   .user-did {
     font-size: 11px;
@@ -576,6 +575,12 @@
 
   .safety-checklist-inline .check-text {
     color: #e0e0e0;
+  }
+}
+
+@media (max-width: 470px) {
+  .address-header code {
+    font-size: 16px;
   }
 }
 
