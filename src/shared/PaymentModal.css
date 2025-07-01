@@ -824,6 +824,24 @@
   word-break: break-all;
 }
 
+.tx-hash-link {
+  color: #0066cc;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.tx-hash-link:hover {
+  text-decoration: underline;
+}
+
+.tx-hash-link code {
+  font-family: monospace;
+  font-size: 0.85rem;
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .payment-summary {
@@ -833,6 +851,14 @@
   .tx-hash {
     background: #2a2a2a;
     color: #fff;
+  }
+
+  .tx-hash-link {
+    color: #66b3ff;
+  }
+
+  .tx-hash-link:hover {
+    color: #99ccff;
   }
 
   /* Success and error state improvements */

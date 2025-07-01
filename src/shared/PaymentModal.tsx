@@ -3,7 +3,7 @@ import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionRec
 import { isAddress, parseUnits } from 'viem';
 import { SimpleWalletConnector } from './SimpleWalletConnector.tsx';
 import { useTokenBalances, type TokenBalance } from './useTokenBalances.ts';
-import { getChainName, getChainClass } from './common.ts';
+import { getChainName, getChainClass, getDoraTransactionUrl } from './common.ts';
 import { AddressLink } from './AddressLink.tsx';
 import './PaymentModal.css';
 
@@ -326,7 +326,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               <p>Waiting for confirmation...</p>
               {txHash && (
                 <div className="tx-hash">
-                  <small>Transaction: {txHash}</small>
+                  <div>Transaction Hash:</div>
+                  <code>{txHash}</code>
                 </div>
               )}
             </div>
@@ -339,7 +340,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               <p>Your payment has been confirmed on the blockchain.</p>
               {txHash && (
                 <div className="tx-hash">
-                  <small>Transaction: {txHash}</small>
+                  <div>View Transaction: </div>
+                  <a 
+                    href={getDoraTransactionUrl(txHash, chainId)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tx-hash-link"
+                  >
+                    <code>{txHash}</code>
+                  </a>
                 </div>
               )}
               <button type="button" className="done-button" onClick={onClose}>

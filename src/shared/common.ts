@@ -106,3 +106,19 @@ export function getChainClass(chainId: number): string {
   };
   return chainClassMap[chainId] || 'ethereum'; // default to ethereum styling
 }
+
+export function getDoraNetworkSlug(chainId: number): string {
+  const ondoraSlugMap: Record<number, string> = {
+    1: 'ethereum',
+    8453: 'base',
+    10: 'optimism', 
+    42161: 'arbitrum',
+    137: 'polygon'
+  };
+  return ondoraSlugMap[chainId] || 'ethereum'; // default to ethereum
+}
+
+export function getDoraTransactionUrl(txHash: string, chainId: number): string {
+  const networkSlug = getDoraNetworkSlug(chainId);
+  return `https://ondora.xyz/network/${networkSlug}/interactions/${txHash}`;
+}
