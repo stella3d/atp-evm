@@ -164,7 +164,7 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
               <div className="profile-display-name">{selectedUser.displayName}</div>
             )}
             <div className="user-did">{selectedUser.did}</div>
-		    <br/>
+            <br/>
             {selectedUser.description && (
               <div className="profile-description">{selectedUser.description}</div>
             )}

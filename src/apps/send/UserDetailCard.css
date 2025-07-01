@@ -2,7 +2,7 @@
   background: white;
   border: 1px solid #e1e5e9;
   border-radius: 12px;
-  padding: 20px;
+  padding: 6px 10px 6px 10x;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-top: 16px;
   animation: slideIn 0.2s ease-out;
@@ -17,10 +17,9 @@
 /* Make wider on smaller screens */
 @media (max-width: 600px) {
   .user-detail-card {
-    max-width: calc(100vw - 4px);
+    max-width: calc(98vw - 4px);
     margin-left: 2px;
     margin-right: 2px;
-    padding: 10px;
   }
 }
 
@@ -39,15 +38,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
   border-bottom: 1px solid #e1e5e9;
   position: relative;
 }
 
 .card-header h3 {
   margin: 0;
-  color: #0f1419;
+  color: rgba(139, 156, 168, 0.8) !important;
   font-size: 18px;
   font-weight: 600;
   text-align: center;
@@ -61,7 +60,7 @@
   cursor: pointer;
   padding: 4px 8px;
   position: absolute;
-  top: calc(50% - 7px);
+  top: calc(50% - 4px);
   right: 8px;
   transform: translateY(-50%);
   border-radius: 4px;
@@ -83,6 +82,9 @@
   display: flex;
   gap: 16px;
   align-items: flex-start;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .profile-avatar {
@@ -142,6 +144,14 @@
   font-weight: 600;
   color: #536471;
   margin-bottom: 8px;
+}
+
+.user-did {
+  font-family: monospace;
+  font-size: 12px;
+  color: #536471;
+  word-break: break-all;
+  margin-bottom: 4px;
 }
 
 .user-did-display {
@@ -272,7 +282,7 @@
   font-size: 12px;
   font-weight: 600;
   flex: 1;
-  max-width: 50%;
+  max-width: 25%;
   text-align: left;
 }
 
@@ -282,7 +292,7 @@
   display: flex;
   align-items: center;
   flex: 1;
-  max-width: 50%;
+  max-width: 70%;
   text-align: left;
 }
 
@@ -305,14 +315,14 @@
 }
 
 /* Responsive width adjustments for address-metadata */
-@media (max-width: 720px) and (min-width: 601px) {
+@media (max-width: 720px) and (min-width: 621px) {
   .address-metadata {
     max-width: 76%;
   }
 }
 
-/* Layout changes for screens up to 600px (phones, small tablets) */
-@media (max-width: 606px) {
+/* Layout changes for screens up to 620px (phones, small tablets) */
+@media (max-width: 620px) {
   /* Fix address record layout to prevent button overlap */
   .address-record {
     flex-direction: column;
@@ -372,10 +382,6 @@
     padding: 4px;
   }
   
-  .card-header {
-    padding: 8px;
-  }
-  
   .card-header h3 {
     font-size: 1.2rem;
   }
@@ -407,17 +413,30 @@
     font-size: 10px;
   }
   
+  /* Shrink address header code text by 10% on very small screens */
+  .address-record .address-header code {
+    font-size: 9px;
+  }
+  
+  /* Shrink address header text by 1px on very small screens */
+  .records-list .address-header {
+    font-size: 13px;
+  }
+  
   /* Extra compact spacing */
   .card-content {
     padding: 12px;
   }
   
-  .card-header {
-    padding: 12px;
-  }
-  
   .address-record {
     padding: 8px;
+  }
+}
+
+@media (max-width: 350px) {
+  /* Shrink user DID text on very small screens */
+  .user-did {
+    font-size: 11px;
   }
 }
 
@@ -615,4 +634,11 @@
   .recipient-address-display .address-link {
     font-size: 11px;
   }
+}
+
+/* Profile card wrapper for better text wrapping */
+.profile-card {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
