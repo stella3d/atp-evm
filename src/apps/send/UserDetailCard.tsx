@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { EnrichedUser, AddressControlRecord } from "../../shared/common.ts";
+import { getChainName } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
 import { PaymentModal } from "../../shared/PaymentModal.tsx";
@@ -164,14 +165,15 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
                         <div className="address-value">{address}</div>
                       </div>
                       {issuedAt && (
-                        <div className="address-date">
-                          {new Date(issuedAt).toLocaleDateString()} at {new Date(issuedAt).toLocaleTimeString()}
-                          {chainId && (
-                            <span className="chain-info">
-                              • Chain {chainId}
-                            </span>
-                          )}
-                        </div>
+						<div className="address-metadata">
+							<div className="address-date">
+							{new Date(issuedAt).toLocaleDateString()} at {new Date(issuedAt).toLocaleTimeString()}
+							</div>
+							⛓️
+							<div className="chain-info">
+								{getChainName(chainId)}
+							</div>
+						</div>
                       )}
                       
                       {showValidationChecks && (() => {

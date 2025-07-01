@@ -82,3 +82,17 @@ export function uid(length = 96): string {
   
   return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('').substring(0, length);
 }
+
+// Chain ID to friendly name mapping
+export const CHAIN_NAMES: Record<number, string> = {
+  1: 'Ethereum',
+  8453: 'Base',
+  10: 'Optimism',
+  42161: 'Arbitrum',
+  137: 'Polygon',
+  56: 'BNB Chain'
+};
+
+export function getChainName(chainId: number): string {
+  return CHAIN_NAMES[chainId] || `Chain ${chainId}`;
+}

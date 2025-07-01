@@ -225,20 +225,32 @@
   flex-shrink: 0;
 }
 
+.address-metadata {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+  max-width: 70%;
+}
+
 .chain-info {
   color: #1d9bf0;
   font-size: 12px;
   font-weight: 600;
-  margin-left: 8px;
+  flex: 1;
+  max-width: 50%;
+  text-align: left;
 }
 
 .address-date {
   font-size: 12px;
   color: #536471;
-  margin-top: 4px;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex: 1;
+  max-width: 50%;
+  text-align: left;
 }
 
 .send-payment-button {
@@ -259,16 +271,11 @@
   background: #106ebe;
 }
 
-/* Action button */
-.action-button.secondary {
-  background: #404040;
-  color: #e0e0e0;
-  border-color: #404040;
-}
-
-.action-button.secondary:hover {
-  background: #333333;
-  border-color: #333333;
+/* Responsive width adjustments for address-metadata */
+@media (max-width: 720px) and (min-width: 601px) {
+  .address-metadata {
+    max-width: 76%;
+  }
 }
 
 /* Layout changes for screens up to 600px (phones, small tablets) */
@@ -294,6 +301,11 @@
   .send-payment-button {
     width: 100%;
     margin-top: 4px;
+  }
+  
+  /* Reset address metadata width constraint on mobile */
+  .address-metadata {
+    max-width: 80%;
   }
 }
 
