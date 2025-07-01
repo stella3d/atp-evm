@@ -138,6 +138,10 @@
   font-size: 0.9rem;
 }
 
+.wallet-status button {
+  padding: 4px 8px 4px 8px;
+}
+
 .wallet-info code {
   font-family: monospace;
   font-size: 0.9rem;
