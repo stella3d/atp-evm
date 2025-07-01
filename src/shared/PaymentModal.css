@@ -978,6 +978,9 @@
   border-radius: 8px;
   border: 1px solid #e1e5e9;
   transition: all 0.2s ease;
+  width: fit-content;
+  margin: 0 auto;
+  min-width: 50%;
 }
 
 .recipient-profile.clickable {
