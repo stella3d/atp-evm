@@ -354,23 +354,23 @@
 
   /* Dark mode chain-specific colors for chain-indicator */
   .chain-indicator.ethereum {
-    color: #93c5fd;
-    background: rgba(30, 58, 138, 0.6);
+    color: #a5d8ff;
+    background: rgba(37, 99, 235, 0.8);
   }
 
   .chain-indicator.base {
-    color: #93c5fd;
-    background: rgba(30, 58, 138, 0.7);
+    color: #bfdbfe;
+    background: rgba(29, 78, 216, 0.8);
   }
 
   .chain-indicator.arbitrum {
-    color: #fdba74;
-    background: rgba(146, 64, 14, 0.6);
+    color: #fed7aa;
+    background: rgba(194, 65, 12, 0.8);
   }
 
   .chain-indicator.optimism {
-    color: #f9a8d4;
-    background: rgba(131, 24, 67, 0.6);
+    color: #fbb6ce;
+    background: rgba(157, 23, 77, 0.8);
   }
 
   .recipient-name {
@@ -1412,4 +1412,36 @@
   font-family: monospace;
   font-size: 0.9rem;
   box-sizing: border-box;
+}
+
+/* Chain indicators in error messages */
+.step-error .chain-indicator {
+  margin: 0 2px;
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+.chain-help .chain-indicator {
+  margin: 0 2px;
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+/* Dark mode styles for chain indicators in error messages */
+@media (prefers-color-scheme: dark) {
+  .step-error .chain-indicator {
+    margin: 0 2px;
+    display: inline-block;
+    vertical-align: baseline;
+  }
+
+  .chain-help .chain-indicator {
+    margin: 0 2px;
+    display: inline-block;
+    vertical-align: baseline;
+  }
+
+  .recipient-name {
+    color: #fff;
+  }
 }

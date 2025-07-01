@@ -71,47 +71,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     return false;
   }
 
-  // Helper function to extract current chain ID from error messages
   const extractCurrentChainIdFromError = (errorMessage: string): number | null => {
-    // Pattern for "The current chain of the wallet (id: 1) does not match"
-    const chainIdMatch = errorMessage.match(/current chain of the wallet \(id: (\d+)\) does not match/i);
-    if (chainIdMatch) {
-      return parseInt(chainIdMatch[1]);
+    // match against like "Your wallet is connected to Base (Chain 8453)"
+    const match = errorMessage.match(/Your wallet is connected to [^(]+ \(Chain (\d+)\)/i);
+    if (match) {
+      console.log('matched wrapper chainId:', match);
+      return parseInt(match[1]);
     }
-    
-    // Pattern for "Connected to chain 1, but expected 8453" or "Connected to chain 1 but expected chain 8453"
-    const connectedChainMatch = errorMessage.match(/connected to chain (\d+)(?:,?\s*but expected(?:\s+chain)?\s+\d+)?/i);
-    if (connectedChainMatch) {
-      return parseInt(connectedChainMatch[1]);
-    }
-    
-    // Pattern for "Chain ID 1 is not supported" or "Chain ID 1 not supported"
-    const chainNotSupportedMatch = errorMessage.match(/chain id (\d+)\s+(?:is\s+)?not supported/i);
-    if (chainNotSupportedMatch) {
-      return parseInt(chainNotSupportedMatch[1]);
-    }
-    
-    // Pattern for "wallet chain 1" or "wallet is on chain 1"
-    const walletChainMatch = errorMessage.match(/wallet(?:\s+is)?\s+(?:on\s+)?chain (\d+)/i);
-    if (walletChainMatch) {
-      return parseInt(walletChainMatch[1]);
-    }
-    
-    // Pattern for "unsupported chain 1" or "chain 1 unsupported"
-    const unsupportedChainMatch = errorMessage.match(/(?:unsupported\s+chain\s+(\d+)|chain\s+(\d+)\s+unsupported)/i);
-    if (unsupportedChainMatch) {
-      return parseInt(unsupportedChainMatch[1] || unsupportedChainMatch[2]);
-    }
-    
-    // Pattern for "wrong network, currently on chain 1"
-    const wrongNetworkMatch = errorMessage.match(/wrong network(?:,)?\s+currently on chain (\d+)/i);
-    if (wrongNetworkMatch) {
-      return parseInt(wrongNetworkMatch[1]);
-    }
-    
     return null;
   };
-
 
   // Helper function to categorize errors
   const categorizeError = (errorMessage: string): { type: 'user_rejected' | 'wrong_chain' | 'insufficient_funds' | 'other', message: string } => {
@@ -165,6 +133,44 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       return getChainName(currentChainId);
     }
     return null;
+  };
+
+  // Helper function to render a network name with chain indicator styling
+  const renderNetworkWithIndicator = (chainId: number) => {
+    const chainName = getChainName(chainId);
+    const chainClass = getChainClass(chainId);
+    
+    return (
+      <span className={`chain-indicator ${chainClass}`}>
+        {chainName}
+      </span>
+    );
+  };
+
+  // Helper function to render the wrong chain error message with styled chain indicators
+  const renderWrongChainError = (error: string) => {
+    console.warn(error);
+    // Try to extract chain IDs from the error message to render with styling
+    const currentChainId = extractCurrentChainIdFromError(error);
+    console.log('renderWrongChainError currentChainId:', currentChainId, 'expected chainId:', chainId);
+    if (currentChainId !== null) {
+      // We found the current chain ID in the error message
+      return (
+        <>
+          Your wallet is connected to {renderNetworkWithIndicator(currentChainId)} (Chain {currentChainId}), 
+          but this transaction requires {renderNetworkWithIndicator(chainId)} (Chain {chainId}). 
+          <p>Please switch networks to complete this transaction.</p>
+        </>
+      );
+    } 
+
+    // Final fallback - just show the expected network with styling
+    return (
+      <>
+        Your wallet is connected to the wrong network. 
+        Please switch to {renderNetworkWithIndicator(chainId)} to complete this transaction.
+      </>
+    );
   };
 
   const { tokenBalances, loading: loadingBalances } = useTokenBalances(chainId);
@@ -528,7 +534,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               ) : (
                 <p>
                   {errorType === 'user_rejected' ? 'You cancelled the transaction in your wallet. No worries - you can try again when ready.' :
-                   errorType === 'wrong_chain' ? error :
+                   errorType === 'wrong_chain' ? renderWrongChainError(error || '') :
                    errorType === 'insufficient_funds' ? 'You don\'t have enough funds to complete this transaction. Please check your balance.' :
                    error}
                 </p>
@@ -538,7 +544,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   <p>To complete this transaction, please:</p>
                   <ol>
                     <li>Open your wallet</li>
-                    <li>Switch to <strong>{getChainName(chainId)}</strong></li>
+                    <li>Switch to {renderNetworkWithIndicator(chainId)}</li>
                     <li>Try the payment again</li>
                   </ol>
                 </div>
