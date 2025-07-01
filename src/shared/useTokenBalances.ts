@@ -19,6 +19,7 @@ const prefix = isProd ? '' : '/public';
 const ETH_LOGO_URL = `${prefix}/token_logos/eth.png`;
 const USDC_LOGO_URL = `${prefix}/token_logos/usdc.png`;
 const USDT_LOGO_URL = `${prefix}/token_logos/usdt.png`;
+const DAI_LOGO_URL = `${prefix}/token_logos/dai.png`;
 
 // Common ERC20 tokens for each chain (you can expand this)
 const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: string, name: string, decimals: number, logoUrl: string}>> = {
@@ -42,7 +43,7 @@ const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: strin
       symbol: 'DAI', 
       name: 'Dai Stablecoin',
       decimals: 18,
-      logoUrl: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png'
+      logoUrl: DAI_LOGO_URL
     },
   ],
   8453: [ // Base
