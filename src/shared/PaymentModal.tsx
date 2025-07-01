@@ -192,19 +192,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
               <div className="recipient-section">
                 <label>Recipient Address on<span className={`chain-indicator ${getChainClass(chainId)}`}>{getChainName(chainId)}</span></label>
-                {isAddress(customRecipient) ? (
-                  <div className="recipient-address-display">
-                    <AddressLink address={customRecipient} className="recipient-input" />
-                  </div>
-                ) : (
-                  <input 
-                    type="text"
-                    value={customRecipient}
-                    onChange={(e) => setCustomRecipient(e.target.value as `0x${string}`)}
-                    placeholder="0x..."
-                    className="recipient-input"
-                  />
-                )}
+                <div className="recipient-address-display">
+                  <AddressLink address={customRecipient} className="recipient-input" />
+                </div>
                 {ensName && (
                   <div className="ens-info">
                     <div className="ens-header">also known as</div>

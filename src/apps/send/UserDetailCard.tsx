@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { isAddress } from 'viem';
 import type { EnrichedUser, AddressControlRecord } from "../../shared/common.ts";
 import { getChainName } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
 import { PaymentModal } from "../../shared/PaymentModal.tsx";
+import { AddressLink } from "../../shared/AddressLink.tsx";
 import { config } from '../../shared/WalletConnector.tsx';
 import './UserDetailCard.css';
 import { WagmiProvider } from "wagmi";
@@ -189,7 +191,11 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
                   <div key={record.uri || index} className="address-record">
                     <div className="address-info">
                       <div className="address-header">
-                        <div className="address-value">{address}</div>
+                        {isAddress(address) ? (
+                          <AddressLink address={address as `0x${string}`} className="address-value" />
+                        ) : (
+                          <div className="address-value">{address}</div>
+                        )}
                       </div>
                       {issuedAt && (
 						<div className="address-metadata">
