@@ -93,11 +93,51 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [errorType, setErrorType] = useState<'user_rejected' | 'wrong_chain' | 'insufficient_funds' | 'other' | null>(null);
   const [amountError, setAmountError] = useState<string | null>(null);
+  const [amountWarning, setAmountWarning] = useState<{type: 'gentle' | 'strong', message: string} | null>(null);
+
+  // Helper function to check for large payment warnings
+  const checkLargePaymentWarning = (amount: number, token: TokenBalance) => {
+    const symbol = token.symbol.toUpperCase();
+    
+    // Stablecoin thresholds
+    const stablecoins = ['USDC', 'USDT', 'DAI', 'EURC'];
+    if (stablecoins.includes(symbol)) {
+      if (amount >= 1500) {
+        return {
+          type: 'strong' as const,
+          message: `⚠️ Large payment alert: You're sending ${amount.toLocaleString()} ${symbol}. Please double-check this amount before proceeding.`
+        };
+      } else if (amount >= 500) {
+        return {
+          type: 'gentle' as const,
+          message: `💰 Sending ${amount.toLocaleString()} ${symbol} - please verify this amount is correct.`
+        };
+      }
+    }
+    
+    // ETH thresholds
+    if (symbol === 'ETH') {
+      if (amount >= 0.6) {
+        return {
+          type: 'strong' as const,
+          message: `⚠️ Large payment alert: You're sending ${amount} ETH. Please double-check this amount before proceeding.`
+        };
+      } else if (amount >= 0.2) {
+        return {
+          type: 'gentle' as const,
+          message: `💰 Sending ${amount} ETH - please verify this amount is correct.`
+        };
+      }
+    }
+    
+    return null;
+  };
 
   // Helper function to validate amount
   const validateAmount = (value: string, token: TokenBalance | null) => {
     if (!token || !value) {
       setAmountError(null);
+      setAmountWarning(null);
       return;
     }
 
@@ -106,13 +146,18 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
     if (isNaN(numericAmount) || numericAmount <= 0) {
       setAmountError(null);
+      setAmountWarning(null);
       return;
     }
 
     if (numericAmount > tokenBalance) {
       setAmountError(`amount exceeds your balance of ${token.balance} ${token.symbol}`);
+      setAmountWarning(null);
     } else {
       setAmountError(null);
+      // Check for large payment warnings
+      const warning = checkLargePaymentWarning(numericAmount, token);
+      setAmountWarning(warning);
     }
   };
 
@@ -345,6 +390,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       setError(null);
       setErrorType(null);
       setAmountError(null);
+      setAmountWarning(null);
     }
   }, [isOpen, recipientAddress]);
 
@@ -359,6 +405,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       validateAmount(amount, selectedToken);
     } else {
       setAmountError(null);
+      setAmountWarning(null);
     }
   }, [selectedToken, amount]);
 
@@ -430,6 +477,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               setError(null);
               setErrorType(null);
               setAmountError(null);
+              setAmountWarning(null);
               setStep('connect');
               
               // Force disconnect and clear cached state
@@ -611,9 +659,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     {amountError}
                   </div>
                 )}
+                {amountWarning && (
+                  <div className={`amount-warning ${amountWarning.type}`}>
+                    {amountWarning.message}
+                  </div>
+                )}
               </div>
 
-                <div className="modal-actions" style={{ minWidth: '50%', maxWidth: '70%', alignSelf: 'center' }}>
+              <div className="modal-actions">
                 <button 
                   type="button" 
                   className="confirm-button"
@@ -722,6 +775,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     setError(null);
                     setErrorType(null);
                     setTxHash(null);
+                    setAmountWarning(null);
                   }
                 }}>
                   {errorType === 'user_rejected' ? 'Try Again' : 

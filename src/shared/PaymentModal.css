@@ -816,7 +816,9 @@
   display: flex;
   gap: 12px;
   justify-content: center;
-  margin-top: 24px;
+  margin: 24px auto 0 auto;
+  max-width: 70%;
+  min-width: 50%;
 }
 
 .confirm-button, .send-button, .done-button {
@@ -1242,8 +1244,10 @@
   .modal-actions {
     flex-direction: column;
     gap: 8px;
-    margin-top: 20px;
+    margin: 20px auto 0 auto;
     align-items: center; /* Center the buttons */
+    max-width: 200px;
+    min-width: 150px;
   }
   
   .confirm-button, 
@@ -1607,7 +1611,43 @@
   }
 }
 
-/* Responsive styles for amount input under 540px */
+.amount-warning {
+  font-size: 0.85rem;
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.amount-warning.gentle {
+  color: #856404;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+}
+
+.amount-warning.strong {
+  color: #721c24;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+
+/* Dark mode styles for amount warnings */
+@media (prefers-color-scheme: dark) {
+  .amount-warning.gentle {
+    color: #ffeb9c;
+    background: #332701;
+    border: 1px solid #664d03;
+  }
+
+  .amount-warning.strong {
+    color: #f1aeb5;
+    background: #2c0b0e;
+    border: 1px solid #842029;
+  }
+}
+
 @media (max-width: 540px) {
   .amount-input label {
     font-size: 1.05rem;
