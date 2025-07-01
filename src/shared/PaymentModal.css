@@ -626,24 +626,24 @@
 .recipient-profile {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
+  gap: 8px;
+  padding: 6px;
   background: #f8f9fa;
   border-radius: 8px;
   border: 1px solid #e1e5e9;
 }
 
 .recipient-avatar {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
 }
 
 .recipient-avatar-placeholder {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
@@ -651,7 +651,7 @@
   justify-content: center;
   color: white;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 22px;
   flex-shrink: 0;
 }
 
@@ -784,9 +784,9 @@
   
   .recipient-avatar,
   .recipient-avatar-placeholder {
-    width: 38px;
-    height: 38px;
-    font-size: 17px;
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
   }
   
   .recipient-name {
