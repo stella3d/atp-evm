@@ -634,16 +634,16 @@
 }
 
 .recipient-avatar {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
 }
 
 .recipient-avatar-placeholder {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
@@ -651,7 +651,7 @@
   justify-content: center;
   color: white;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 18px;
   flex-shrink: 0;
 }
 
@@ -665,7 +665,7 @@
 }
 
 .recipient-name {
-  font-size: 0.95rem;
+  font-size: 1.14rem;
   font-weight: 600;
   color: #333;
   line-height: 1.1;
@@ -674,7 +674,7 @@
 }
 
 .recipient-handle {
-  font-size: 0.8rem;
+  font-size: 0.96rem;
   color: #666;
   line-height: 1.1;
   text-align: left;
@@ -784,17 +784,17 @@
   
   .recipient-avatar,
   .recipient-avatar-placeholder {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
+    width: 38px;
+    height: 38px;
+    font-size: 17px;
   }
   
   .recipient-name {
-    font-size: 0.85rem;
+    font-size: 1.02rem;
   }
   
   .recipient-handle {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
   }
   
   .recipient-header {
