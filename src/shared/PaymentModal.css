@@ -64,17 +64,17 @@
 
 .modal-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 8px;
   border-bottom: 1px solid #eee;
+  position: relative;
 }
 
 .modal-header h3 {
   margin: 0;
   font-size: 1.4rem;
   text-align: center;
-  flex-grow: 1;
 }
 
 .close-button {
@@ -85,6 +85,9 @@
   padding: 4px;
   border-radius: 4px;
   color: #666;
+  position: absolute;
+  top: 8px;
+  right: 8px;
 }
 
 .close-button:hover {
@@ -109,7 +112,7 @@
 }
 
 .modal-content {
-  padding: 20px;
+  padding: 8px 14px 8px 14px;
 }
 
 .step-connect {
@@ -117,10 +120,10 @@
 }
 
 .wallet-info {
-  padding: 8px 6px 8px 6px;
+  padding: 4px 6px 4px 6px;
   background: #f8f9fa;
   border-radius: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
 }
 
 .wallet-status {
