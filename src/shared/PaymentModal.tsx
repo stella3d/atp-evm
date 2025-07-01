@@ -21,6 +21,49 @@ const ERC20_ABI = [
   }
 ] as const;
 
+// Utility function for robust wallet disconnection
+const forceDisconnectAndClearState = async (disconnect: () => void, isConnected: boolean) => {
+  console.log('Starting robust wallet disconnection...');
+  
+  // Force disconnect and clear any cached state
+  try {
+    await disconnect();
+    console.log('Wallet disconnect completed');
+  } catch (err) {
+    console.warn('Disconnect failed:', err);
+  }
+  
+  // Clear localStorage items that might cause auto-reconnection
+  try {
+    const keysToRemove = ['wagmi.store', 'wagmi.wallet', 'wagmi.connected'];
+    keysToRemove.forEach(key => {
+      if (localStorage.getItem(key)) {
+        localStorage.removeItem(key);
+        console.log(`Cleared localStorage key: ${key}`);
+      }
+    });
+    
+    // Clear any RainbowKit and wallet-related storage
+    const walletKeys = Object.keys(localStorage).filter(key => 
+      key.startsWith('rainbow') || key.startsWith('wagmi') || key.startsWith('wallet')
+    );
+    walletKeys.forEach(key => {
+      localStorage.removeItem(key);
+      console.log(`Cleared wallet-related localStorage key: ${key}`);
+    });
+  } catch (err) {
+    console.warn('Failed to clear localStorage:', err);
+  }
+  
+  // Force page refresh if still connected (nuclear option)
+  if (isConnected) {
+    console.warn('Wallet still connected after disconnect, will force page refresh in 500ms');
+    setTimeout(() => {
+      globalThis.location.reload();
+    }, 500);
+  }
+};
+
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -379,7 +422,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         <div className="modal-header">
           <h3>Send Payment</h3>
           {step === 'select' && (
-            <button type="button" className="change-wallet-btn" onClick={() => {
+            <button type="button" className="change-wallet-btn" onClick={async () => {
               // Clear all account-related state
               setSelectedToken(null);
               setAmount('');
@@ -388,9 +431,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               setErrorType(null);
               setAmountError(null);
               setStep('connect');
-              // Disconnect wallet and close modal
-              disconnect();
-              onClose();
+              
+              // Force disconnect and clear cached state
+              await forceDisconnectAndClearState(disconnect, isConnected);
+              
+              // Close modal after clearing state
+              setTimeout(() => {
+                onClose();
+              }, 100);
             }}>
               Switch 👛
             </button>
@@ -565,7 +613,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 )}
               </div>
 
-              <div className="modal-actions">
+                <div className="modal-actions" style={{ minWidth: '50%', maxWidth: '70%', alignSelf: 'center' }}>
                 <button 
                   type="button" 
                   className="confirm-button"
@@ -574,7 +622,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 >
                   {isTransactionPending ? 'Sending...' : `Send ${selectedToken?.symbol || 'Payment'}`}
                 </button>
-              </div>
+                </div>
             </div>
           )}
 
@@ -650,11 +698,31 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 </div>
               )}
               <div className="modal-actions">
-                <button type="button" className="back-button" onClick={() => {
-                  setStep('select');
-                  setError(null);
-                  setErrorType(null);
-                  setTxHash(null);
+                <button type="button" className="back-button" onClick={async () => {
+                  if (errorType === 'wrong_chain') {
+                    // Clear all account-related state and forcefully disconnect wallet
+                    setSelectedToken(null);
+                    setAmount('');
+                    setTxHash(null);
+                    setError(null);
+                    setErrorType(null);
+                    setAmountError(null);
+                    setStep('connect');
+                    
+                    // Force disconnect and clear cached state
+                    await forceDisconnectAndClearState(disconnect, isConnected);
+                    
+                    // Small delay to ensure state is cleared before closing
+                    setTimeout(() => {
+                      onClose();
+                    }, 100);
+                  } else {
+                    // For other errors, just go back to select step
+                    setStep('select');
+                    setError(null);
+                    setErrorType(null);
+                    setTxHash(null);
+                  }
                 }}>
                   {errorType === 'user_rejected' ? 'Try Again' : 
                    errorType === 'wrong_chain' ? 'Switch Network & Try Again' :
