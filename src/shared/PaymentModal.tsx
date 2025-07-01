@@ -48,6 +48,124 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [step, setStep] = useState<'connect' | 'select' | 'sending' | 'success' | 'error'>('connect');
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [errorType, setErrorType] = useState<'user_rejected' | 'wrong_chain' | 'insufficient_funds' | 'other' | null>(null);
+
+  const isWrongChainErr = (err: {
+    type: "user_rejected" | "wrong_chain" | "insufficient_funds" | "other";
+    message: string;
+  }, originalErrorMessage: string) => {
+    if (err.type === 'wrong_chain') {
+      return true;
+    }
+    
+    // Check if this is a chain mismatch error by looking for current chain ID in the message
+    const currentChainId = extractCurrentChainIdFromError(originalErrorMessage);
+    if (currentChainId !== null && currentChainId !== chainId) {
+      // This is definitely a wrong chain error - update the message with specific chain info
+      const currentChainName = getChainName(currentChainId);
+      const expectedChainName = getChainName(chainId);
+      err.message = `Your wallet is connected to ${currentChainName} (Chain ${currentChainId}), but this transaction requires ${expectedChainName} (Chain ${chainId}). Please switch networks to complete this transaction.`;
+      return true;
+    }
+    
+    return false;
+  }
+
+  // Helper function to extract current chain ID from error messages
+  const extractCurrentChainIdFromError = (errorMessage: string): number | null => {
+    // Pattern for "The current chain of the wallet (id: 1) does not match"
+    const chainIdMatch = errorMessage.match(/current chain of the wallet \(id: (\d+)\) does not match/i);
+    if (chainIdMatch) {
+      return parseInt(chainIdMatch[1]);
+    }
+    
+    // Pattern for "Connected to chain 1, but expected 8453" or "Connected to chain 1 but expected chain 8453"
+    const connectedChainMatch = errorMessage.match(/connected to chain (\d+)(?:,?\s*but expected(?:\s+chain)?\s+\d+)?/i);
+    if (connectedChainMatch) {
+      return parseInt(connectedChainMatch[1]);
+    }
+    
+    // Pattern for "Chain ID 1 is not supported" or "Chain ID 1 not supported"
+    const chainNotSupportedMatch = errorMessage.match(/chain id (\d+)\s+(?:is\s+)?not supported/i);
+    if (chainNotSupportedMatch) {
+      return parseInt(chainNotSupportedMatch[1]);
+    }
+    
+    // Pattern for "wallet chain 1" or "wallet is on chain 1"
+    const walletChainMatch = errorMessage.match(/wallet(?:\s+is)?\s+(?:on\s+)?chain (\d+)/i);
+    if (walletChainMatch) {
+      return parseInt(walletChainMatch[1]);
+    }
+    
+    // Pattern for "unsupported chain 1" or "chain 1 unsupported"
+    const unsupportedChainMatch = errorMessage.match(/(?:unsupported\s+chain\s+(\d+)|chain\s+(\d+)\s+unsupported)/i);
+    if (unsupportedChainMatch) {
+      return parseInt(unsupportedChainMatch[1] || unsupportedChainMatch[2]);
+    }
+    
+    // Pattern for "wrong network, currently on chain 1"
+    const wrongNetworkMatch = errorMessage.match(/wrong network(?:,)?\s+currently on chain (\d+)/i);
+    if (wrongNetworkMatch) {
+      return parseInt(wrongNetworkMatch[1]);
+    }
+    
+    return null;
+  };
+
+
+  // Helper function to categorize errors
+  const categorizeError = (errorMessage: string): { type: 'user_rejected' | 'wrong_chain' | 'insufficient_funds' | 'other', message: string } => {
+    const msg = errorMessage.toLowerCase();
+    
+    if (msg.includes('user rejected') || msg.includes('user denied') || msg.includes('rejected') || msg.includes('user cancelled')) {
+      return {
+        type: 'user_rejected',
+        message: 'Transaction was cancelled. You can try again when ready.'
+      };
+    }
+    
+    if (msg.includes('wrong chain') || msg.includes('chain mismatch') || msg.includes('unsupported chain') || msg.includes('switch chain')) {
+      // Try to extract current chain from error message and compare with expected
+      const currentChainId = extractCurrentChainIdFromError(errorMessage);
+      if (currentChainId !== null && currentChainId !== chainId) {
+        const currentChainName = getChainName(currentChainId);
+        const expectedChainName = getChainName(chainId);
+        return {
+          type: 'wrong_chain',
+          message: `Your wallet is connected to ${currentChainName} (Chain ${currentChainId}), but this transaction requires ${expectedChainName} (Chain ${chainId}). Please switch networks to complete this transaction.`
+        };
+      } else {
+        // Fallback for when we can't extract chain info
+        const currentChainInfo = extractCurrentChainFromError(errorMessage);
+        const currentChainText = currentChainInfo ? ` You're currently connected to ${currentChainInfo}.` : '';
+        return {
+          type: 'wrong_chain',
+          message: `Your wallet is connected to the wrong network.${currentChainText} Please switch to ${getChainName(chainId)} to complete this transaction.`
+        };
+      }
+    }
+    
+    if (msg.includes('insufficient funds') || msg.includes('insufficient balance') || msg.includes('not enough')) {
+      return {
+        type: 'insufficient_funds',
+        message: 'Insufficient funds to complete this transaction. Please check your balance and try again.'
+      };
+    }
+    
+    return {
+      type: 'other',
+      message: errorMessage
+    };
+  };
+
+  // Helper function to extract current chain information from error messages
+  const extractCurrentChainFromError = (errorMessage: string): string | null => {
+    const currentChainId = extractCurrentChainIdFromError(errorMessage);
+    if (currentChainId !== null) {
+      return getChainName(currentChainId);
+    }
+    return null;
+  };
 
   const { tokenBalances, loading: loadingBalances } = useTokenBalances(chainId);
   
@@ -64,7 +182,16 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         setStep('sending');
       },
       onError: (error) => {
-        setError(error.message);
+        const categorized = categorizeError(error.message);
+        console.error('sendTransaction error:', error.message, categorized);
+        if (categorized.type !== 'other') {
+          // For typed errors, only store the user-friendly message but log the raw error
+          setError(categorized.message);
+        } else {
+          // For unknown errors, show the raw message
+          setError(categorized.message);
+        }
+        setErrorType(categorized.type);
         setStep('error');
       }
     }
@@ -77,13 +204,25 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         setStep('sending');
       },
       onError: (error) => {
-        setError(error.message);
+        const categorized = categorizeError(error.message);
+        console.error('writeContract error:', error.message, categorized);
+        if (isWrongChainErr(categorized, error.message))
+          categorized.type = 'wrong_chain';
+        
+        if (categorized.type !== 'other') {
+          // For typed errors, only store the user-friendly message but log the raw error
+          setError(categorized.message);
+        } else {
+          // For unknown errors, show the raw message
+          setError(categorized.message);
+        }
+        setErrorType(categorized.type);
         setStep('error');
       }
     }
   });
 
-  const { isSuccess } = useWaitForTransactionReceipt({
+  const { isSuccess, isError, error: receiptError } = useWaitForTransactionReceipt({
     hash: txHash || undefined,
   });
 
@@ -94,15 +233,24 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   }, [isSuccess, step]);
 
   React.useEffect(() => {
-    console.log('PaymentModal: checking step transition', { 
-      isConnected, 
-      tokenBalancesLength: tokenBalances.length, 
-      step,
-      tokenBalances 
-    });
-    
+    if (isError && receiptError && step === 'sending') {
+      const categorized = categorizeError(receiptError.message);
+      console.error('transaction receipt error:', receiptError.message, categorized);
+      
+      if (categorized.type !== 'other') {
+        // For typed errors, only store the user-friendly message but log the raw error
+        setError(categorized.message);
+      } else {
+        // For unknown errors, show the raw message
+        setError(categorized.message);
+      }
+      setErrorType(categorized.type);
+      setStep('error');
+    }
+  }, [isError, receiptError, step]);
+
+  React.useEffect(() => {
     if (isConnected && tokenBalances.length > 0 && step === 'connect') {
-      console.log('PaymentModal: transitioning to select step');
       setStep('select');
     }
   }, [isConnected, tokenBalances.length, step, tokenBalances]);
@@ -116,6 +264,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       setCustomRecipient(recipientAddress);
       setTxHash(null);
       setError(null);
+      setErrorType(null);
     }
   }, [isOpen, recipientAddress]);
 
@@ -128,7 +277,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     if (!selectedToken || !amount || !customRecipient) return;
 
     if (!isAddress(customRecipient)) {
-      setError('Invalid recipient address');
+      const categorized = categorizeError('Invalid recipient address');
+      setError(categorized.message);
+      setErrorType(categorized.type);
       setStep('error');
       return;
     }
@@ -154,7 +305,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send transaction');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send transaction';
+      const categorized = categorizeError(errorMessage);
+      setError(categorized.message);
+      setErrorType(categorized.type);
       setStep('error');
     }
   };
@@ -257,10 +411,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                                 alt={`${token.symbol} logo`}
                                 className="token-logo"
                                 onLoad={() => {
-                                  console.log(`Token logo loaded for ${token.symbol}:`, token.logoUrl);
                                 }}
                                 onError={(e) => {
-                                  console.log(`Token logo failed to load for ${token.symbol}:`, token.logoUrl);
+                                  console.warn(`Token logo failed to load for ${token.symbol}:`, token.logoUrl);
                                   e.currentTarget.style.display = 'none';
                                   const placeholder = e.currentTarget.parentElement?.querySelector('.token-logo-placeholder') as HTMLElement;
                                   if (placeholder) {
@@ -359,16 +512,47 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
           {step === 'error' && (
             <div className="step-error">
-              <div className="error-icon">❌</div>
-              <h4>Payment Failed</h4>
-              <p>{error}</p>
+              <div className="error-icon">
+                {errorType === 'user_rejected' ? '🚫' : 
+                 errorType === 'wrong_chain' ? '⛓️' : 
+                 errorType === 'insufficient_funds' ? '💰' : '❌'}
+              </div>
+              <h4>
+                {errorType === 'user_rejected' ? 'Transaction Cancelled' :
+                 errorType === 'wrong_chain' ? 'Wrong Network' :
+                 errorType === 'insufficient_funds' ? 'Insufficient Funds' :
+                 'Payment Failed'}
+              </h4>
+              {errorType === 'other' ? (
+                <p>{error}</p>
+              ) : (
+                <p>
+                  {errorType === 'user_rejected' ? 'You cancelled the transaction in your wallet. No worries - you can try again when ready.' :
+                   errorType === 'wrong_chain' ? error :
+                   errorType === 'insufficient_funds' ? 'You don\'t have enough funds to complete this transaction. Please check your balance.' :
+                   error}
+                </p>
+              )}
+              {errorType === 'wrong_chain' && (
+                <div className="chain-help">
+                  <p>To complete this transaction, please:</p>
+                  <ol>
+                    <li>Open your wallet</li>
+                    <li>Switch to <strong>{getChainName(chainId)}</strong></li>
+                    <li>Try the payment again</li>
+                  </ol>
+                </div>
+              )}
               <div className="modal-actions">
                 <button type="button" className="back-button" onClick={() => {
                   setStep('select');
                   setError(null);
+                  setErrorType(null);
                   setTxHash(null);
                 }}>
-                  Try Again
+                  {errorType === 'user_rejected' ? 'Try Again' : 
+                   errorType === 'wrong_chain' ? 'Switch Network & Try Again' :
+                   'Try Again'}
                 </button>
                 <button type="button" className="cancel-button" onClick={onClose}>
                   Cancel

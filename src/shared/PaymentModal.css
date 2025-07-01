@@ -814,32 +814,34 @@
   margin-bottom: 16px;
 }
 
-.tx-hash {
-  margin-top: 16px;
-  padding: 8px;
+.chain-help {
+  margin: 16px 0;
+  padding: 12px;
   background: #f8f9fa;
   border-radius: 6px;
-  font-family: monospace;
-  font-size: 0.85rem;
-  word-break: break-all;
+  border-left: 4px solid #1d9bf0;
+  text-align: left;
 }
 
-.tx-hash-link {
-  color: #0066cc;
-  text-decoration: none;
-  word-break: break-all;
+.chain-help p {
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  color: #0f1419;
 }
 
-.tx-hash-link:hover {
-  text-decoration: underline;
+.chain-help ol {
+  margin: 0;
+  padding-left: 20px;
 }
 
-.tx-hash-link code {
-  font-family: monospace;
-  font-size: 0.85rem;
-  background: none;
-  padding: 0;
-  color: inherit;
+.chain-help li {
+  margin: 4px 0;
+  color: #536471;
+}
+
+.chain-help strong {
+  color: #1d9bf0;
+  font-weight: 600;
 }
 
 /* Dark mode styles */
@@ -868,6 +870,23 @@
 
   .step-error .error-icon {
     color: #ef4444;
+  }
+
+  .chain-help {
+    background: #2a2a2a;
+    border-left-color: #4da6ff;
+  }
+
+  .chain-help p {
+    color: #e0e0e0;
+  }
+
+  .chain-help li {
+    color: #cccccc;
+  }
+
+  .chain-help strong {
+    color: #4da6ff;
   }
 }
 
