@@ -49,6 +49,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   const { tokenBalances, loading: loadingBalances } = useTokenBalances(chainId);
   
+  // Get ENS name for the recipient address
+  const { data: ensName } = useEnsName({
+    address: isAddress(customRecipient) ? customRecipient : undefined,
+    chainId: 1, // ENS is on mainnet
+  });
+  
   const { sendTransaction, isPending: isSending } = useSendTransaction({
     mutation: {
       onSuccess: (hash) => {
@@ -191,6 +197,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   placeholder="0x..."
                   className="recipient-input"
                 />
+                {ensName && (
+                  <div className="ens-info">
+                    <div className="ens-header">also known as</div>
+                    <div className="ens-name">
+                      <span className="ens-value">{ensName}</span>
+                    </div>
+                  </div>
+                )}
                 {(recipientName || recipientHandle) && (
                   <div className="recipient-info">
                     <div className="recipient-header">which is controlled by</div>

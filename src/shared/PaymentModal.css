@@ -22,6 +22,10 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
+.payment-modal input {
+  padding: 4px 6px;
+}
+
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .payment-modal-overlay {
@@ -164,12 +168,47 @@
 
 .recipient-input {
   width: 100%;
-  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-family: monospace;
   font-size: 0.9rem;
   box-sizing: border-box;
+}
+
+.ens-info {
+  margin-top: 2px;
+}
+
+.ens-header {
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 6px;
+  text-transform: lowercase;
+  letter-spacing: 0.3px;
+}
+
+.ens-name {
+  padding: 2px 8px;
+  background: #f0f8ff;
+  border: 1px solid #d0e7ff;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.ens-label {
+  font-weight: 600;
+  color: #0066cc;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ens-value {
+  font-family: monospace;
+  color: #0066cc;
+  font-weight: 500;
 }
 
 .recipient-name {
@@ -210,6 +249,23 @@
 
   .recipient-name {
     color: #ccc;
+  }
+
+  .ens-header {
+    color: #aaa;
+  }
+
+  .ens-name {
+    background: #1a2332;
+    border: 1px solid #334155;
+  }
+
+  .ens-label {
+    color: #4da6ff;
+  }
+
+  .ens-value {
+    color: #4da6ff;
   }
 
   /* Enhanced focus states for dark mode */
@@ -416,7 +472,6 @@
 
 .amount-row input {
   flex: 1;
-  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 1rem;
@@ -757,7 +812,20 @@
   
   .recipient-input {
     font-size: 0.8rem;
-    padding: 8px;
+  }
+  
+  .ens-header {
+    font-size: 0.7rem;
+    margin-bottom: 4px;
+  }
+  
+  .ens-name {
+    font-size: 0.8rem;
+    padding: 2px 8px;
+  }
+  
+  .ens-label {
+    font-size: 0.7rem;
   }
   
   .recipient-name {
@@ -788,7 +856,6 @@
   /* Amount input adjustments */
   .amount-row input {
     font-size: 0.9rem;
-    padding: 8px;
   }
   
   /* Payment summary more compact */
@@ -921,6 +988,16 @@
   }
   .wallet-status code {
     font-size: 12px;
+  }
+  .ens-header {
+    font-size: 0.65rem;
+  }
+  .ens-name {
+    font-size: 0.75rem;
+    padding: 2px 6px;
+  }
+  .ens-label {
+    font-size: 0.65rem;
   }
 }
 
