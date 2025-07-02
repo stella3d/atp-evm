@@ -1,4 +1,5 @@
 import type { DefinedDidString, EnrichedUser, EnrichedUserCacheEntry, AddressControlRecord } from "./common.ts";
+import { BLOCKLISTED_DIDS } from "./spam.ts";
 
 // Cache configuration
 const CACHE_DURATION = import.meta.env.DEV 
@@ -64,8 +65,12 @@ export const fetchUsersWithAddressRecord = async (): Promise<DefinedDidString[]>
   // using regular fetch skips needing OAuth permissions
   const res = await fetch('https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=club.stellz.evm.addressControl');
   const data: ResponseShape = await res.json();
-  const users = data.repos.map(r => r.did);
-  
+  const users = data.repos
+    .map(r => r.did)
+    .filter(did => !BLOCKLISTED_DIDS.includes(did)); // remove blocklisted DIDs
+
+    console.log(users);
+
   // Cache the new data
   setCachedData(users);
   console.log('Fetched and cached new users data');
