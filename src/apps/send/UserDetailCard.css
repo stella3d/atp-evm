@@ -102,6 +102,10 @@
   text-align: center;
 }
 
+.profile-description p {
+  margin: 4px 0;
+}
+
 .user-info label {
   display: block;
   font-size: 14px;
@@ -131,13 +135,13 @@
 }
 
 .address-records {
-  margin-top: 8px;
+  margin-top: 2px;
 }
 
 .address-records label {
   display: block;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   color: #536471;
   margin-bottom: 8px;
 }
@@ -489,6 +493,8 @@
 
   .address-records label {
     color: #cccccc;
+    font-size: 16px;
+    font-weight: 700;
   }
 
   .loading-records {

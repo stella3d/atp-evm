@@ -148,12 +148,16 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
             showDid
           />
           {selectedUser.description && (
-            <div className="profile-description">{selectedUser.description}</div>
+            <div className="profile-description">
+              {selectedUser.description.split('\n').map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
+            </div>
           )}
         </div>
 
         <div className="address-records">
-          <label>Linked Ethereum Addresses:</label>
+          <label>Linked Ethereum Addresses</label>
           {loadingRecords ? (
             <div className="loading-records">Loading addresses...</div>
           ) : recordsError ? (
