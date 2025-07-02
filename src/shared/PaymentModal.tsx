@@ -607,7 +607,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       setAmount(e.target.value);
                       validateAmount(e.target.value, selectedToken);
                     }}
-                    placeholder={selectedToken ? "0.0" : "select a token first"}
+                    placeholder={selectedToken ? "0.0" : "select a token"}
                     step="any"
                     max={selectedToken?.balance}
                     disabled={!selectedToken}
