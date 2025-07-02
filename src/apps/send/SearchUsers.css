@@ -67,7 +67,7 @@
 }
 
 .users-list {
-  max-height: 300px;
+  max-height: 255px;
   overflow-y: auto;
   border: 1px solid #eee;
   border-radius: 4px;
