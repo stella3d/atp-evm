@@ -125,12 +125,6 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
     loadAddressRecords();
   }, [selectedUser.did, selectedUser.pds]);
 
-  const handleViewProfile = () => {
-    if (selectedUser.handle) {
-      globalThis.open(`https://bsky.app/profile/${selectedUser.handle}`, '_blank');
-    }
-  };
-
   return (
     <div className="user-detail-card">
       <div className="card-header">
