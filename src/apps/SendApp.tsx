@@ -1,11 +1,17 @@
 import '../App.css'
 import { useEffect, useState } from 'react';
+import { WagmiProvider } from 'wagmi';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { oauthClient } from "../shared/oauth.ts";
 import { OAuthSession } from "@atproto/oauth-client-browser";
 import { SearchUsers } from "./send/SearchUsers.tsx";
 import { UserDetailCard } from "./send/UserDetailCard.tsx";
+import { WalletConnectionCard } from './send/WalletConnectionCard.tsx';
 import type { DefinedDidString, EnrichedUser } from "../shared/common.ts";
+import { config } from '../shared/WalletConnector.tsx';
+
+const queryClient = new QueryClient();
 
 function SendApp() {
   const [_oauthSession, setOauthSession] = useState<OAuthSession | null>(null);
@@ -41,20 +47,23 @@ function SendApp() {
   };
 
   return (
-    <>
-      <h1>ATPay</h1>
-      <p>This demo lets you send value to a recipient based on their ATProto DID & linked Ethereum wallet.</p>
-      <SearchUsers 
-        onUserSelect={handleUserSelect} 
-        onUsersUpdate={handleUsersUpdate} 
-      />
-      {selectedUser && (
-        <UserDetailCard 
-          selectedUser={selectedUser} 
-          onClose={handleCloseCard}
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <h1>ATPay</h1>
+        <p>This demo lets you send value to a recipient based on their ATProto DID & linked Ethereum wallet.</p>
+        <SearchUsers 
+          onUserSelect={handleUserSelect} 
+          onUsersUpdate={handleUsersUpdate} 
         />
-      )}
-    </>
+        <WalletConnectionCard />
+        {selectedUser && (
+          <UserDetailCard 
+            selectedUser={selectedUser} 
+            onClose={handleCloseCard}
+          />
+        )}
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
 

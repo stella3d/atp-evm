@@ -318,11 +318,10 @@
 }
 
 .wallet-connection-section {
-  margin-top: 16px;
-  padding: 12px;
+  padding: 6px;
   background: #f8f9fa;
   border: 1px solid #e1e5e9;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .wallet-connection-section label {
@@ -331,6 +330,10 @@
   font-weight: 600;
   color: #536471;
   margin-bottom: 8px;
+}
+
+.wallet-connection-section h2 {
+  margin: 2px;
 }
 
 /* Responsive width adjustments for address-metadata */
@@ -539,71 +542,15 @@
     border-color: #404040;
   }
 
-  .address-value {
-    color: #e0e0e0;
-  }
-
-  .chain-info {
-    color: #0078d4;
-  }
-
-  .address-date {
-    color: #999999;
-  }
-
-  .send-payment-button {
-    background: #0078d4;
-  }
-
-  .send-payment-button:hover {
-    background: #106ebe;
-  }
-
-  .action-button.primary {
-    background: #0078d4;
-  }
-
-  .action-button.primary:hover {
-    background: #106ebe;
-  }
-
-  .action-button.secondary {
-    background: #2d2d2d;
-    color: #e0e0e0;
-    border-color: #404040;
-  }
-
-  .action-button.secondary:hover {
-    background: #404040;
-  }
-
-  .safety-checklist-inline .checklist-item.verified {
-    background: #1a2e1a;
-    border-color: #16a34a;
-  }
-
-  .safety-checklist-inline .checklist-item.failed {
-    background: #2d1b1b;
-    border-color: #dc2626;
-  }
-
-  .safety-checklist-inline .checklist-item.warning {
-    background: #2d2416;
-    border-color: #d97706;
-  }
-
-  .safety-checklist-inline .check-text {
-    color: #e0e0e0;
-  }
-
   .wallet-connection-section {
     background: #2d2d2d;
-    border-color: #444;
+    border-color: #404040;
   }
 
   .wallet-connection-section label {
     color: #cccccc;
   }
+
 }
 
 @media (max-width: 492px) {
@@ -670,20 +617,4 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
-}
-
-.wallet-connection-section {
-  margin-top: 16px;
-  padding: 12px;
-  background: #f8f9fa;
-  border: 1px solid #e1e5e9;
-  border-radius: 6px;
-}
-
-.wallet-connection-section label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #536471;
-  margin-bottom: 8px;
 }
