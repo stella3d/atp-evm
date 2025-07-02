@@ -270,8 +270,8 @@
   color: white;
   border: none;
   border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 13px;
+  padding: 7px 11px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -365,8 +365,8 @@
   }
   
   .send-payment-button {
-    padding: 10px 16px;
-    font-size: 0.9rem;
+    padding: 9px 15px;
+    font-size: 17px;
   }
   
   /* Card content padding adjustments */
@@ -400,8 +400,8 @@
   }
   
   .send-payment-button {
-    padding: 8px 12px;
-    font-size: 0.85rem;
+    padding: 7px 11px;
+    font-size: 16px;
   }
 }
 
