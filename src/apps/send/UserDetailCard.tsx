@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { isAddress } from 'viem';
+import { useAccount } from 'wagmi';
 import type { EnrichedUser, AddressControlRecord } from "../../shared/common.ts";
 import { getChainName } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
 import { PaymentModal } from "../../shared/PaymentModal.tsx";
 import { AddressLink } from "../../shared/AddressLink.tsx";
+import { ConnectWallet } from "../../shared/WalletConnector.tsx";
 import { config } from '../../shared/WalletConnector.tsx';
 import './UserDetailCard.css';
 import { WagmiProvider } from "wagmi";
@@ -16,7 +18,9 @@ interface UserDetailCardProps {
   onClose?: () => void;
 }
 
-export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, onClose }) => {
+// Inner component that uses wagmi hooks
+const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onClose }) => {
+  const { isConnected } = useAccount();
   const [addressRecords, setAddressRecords] = useState<AddressControlRecord[]>([]);
   const [loadingRecords, setLoadingRecords] = useState(false);
   const [recordsError, setRecordsError] = useState<string | null>(null);
@@ -122,13 +126,12 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
 
     loadAddressRecords();
   }, [selectedUser.did, selectedUser.pds]);
+
   const handleViewProfile = () => {
     if (selectedUser.handle) {
       globalThis.open(`https://bsky.app/profile/${selectedUser.handle}`, '_blank');
     }
   };
-
-  const queryClient = new QueryClient();
 
   return (
     <div className="user-detail-card">
@@ -239,6 +242,11 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
                       type="button" 
                       className="send-payment-button"
                       onClick={() => {
+                        if (!isConnected) {
+                          // Show wallet connection UI instead of opening payment modal
+                          alert('Please connect your wallet first to send payments');
+                          return;
+                        }
                         setPaymentModal({
                           isOpen: true,
                           recipientAddress: address as `0x${string}`,
@@ -246,7 +254,7 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
                         });
                       }}
                     >
-                      Send Payment
+                      {isConnected ? 'Send Payment' : 'Connect Wallet to Send'}
                     </button>
                   </div>
                 );
@@ -254,6 +262,13 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
             </div>
           )}
         </div>
+        
+        {!isConnected && (
+          <div className="wallet-connection-section">
+            <label>Connect Wallet to Send Payments:</label>
+            <ConnectWallet />
+          </div>
+        )}
         
         {selectedUser.handle && (
           <div className="user-actions">
@@ -268,19 +283,28 @@ export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, on
         )}
       </div>
       
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <PaymentModal
-            isOpen={paymentModal.isOpen}
-            onClose={() => setPaymentModal(prev => ({ ...prev, isOpen: false }))}
-            recipientAddress={paymentModal.recipientAddress}
-            recipientName={selectedUser.displayName || undefined}
-            recipientHandle={selectedUser.handle || undefined}
-            recipientAvatar={selectedUser.avatar || undefined}
-            chainId={paymentModal.chainId}
-          />
-        </QueryClientProvider>
-      </WagmiProvider>
+      <PaymentModal
+        isOpen={paymentModal.isOpen}
+        onClose={() => setPaymentModal(prev => ({ ...prev, isOpen: false }))}
+        recipientAddress={paymentModal.recipientAddress}
+        recipientName={selectedUser.displayName || undefined}
+        recipientHandle={selectedUser.handle || undefined}
+        recipientAvatar={selectedUser.avatar || undefined}
+        chainId={paymentModal.chainId}
+      />
     </div>
+  );
+};
+
+// Main component that provides Wagmi context
+export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, onClose }) => {
+  const queryClient = new QueryClient();
+
+  return (
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <UserDetailCardInner selectedUser={selectedUser} onClose={onClose} />
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 };

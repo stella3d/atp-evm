@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionReceipt, useWriteContract, useEnsName } from 'wagmi';
 import { isAddress, parseUnits } from 'viem';
-import { SimpleWalletConnector } from './SimpleWalletConnector.tsx';
 import { useTokenBalances, type TokenBalance } from './useTokenBalances.ts';
 import { getChainName, getChainClass, getDoraTransactionUrl } from './common.ts';
 import { AddressLink } from './AddressLink.tsx';
@@ -88,7 +87,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [selectedToken, setSelectedToken] = useState<TokenBalance | null>(null);
   const [amount, setAmount] = useState('');
   const [customRecipient, setCustomRecipient] = useState(recipientAddress);
-  const [step, setStep] = useState<'connect' | 'select' | 'sending' | 'success' | 'error'>('connect');
+  const [step, setStep] = useState<'select' | 'sending' | 'success' | 'error'>('select');
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [errorType, setErrorType] = useState<'user_rejected' | 'wrong_chain' | 'insufficient_funds' | 'other' | null>(null);
@@ -374,15 +373,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   }, [isError, receiptError, step]);
 
   React.useEffect(() => {
-    if (isConnected && tokenBalances.length > 0 && step === 'connect') {
-      setStep('select');
-    }
-  }, [isConnected, tokenBalances.length, step, tokenBalances]);
+    // Modal starts directly in select step if wallet is connected
+  }, [isConnected, tokenBalances.length, tokenBalances]);
 
   React.useEffect(() => {
     if (!isOpen) {
       // Reset state when modal closes
-      setStep('connect');
+      setStep('select');
       setSelectedToken(null);
       setAmount('');
       setCustomRecipient(recipientAddress);
@@ -467,49 +464,46 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     <div className="payment-modal-overlay" onClick={onClose}>
       <div className="payment-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h3>Send Payment</h3>
-          {step === 'select' && (
-            <button type="button" className="change-wallet-btn" onClick={async () => {
-              // Clear all account-related state
-              setSelectedToken(null);
-              setAmount('');
-              setTxHash(null);
-              setError(null);
-              setErrorType(null);
-              setAmountError(null);
-              setAmountWarning(null);
-              setStep('connect');
-              
-              // Force disconnect and clear cached state
-              await forceDisconnectAndClearState(disconnect, isConnected);
-              
-              // Close modal after clearing state
-              setTimeout(() => {
-                onClose();
-              }, 100);
-            }}>
-              Switch 👛
-            </button>
+          <div className="header-top-row">
+            <div className="header-left">
+              {step === 'select' && (
+                <button type="button" className="change-wallet-btn" onClick={async () => {
+                  // Clear all account-related state
+                  setSelectedToken(null);
+                  setAmount('');
+                  setTxHash(null);
+                  setError(null);
+                  setErrorType(null);
+                  setAmountError(null);
+                  setAmountWarning(null);
+                  
+                  // Force disconnect and clear cached state
+                  await forceDisconnectAndClearState(disconnect, isConnected);
+                  
+                  // Close modal after clearing state
+                  setTimeout(() => {
+                    onClose();
+                  }, 100);
+                }}>
+                  Switch Wallet
+                </button>
+              )}
+            </div>
+            <h3>Send Payment</h3>
+            <div className="header-right">
+              <button type="button" className="close-button" onClick={onClose}>×</button>
+            </div>
+          </div>
+          {address && (
+            <div className="sender-info" style={{ fontSize: '9px !important' }}>
+              <AddressLink address={address} />
+            </div>
           )}
-          <button type="button" className="close-button" onClick={onClose}>×</button>
         </div>
 
         <div className="modal-content">
-          {step === 'connect' && (
-            <div className="step-connect">
-              <p>Connect your wallet to send a payment{recipientName && ` to ${recipientName}`}</p>
-              <SimpleWalletConnector />
-            </div>
-          )}
-
           {step === 'select' && (
             <div className="step-select">
-              <div className="wallet-info">
-                <div className="wallet-status">
-                  <p>✅ Connected on <span className="chain-name">{getChainName(chainId)}</span> as: {address ? <AddressLink address={address} /> : <code>No address</code>}</p>
-                </div>
-              </div>
-
               <div className="recipient-section">
                 <label>Recipient on<span className={`chain-indicator ${getChainClass(chainId)}`}>{getChainName(chainId)}</span></label>
                 <div className="recipient-address-display">
@@ -760,7 +754,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     setError(null);
                     setErrorType(null);
                     setAmountError(null);
-                    setStep('connect');
                     
                     // Force disconnect and clear cached state
                     await forceDisconnectAndClearState(disconnect, isConnected);

@@ -59,7 +59,7 @@
   cursor: pointer;
   padding: 4px 8px;
   position: absolute;
-  top: calc(50% - 4px);
+  top: calc(34% - 4px);
   right: 8px;
   transform: translateY(-50%);
   border-radius: 4px;
@@ -315,6 +315,22 @@
 
 .send-payment-button:hover {
   background: #106ebe;
+}
+
+.wallet-connection-section {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f8f9fa;
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+}
+
+.wallet-connection-section label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #536471;
+  margin-bottom: 8px;
 }
 
 /* Responsive width adjustments for address-metadata */
@@ -579,6 +595,15 @@
   .safety-checklist-inline .check-text {
     color: #e0e0e0;
   }
+
+  .wallet-connection-section {
+    background: #2d2d2d;
+    border-color: #444;
+  }
+
+  .wallet-connection-section label {
+    color: #cccccc;
+  }
 }
 
 @media (max-width: 470px) {
@@ -649,4 +674,20 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
+}
+
+.wallet-connection-section {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f8f9fa;
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+}
+
+.wallet-connection-section label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #536471;
+  margin-bottom: 8px;
 }

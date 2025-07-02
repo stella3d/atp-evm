@@ -66,36 +66,52 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 8px;
+  padding: 4px 8px 4px 8px;
   border-bottom: 1px solid #eee;
+  position: relative;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.header-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
   position: relative;
 }
 
-.modal-header h3 {
+.header-left,
+.header-right {
+  flex: 0 0 auto;
+  display: flex;
+  min-width: 0;
+}
+
+.header-left {
+  justify-content: flex-start;
+  width: 110px;
+}
+
+.header-right {
+  justify-content: flex-end;
+  width: 40px;
+}
+
+.header-top-row h3 {
   margin: 0;
   font-size: 1.4rem;
   text-align: center;
-}
-
-.close-button {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  color: #666;
   position: absolute;
-  top: 8px;
-  right: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
 }
 
-.close-button:hover {
-  background: #f0f0f0;
-  color: #000;
-}
-
-.change-wallet-btn {
+.header-left .change-wallet-btn {
   background: #6c757d;
   color: white;
   border: none;
@@ -105,14 +121,54 @@
   font-size: 0.8rem;
   font-weight: 500;
   transition: background-color 0.2s;
-  position: absolute;
-  top: 50%;
-  left: 14px;
-  transform: translateY(-50%);
 }
 
-.change-wallet-btn:hover {
+.header-left .change-wallet-btn:hover {
   background: #5a6268;
+}
+
+.header-right .close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: #666;
+}
+
+.header-right .close-button:hover {
+  background: #f0f0f0;
+  color: #000;
+}
+
+.sender-info {
+  font-size: 0.8rem;
+  color: #666;
+  order: 2;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sender-info::before {
+  content: "from: ";
+  font-size: 0.8rem;
+}
+
+.sender-info .address-link {
+  font-size: 0.8rem;
+  color: #666;
+  text-decoration: none;
+  font-family: monospace;
+  background: transparent;
+}
+
+.sender-info .address-link:hover {
+  color: #1d9bf0;
+  text-decoration: underline;
+  background: transparent;
 }
 
 /* Dark mode styles */
@@ -121,21 +177,35 @@
     border-bottom: 1px solid #333;
   }
 
-  .close-button {
+  .sender-info {
+    color: #888;
+  }
+
+  .sender-info .address-link {
+    color: #888;
+    background: transparent;
+  }
+
+  .sender-info .address-link:hover {
+    color: #4da6ff;
+    background: transparent;
+  }
+
+  .header-right .close-button {
     color: #ccc;
   }
 
-  .close-button:hover {
+  .header-right .close-button:hover {
     background: #333;
     color: #fff;
   }
 
-  .change-wallet-btn {
+  .header-left .change-wallet-btn {
     background: #495057;
     color: #fff;
   }
 
-  .change-wallet-btn:hover {
+  .header-left .change-wallet-btn:hover {
     background: #6c757d;
   }
 }
