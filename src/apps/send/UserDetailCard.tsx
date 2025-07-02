@@ -7,6 +7,7 @@ import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
 import { PaymentModal } from "../../shared/PaymentModal.tsx";
 import { AddressLink } from "../../shared/AddressLink.tsx";
+import { AtprotoUserCard } from "../../shared/AtprotoUserCard.tsx";
 import { ConnectWallet } from "../../shared/WalletConnector.tsx";
 import { config } from '../../shared/WalletConnector.tsx';
 import './UserDetailCard.css';
@@ -146,32 +147,18 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
       
       <div className="card-content">
         <div className="user-profile">
-          <div className="profile-avatar">
-            {selectedUser.avatar ? (
-              <img 
-                src={selectedUser.avatar} 
-                alt={`${selectedUser.handle || selectedUser.did} avatar`}
-                className="avatar-image"
-              />
-            ) : (
-              <div className="avatar-placeholder">
-                {(selectedUser.handle || selectedUser.displayName || selectedUser.did).charAt(0).toUpperCase()}
-              </div>
-            )}
-          </div>
-          <div className="profile-info">
-            <div className="profile-handle">
-              {selectedUser.handle ? `@${selectedUser.handle}` : 'No handle'}
-            </div>
-            {selectedUser.displayName && (
-              <div className="profile-display-name">{selectedUser.displayName}</div>
-            )}
-            <div className="user-did">{selectedUser.did}</div>
-            <br/>
-            {selectedUser.description && (
-              <div className="profile-description">{selectedUser.description}</div>
-            )}
-          </div>
+          <AtprotoUserCard
+            name={selectedUser.displayName}
+            handle={selectedUser.handle}
+            did={selectedUser.did}
+            avatar={selectedUser.avatar}
+            variant="profile"
+            clickable={!!selectedUser.handle}
+            showDid
+          />
+          {selectedUser.description && (
+            <div className="profile-description">{selectedUser.description}</div>
+          )}
         </div>
 
         <div className="address-records">

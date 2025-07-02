@@ -81,69 +81,25 @@
 
 .user-profile {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-items: flex-start;
+  align-items: center;
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
   justify-content: center;
-}
-
-.profile-avatar {
-  flex-shrink: 0;
-  width: 80px;
-  height: 80px;
-}
-
-.profile-avatar .avatar-image {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.profile-avatar .avatar-placeholder {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 24px;
-}
-
-.profile-info {
-  min-width: 0;
-  max-width: 70%;
-  min-width: 40%;
-  text-align: center;
-}
-
-.profile-handle {
-  font-size: 18px;
-  font-weight: 600;
-  color: #0f1419;
-  margin-bottom: 4px;
-}
-
-.profile-display-name {
-  font-size: 16px;
-  color: #536471;
-  margin-bottom: 8px;
 }
 
 .profile-description {
   font-size: 14px;
   color: #0f1419;
   line-height: 1.4;
-  margin-bottom: 0;
+  margin: 8px 0 0 0;
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
   max-width: 100%;
+  text-align: center;
 }
 
 .user-info label {
@@ -420,16 +376,6 @@
 }
 
 @media (max-width: 400px) {
-  .profile-avatar {
-    width: 64px;
-    height: 64px;
-  }
-  .profile-handle {
-    font-size: 17px;
-  }
-  .profile-display-name {
-    font-size: 15px;
-  }
   .user-did {
     font-size: 9px;
   }

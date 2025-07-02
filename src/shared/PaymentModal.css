@@ -1189,113 +1189,19 @@
   text-transform: lowercase;
 }
 
-.recipient-profile {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e1e5e9;
-  transition: all 0.2s ease;
-  width: fit-content;
-  margin: 0 auto;
-  min-width: 50%;
-}
-
-.recipient-profile.clickable {
-  cursor: pointer;
-}
-
-.recipient-profile.clickable:hover {
-  background: #e9ecef;
-  border-color: #1d9bf0;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(29, 155, 240, 0.2);
-}
-
-.recipient-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.recipient-avatar-placeholder {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
-.recipient-details {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-  min-width: 0;
-  align-self: center;
-}
-
-.recipient-details .user-did {
-  font-size: 10px;
-  margin: 0px;
-  color: darkgrey
-}
-
-.recipient-name {
-  font-size: 1.26rem;
-  font-weight: 600;
-  color: #333;
-  line-height: 1.1;
-  text-align: left;
-  margin: 0;
-}
-
-.recipient-handle {
-  font-family: monospace;
-  font-size: 1.26rem;
+.recipient-header {
+  font-size: 14px;
   color: #666;
-  line-height: 1.1;
-  text-align: left;
-  margin: 0;
+  font-weight: 500;
+  margin-bottom: 6px;
+  text-transform: lowercase;
+  letter-spacing: 0.3px;
 }
 
 /* Dark mode styles for recipient info */
 @media (prefers-color-scheme: dark) {
   .recipient-header {
     color: #ccc;
-  }
-
-  .recipient-profile {
-    background: #2a2a2a;
-    border-color: #555;
-  }
-
-  .recipient-text {
-    color: #ccc;
-  }
-
-  .recipient-name {
-    color: #fff;
-  }
-
-  .recipient-handle {
-    color: #ccc;
-  }
-
-  .recipient-profile.clickable:hover {
-    background: #3a3a3a;
-    border-color: #1d9bf0;
-    box-shadow: 0 2px 8px rgba(29, 155, 240, 0.3);
   }
 }
 

@@ -4,6 +4,7 @@ import { isAddress, parseUnits } from 'viem';
 import { useTokenBalances, type TokenBalance } from './useTokenBalances.ts';
 import { getChainName, getChainClass, getDoraTransactionUrl } from './common.ts';
 import { AddressLink } from './AddressLink.tsx';
+import { AtprotoUserCard } from './AtprotoUserCard.tsx';
 import './PaymentModal.css';
 
 // ERC20 ABI for transfer function
@@ -529,32 +530,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 {(recipientName || recipientHandle) && (
                   <div className="recipient-info">
                     <div className="recipient-header">which is controlled by</div>
-                    <div 
-                      className={`recipient-profile ${recipientHandle ? 'clickable' : ''}`}
-                      onClick={() => {
-                        if (recipientHandle) {
-                          globalThis.open(`https://bsky.app/profile/${recipientHandle}`, '_blank');
-                        }
-                      }}
-                      title={recipientHandle ? `View @${recipientHandle} on Bluesky` : undefined}
-                    >
-                      {recipientAvatar ? (
-                        <img 
-                          src={recipientAvatar} 
-                          alt={`${recipientHandle || recipientName} avatar`}
-                          className="recipient-avatar"
-                        />
-                      ) : (
-                        <div className="recipient-avatar-placeholder">
-                          {(recipientHandle || recipientName || '?').charAt(0).toUpperCase()}
-                        </div>
-                      )}
-                      <div className="recipient-details">
-                        {recipientName && <div className="recipient-name">{recipientName}</div>}
-                        {recipientHandle && <div className="recipient-handle">@{recipientHandle}</div>}
-                        {recipientDid && <div className="user-did" style={{ textAlign: 'left', marginTop: '4px' }}>{recipientDid}</div>}
-                      </div>
-                    </div>
+                    <AtprotoUserCard
+                      name={recipientName}
+                      handle={recipientHandle}
+                      did={recipientDid}
+                      avatar={recipientAvatar}
+                      clickable={!!recipientHandle}
+                      variant="payment"
+                      showDid
+                    />
                   </div>
                 )}
               </div>

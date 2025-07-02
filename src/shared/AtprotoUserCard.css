@@ -1,0 +1,205 @@
+/* Base styles for AtprotoUserCard */
+.atproto-user-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e1e5e9;
+  transition: all 0.2s ease;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.atproto-user-card.clickable {
+  cursor: pointer;
+}
+
+.atproto-user-card.clickable:hover {
+  background: #e9ecef;
+  border-color: #1d9bf0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(29, 155, 240, 0.2);
+}
+
+/* Payment variant (used in PaymentModal) */
+.atproto-user-card.payment {
+  min-width: 50%;
+}
+
+/* Profile variant (used in UserDetailCard) */
+.atproto-user-card.profile {
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  margin: 0;
+  width: 100%;
+  justify-content: center;
+}
+
+.atproto-user-card.profile.clickable:hover {
+  background: transparent;
+  border: none;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Avatar styles */
+.atproto-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.atproto-avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+/* Details container */
+.atproto-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  align-self: center;
+}
+
+/* Profile variant details alignment */
+.atproto-user-card.profile .atproto-details {
+  max-width: 70%;
+  min-width: 40%;
+  text-align: center;
+  gap: 4px;
+}
+
+/* Name styles */
+.atproto-name {
+  font-size: 1.26rem;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.1;
+  text-align: left;
+  margin: 0;
+}
+
+.atproto-user-card.profile .atproto-name {
+  font-size: 16px;
+  color: #536471;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+/* Handle styles */
+.atproto-handle {
+  font-family: monospace;
+  font-size: 1.26rem;
+  color: #666;
+  line-height: 1.1;
+  text-align: left;
+  margin: 0;
+}
+
+.atproto-user-card.profile .atproto-handle {
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f1419;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+/* DID styles */
+.atproto-did {
+  font-size: 10px;
+  margin: 0;
+  color: darkgrey;
+  text-align: left;
+}
+
+.atproto-user-card.profile .atproto-did {
+  font-size: 10px;
+  color: #536471;
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .atproto-user-card {
+    background: #2a2a2a;
+    border-color: #555;
+  }
+
+  .atproto-user-card.profile {
+    background: transparent;
+    border: none;
+  }
+
+  .atproto-name {
+    color: #fff;
+  }
+
+  .atproto-handle {
+    color: #ccc;
+  }
+
+  .atproto-user-card.profile .atproto-name {
+    color: #ccc;
+  }
+
+  .atproto-user-card.profile .atproto-handle {
+    color: #fff;
+  }
+
+  .atproto-user-card.clickable:hover {
+    background: #3a3a3a;
+    border-color: #1d9bf0;
+    box-shadow: 0 2px 8px rgba(29, 155, 240, 0.3);
+  }
+
+  .atproto-user-card.profile.clickable:hover {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 400px) {
+  .atproto-avatar,
+  .atproto-avatar-placeholder {
+    width: 64px;
+    height: 64px;
+  }
+
+  .atproto-avatar-placeholder {
+    font-size: 20px;
+  }
+
+  .atproto-user-card.profile .atproto-handle {
+    font-size: 17px;
+  }
+
+  .atproto-user-card.profile .atproto-name {
+    font-size: 15px;
+  }
+
+  .atproto-user-card.profile .atproto-did {
+    font-size: 9px;
+  }
+}
