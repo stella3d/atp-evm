@@ -1241,6 +1241,7 @@
 }
 
 .recipient-handle {
+  font-family: monospace;
   font-size: 1.26rem;
   color: #666;
   line-height: 1.1;

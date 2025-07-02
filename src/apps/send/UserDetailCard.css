@@ -2,7 +2,7 @@
   background: white;
   border: 1px solid #e1e5e9;
   border-radius: 12px;
-  padding: 6px 10px;
+  padding: 6px 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-top: 16px;
   animation: slideIn 0.2s ease-out;
@@ -380,6 +380,10 @@
   .address-value {
     font-size: 13px;
   }
+
+  .records-list .address-header code {
+    font-size: 15px;
+  }
   
   /* Make other elements more compact too */
   .chain-info {
@@ -566,19 +570,20 @@
 }
 
 /* Responsive font size adjustments for AddressLink components */
-@media (max-width: 470px) {
-  
+
+@media (max-width: 446px) {
+  .address-record .address-header code {
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 442px) {
   .address-value.address-link {
-    font-size: 14px !important;
+    font-size: 14px;
   }
-  
   .address-header code {
     font-size: 14px;
   }
-  
   .recipient-address-display .address-link {
     font-size: 13px;
   }
@@ -590,6 +595,10 @@
   }
   
   .address-header code {
+    font-size: 13px;
+  }
+
+  .address-record .address-header code {
     font-size: 13px;
   }
   
@@ -606,9 +615,25 @@
   .address-header code {
     font-size: 11px;
   }
+
+  .address-record .address-header code {
+    font-size: 12px;
+  }
   
   .recipient-address-display .address-link {
     font-size: 11px;
+  }
+}
+
+@media (max-width: 376px) {
+  .address-record .address-header code {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 340px) {
+  .address-record .address-header code {
+    font-size: 10px;
   }
 }
 
