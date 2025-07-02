@@ -26,6 +26,8 @@
   padding: 4px 6px;
 }
 
+
+
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .payment-modal-overlay {
@@ -224,7 +226,7 @@
 }
 
 .modal-content {
-  padding: 8px 14px 8px 14px;
+  padding: 6px 12px 6px 12px;
 }
 
 .step-connect {
@@ -321,6 +323,7 @@
   display: block;
   margin-bottom: 4px;
   font-weight: 600;
+  font-size: 18px;
 }
 
 .recipient-section input {
@@ -375,6 +378,16 @@
   margin-bottom: 6px;
   text-transform: lowercase;
   letter-spacing: 0.3px;
+  font-size: 14px;
+}
+
+.recipient-header {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 6px;
+  text-transform: lowercase;
+  letter-spacing: 0.3px;
 }
 
 .ens-name {
@@ -405,7 +418,7 @@
 .recipient-name {
   margin-top: 8px;
   color: #666;
-  font-size: 1.05rem;
+  font-size: 1rem;
 }
 
 /* Dark mode styles */
@@ -1281,7 +1294,7 @@
   }
   
   .modal-content {
-    padding: 16px;
+    padding: 4px 12px 8px 12px;
   }
   
   /* Reduce text sizes throughout */
@@ -1300,7 +1313,7 @@
   }
   
   .recipient-input {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
   
   .ens-header {
@@ -1310,10 +1323,6 @@
   
   .ens-label {
     font-size: 0.7rem;
-  }
-  
-  .recipient-name {
-    font-size: 0.8rem;
   }
   
   /* Token list items more compact */
@@ -1365,24 +1374,11 @@
     font-size: 0.85rem;
   }
   
-  /* Recipient profile more compact */
-  .recipient-profile {
-    padding: 6px;
-  }
-  
   .recipient-avatar,
   .recipient-avatar-placeholder {
     width: 60px;
     height: 60px;
     font-size: 22px;
-  }
-  
-  .recipient-name {
-    font-size: 1.08rem;
-  }
-  
-  .recipient-handle {
-    font-size: 0.96rem;
   }
   
   .recipient-header {
@@ -1608,11 +1604,17 @@
   .recipient-address-display .address-link {
     font-size: 12px
   }
+  .recipient-address-display code {
+    font-size: 15px;
+  }
 }
 
 /* Responsive font size adjustments for AddressLink components */
 @media (max-width: 470px) {
   .address-value.address-link {
+    font-size: 14px;
+  }
+  .recipient-address-display code {
     font-size: 14px;
   }
   
@@ -1622,8 +1624,8 @@
 }
 
 @media (max-width: 442px) {
-  .address-value.address-link {
-    font-size: 14px !important;
+  .recipient-address-display code {
+    font-size: 13px;
   }
   
   .recipient-address-display .address-link {
@@ -1641,6 +1643,24 @@
   }
 }
 
+@media (max-width: 410px) {
+  .modal-header .sender-info code {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 364px) {
+  .modal-header .sender-info code {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 328px) {
+  .modal-header .sender-info code {
+    font-size: 9px;
+  }
+}
+
 @media (max-width: 400px) {
   .address-link {
     font-size: 0.8rem;
@@ -1654,8 +1674,8 @@
     font-size: 0.8rem;
   }
   
-  .recipient-address-display {
-    font-size: 0.7rem;
+  .recipient-address-display code {
+    font-size: 11px;
   }
 }
 
@@ -1827,7 +1847,7 @@
 /* Responsive modal width adjustments */
 @media (max-width: 464px) {
   .payment-modal {
-    max-width: 380px;
+    max-width: 420px;
     width: 92vw;
   }
 }

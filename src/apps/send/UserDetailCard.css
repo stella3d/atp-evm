@@ -59,7 +59,7 @@
   cursor: pointer;
   padding: 4px 8px;
   position: absolute;
-  top: calc(60% - 4px);
+  top: calc(55% - 4px);
   right: 8px;
   transform: translateY(-50%);
   border-radius: 4px;
@@ -606,6 +606,12 @@
   }
 }
 
+@media (max-width: 492px) {
+  .recipient-address-display .address-link {
+    font-size: 14px;
+  }
+}
+
 @media (max-width: 470px) {
   .address-header code {
     font-size: 16px;
@@ -614,17 +620,7 @@
 
 /* Responsive font size adjustments for AddressLink components */
 @media (max-width: 470px) {
-  .address-value.address-link {
-    font-size: 15px !important;
-  }
   
-  .address-header code {
-    font-size: 15px;
-  }
-
-  .recipient-address-display .address-link {
-    font-size: 13px;
-  }
 }
 
 @media (max-width: 442px) {
