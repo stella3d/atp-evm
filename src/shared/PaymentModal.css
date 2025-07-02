@@ -323,7 +323,7 @@
   display: block;
   margin-bottom: 4px;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .recipient-section input {
@@ -375,7 +375,6 @@
   font-size: 0.87rem;
   color: #666;
   font-weight: 500;
-  margin-bottom: 6px;
   text-transform: lowercase;
   letter-spacing: 0.3px;
   font-size: 14px;
@@ -733,74 +732,74 @@
   }
 }
 
-/* Compact styling when there are more than 3 tokens */
-.token-list:has(.token-item:nth-child(4)) .token-item {
+/* Compact styling when there are more than 2 tokens */
+.token-list:has(.token-item:nth-child(3)) .token-item {
   padding: 6px 10px;
 }
 
-/* Extra compact styling when there are more than 4 tokens */
-.token-list:has(.token-item:nth-child(5)) .token-item {
+/* Extra compact styling when there are more than 3 tokens */
+.token-list:has(.token-item:nth-child(4)) .token-item {
   padding: 4px 10px;
 }
 
-.token-list:has(.token-item:nth-child(4)) .token-logo-container {
+.token-list:has(.token-item:nth-child(3)) .token-logo-container {
   width: 20px;
   height: 20px;
 }
 
-.token-list:has(.token-item:nth-child(4)) .token-logo,
-.token-list:has(.token-item:nth-child(4)) .token-logo-placeholder {
+.token-list:has(.token-item:nth-child(3)) .token-logo,
+.token-list:has(.token-item:nth-child(3)) .token-logo-placeholder {
   width: 20px;
   height: 20px;
   font-size: 8px;
 }
 
-.token-list:has(.token-item:nth-child(4)) .token-symbol {
+.token-list:has(.token-item:nth-child(3)) .token-symbol {
   font-size: 0.9rem;
 }
 
-.token-list:has(.token-item:nth-child(4)) .token-name {
+.token-list:has(.token-item:nth-child(3)) .token-name {
   font-size: 0.75rem;
 }
 
-.token-list:has(.token-item:nth-child(4)) .token-balance {
+.token-list:has(.token-item:nth-child(3)) .token-balance {
   font-size: 0.8rem;
 }
 
-.token-list:has(.token-item:nth-child(4)) .token-balance-label {
+.token-list:has(.token-item:nth-child(3)) .token-balance-label {
   font-size: 0.65rem;
 }
 
-.token-list:has(.token-item:nth-child(4)) .token-info {
+.token-list:has(.token-item:nth-child(3)) .token-info {
   gap: 0.5px;
 }
 
-.token-list:has(.token-item:nth-child(4)) .token-header {
+.token-list:has(.token-item:nth-child(3)) .token-header {
   gap: 4px;
 }
 
 /* Dark mode compact styles */
 @media (prefers-color-scheme: dark) {
-  .token-list:has(.token-item:nth-child(4)) .token-name {
+  .token-list:has(.token-item:nth-child(3)) .token-name {
     color: #ccc;
   }
 
-  .token-list:has(.token-item:nth-child(4)) .token-balance-label {
+  .token-list:has(.token-item:nth-child(3)) .token-balance-label {
     color: #aaa;
   }
 
-  .token-list:has(.token-item:nth-child(4)) .token-balance {
+  .token-list:has(.token-item:nth-child(3)) .token-balance {
     color: #fff;
   }
 }
 
 .amount-input {
-  margin-top: 16px;
+  margin-top: 8px;
 }
 
 .amount-input label {
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   font-weight: 600;
   font-size: 1.1rem;
 }
@@ -818,7 +817,7 @@
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 1.3rem;
-  padding: 12px 16px;
+  padding: 8px 12px;
   font-weight: 500;
   box-sizing: border-box;
 }
@@ -935,7 +934,7 @@
     background: #2a2a2a;
     border: 1px solid #555;
     color: #fff;
-    padding: 12px 16px;
+    padding: 8px 12px;
     font-size: 1.3rem;
     font-weight: 500;
   }
@@ -990,7 +989,7 @@
   display: flex;
   gap: 12px;
   justify-content: center;
-  margin: 24px auto 0 auto;
+  margin: 16px auto 0 auto;
   max-width: 70%;
   min-width: 50%;
 }
@@ -1175,7 +1174,7 @@
 
 /* Recipient info styles */
 .recipient-info {
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .recipient-header {
@@ -1325,7 +1324,6 @@
     font-size: 0.8rem;
   }
   
-  .recipient-section label,
   .token-selection label,
   .amount-input label {
     font-size: 0.9rem;
@@ -1337,7 +1335,6 @@
   
   .ens-header {
     font-size: 0.82rem;
-    margin-bottom: 4px;
   }
   
   .ens-label {
@@ -1514,6 +1511,9 @@
 
 /* Additional breakpoint for recipient input at smaller screens */
 @media (max-width: 432px) {
+  .recipient-section label {
+    font-size: 18px;
+   }
   .recipient-section input {
     font-size: 11px;
   }
@@ -1826,33 +1826,6 @@
     color: #f1aeb5;
     background: #2c0b0e;
     border: 1px solid #842029;
-  }
-}
-
-@media (max-width: 540px) {
-  .amount-input label {
-    font-size: 1.05rem;
-  }
-  
-  .amount-row input {
-    font-size: 1.2rem;
-    padding: 10px 14px;
-  }
-  
-  .amount-row .token-symbol {
-    font-size: 1.05rem;
-  }
-  
-  .amount-token-logo-container {
-    width: 18px;
-    height: 18px;
-  }
-  
-  .amount-token-logo,
-  .amount-token-logo-placeholder {
-    width: 18px;
-    height: 18px;
-    font-size: 7px;
   }
 }
 
