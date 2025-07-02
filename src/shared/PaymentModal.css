@@ -66,11 +66,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 4px 8px 4px 8px;
+  padding: 6px 8px 6px 8px;
   border-bottom: 1px solid #eee;
   position: relative;
   flex-direction: column;
-  gap: 1px;
+  gap: 4px;
 }
 
 .header-top-row {
@@ -113,9 +113,9 @@
 
 .header-left .change-wallet-btn {
   background: #6c757d;
-  color: white;
+  color: lightgray;
   border: none;
-  padding: 4px 8px;
+  padding: 4px 6px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.8rem;
@@ -146,15 +146,24 @@
   font-size: 0.8rem;
   color: #666;
   order: 2;
-  margin-top: 2px;
+  margin-top: 3px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 4px;
+  width: 100%;
 }
 
-.sender-info::before {
-  content: "from: ";
+.sender-info .from-label {
   font-size: 0.8rem;
+  color: #666;
+  font-weight: 500;
+  align-self: flex-start;
+  margin-left: 6px;
+}
+
+.sender-info .address-link {
+  flex-grow: 1;
+  text-align: center;
 }
 
 .sender-info .address-link {
@@ -181,6 +190,10 @@
     color: #888;
   }
 
+  .sender-info .from-label {
+    color: #888;
+  }
+
   .sender-info .address-link {
     color: #888;
     background: transparent;
@@ -202,7 +215,7 @@
 
   .header-left .change-wallet-btn {
     background: #495057;
-    color: #fff;
+    color: lightgray;
   }
 
   .header-left .change-wallet-btn:hover {

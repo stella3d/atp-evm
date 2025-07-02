@@ -6,6 +6,9 @@ interface AddressLinkProps {
   children?: React.ReactNode;
   showFullAddress?: boolean;
   monospace?: boolean;
+  fontSize?: string | number;
+  color?: string;
+  style?: React.CSSProperties;
 }
 
 export const AddressLink: React.FC<AddressLinkProps> = ({
@@ -13,7 +16,10 @@ export const AddressLink: React.FC<AddressLinkProps> = ({
   className = '',
   children,
   showFullAddress = true,
-  monospace = true
+  monospace = true,
+  fontSize,
+  color,
+  style
 }) => {
   // Validate that the address is a proper 42-character hex string
   if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
@@ -37,6 +43,13 @@ export const AddressLink: React.FC<AddressLinkProps> = ({
     displayText
   );
 
+  // Combine custom styles with fontSize and color props
+  const combinedStyle: React.CSSProperties = {
+    ...style,
+    ...(fontSize && { fontSize: typeof fontSize === 'number' ? `${fontSize}px` : fontSize }),
+    ...(color && { color })
+  };
+
   return (
     <a
       href={doraUrl}
@@ -45,6 +58,7 @@ export const AddressLink: React.FC<AddressLinkProps> = ({
       className={`address-link ${className}`}
       onClick={handleClick}
       title={`view ${address}'s profile on Dora`}
+      style={combinedStyle}
     >
       {content}
     </a>

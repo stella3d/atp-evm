@@ -495,8 +495,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             </div>
           </div>
           {address && (
-            <div className="sender-info" style={{ fontSize: '9px !important' }}>
-              <AddressLink address={address} />
+            <div className="sender-info">
+              <span className="from-label">from:</span>
+              <AddressLink 
+                address={address} 
+                fontSize="0.8rem" 
+                style={{ 
+                  color: 'inherit' // This will inherit the color from .sender-info CSS
+                }} 
+              />
             </div>
           )}
         </div>
