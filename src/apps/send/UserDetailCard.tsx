@@ -76,7 +76,6 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         
         // Convert back to array
         const deduplicatedRecords = Array.from(addressMap.values());
-        console.log(`Deduplicated from ${records.length} to ${deduplicatedRecords.length} records`);
         
         setAddressRecords(deduplicatedRecords);
 
@@ -84,8 +83,6 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         const validationMap = new Map<string, AddressControlVerificationChecks>();
         for (const record of deduplicatedRecords) {
           try {
-            console.log('Record structure for validation:', record);
-            
             // Basic validation based on available data
             const hasValidAddress = !!(record.value?.siwe?.address && 
               record.value.siwe.address.startsWith('0x') && 
@@ -254,18 +251,6 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
           <div className="wallet-connection-section">
             <label>Connect Wallet to Send Payments:</label>
             <ConnectWallet />
-          </div>
-        )}
-        
-        {selectedUser.handle && (
-          <div className="user-actions">
-            <button 
-              type="button" 
-              className="action-button secondary"
-              onClick={handleViewProfile}
-            >
-              View Profile
-            </button>
           </div>
         )}
       </div>

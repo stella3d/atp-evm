@@ -39,11 +39,20 @@
   justify-content: center;
 }
 
+.atproto-user-card.profile.clickable {
+  background: #f8f9fa;
+  border: 1px solid #e1e5e9;
+  padding: 6px;
+  border-radius: 8px;
+  max-width: 80%;
+  width: fit-content;
+}
+
 .atproto-user-card.profile.clickable:hover {
-  background: transparent;
-  border: none;
-  transform: none;
-  box-shadow: none;
+  background: #e9ecef;
+  border-color: #1d9bf0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(29, 155, 240, 0.2);
 }
 
 /* Avatar styles */
@@ -150,6 +159,11 @@
     border: none;
   }
 
+  .atproto-user-card.profile.clickable {
+    background: #2a2a2a;
+    border-color: #555;
+  }
+
   .atproto-name {
     color: #fff;
   }
@@ -173,9 +187,9 @@
   }
 
   .atproto-user-card.profile.clickable:hover {
-    background: transparent;
-    border: none;
-    box-shadow: none;
+    background: #3a3a3a;
+    border-color: #1d9bf0;
+    box-shadow: 0 2px 8px rgba(29, 155, 240, 0.3);
   }
 }
 
