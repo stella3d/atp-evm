@@ -92,7 +92,7 @@
 .atproto-user-card.profile .atproto-details {
   max-width: 70%;
   min-width: 40%;
-  text-align: center;
+  text-align: left;
   gap: 4px;
 }
 
@@ -107,9 +107,10 @@
 }
 
 .atproto-user-card.profile .atproto-name {
-  font-size: 16px;
-  color: #536471;
-  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f1419;
+  text-align: left;
   margin-bottom: 0;
 }
 
@@ -124,11 +125,11 @@
 }
 
 .atproto-user-card.profile .atproto-handle {
-  font-family: inherit;
-  font-size: 18px;
-  font-weight: 600;
-  color: #0f1419;
-  text-align: center;
+  font-family: monospace;
+  font-size: 20px;
+  font-weight: 400;
+  color: #536471;
+  text-align: left;
   margin-bottom: 0;
 }
 
@@ -143,7 +144,7 @@
 .atproto-user-card.profile .atproto-did {
   font-size: 10px;
   color: #536471;
-  text-align: center;
+  text-align: left;
   margin-top: 4px;
 }
 
@@ -173,11 +174,11 @@
   }
 
   .atproto-user-card.profile .atproto-name {
-    color: #ccc;
+    color: #fff;
   }
 
   .atproto-user-card.profile .atproto-handle {
-    color: #fff;
+    color: #ccc;
   }
 
   .atproto-user-card.clickable:hover {
@@ -206,11 +207,11 @@
   }
 
   .atproto-user-card.profile .atproto-handle {
-    font-size: 17px;
+    font-size: 18px;
   }
 
   .atproto-user-card.profile .atproto-name {
-    font-size: 15px;
+    font-size: 18px;
   }
 
   .atproto-user-card.profile .atproto-did {
