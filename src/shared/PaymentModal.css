@@ -107,7 +107,7 @@
   transition: background-color 0.2s;
   position: absolute;
   top: 50%;
-  left: 8px;
+  left: 14px;
   transform: translateY(-50%);
 }
 
@@ -286,7 +286,7 @@
 }
 
 .ens-header {
-  font-size: 0.75rem;
+  font-size: 0.87rem;
   color: #666;
   font-weight: 500;
   margin-bottom: 6px;
@@ -1071,7 +1071,7 @@
 }
 
 .recipient-header {
-  font-size: 0.9rem;
+  font-size: 1.02rem;
   color: #666;
   font-weight: 500;
   margin-bottom: 8px;
@@ -1104,16 +1104,16 @@
 }
 
 .recipient-avatar {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
 }
 
 .recipient-avatar-placeholder {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
@@ -1121,7 +1121,7 @@
   justify-content: center;
   color: white;
   font-weight: 600;
-  font-size: 22px;
+  font-size: 24px;
   flex-shrink: 0;
 }
 
@@ -1135,7 +1135,7 @@
 }
 
 .recipient-name {
-  font-size: 1.2rem;
+  font-size: 1.26rem;
   font-weight: 600;
   color: #333;
   line-height: 1.1;
@@ -1144,7 +1144,7 @@
 }
 
 .recipient-handle {
-  font-size: 1.2rem;
+  font-size: 1.26rem;
   color: #666;
   line-height: 1.1;
   text-align: left;
@@ -1221,7 +1221,7 @@
   }
   
   .ens-header {
-    font-size: 0.7rem;
+    font-size: 0.82rem;
     margin-bottom: 4px;
   }
   
@@ -1289,21 +1289,21 @@
   
   .recipient-avatar,
   .recipient-avatar-placeholder {
-    width: 52px;
-    height: 52px;
-    font-size: 20px;
+    width: 60px;
+    height: 60px;
+    font-size: 22px;
   }
   
   .recipient-name {
-    font-size: 1.02rem;
+    font-size: 1.08rem;
   }
   
   .recipient-handle {
-    font-size: 0.9rem;
+    font-size: 0.96rem;
   }
   
   .recipient-header {
-    font-size: 0.8rem;
+    font-size: 0.92rem;
   }
   
   /* Make action buttons stack vertically on very small screens but keep them centered and pill-shaped */
@@ -1430,7 +1430,7 @@
     font-size: 12px;
   }
   .ens-header {
-    font-size: 0.65rem;
+    font-size: 0.77rem;
   }
   .ens-name {
     font-size: 0.95rem;
