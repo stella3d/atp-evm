@@ -398,7 +398,7 @@
   font-size: 1rem;
   margin: 0 auto;
   width: fit-content;
-  min-width: 50%;
+  min-width: 40%;
 }
 
 .ens-label {
@@ -413,6 +413,19 @@
   font-family: monospace;
   color: #0066cc;
   font-weight: 500;
+  font-size: 16px;
+}
+
+@media (max-width: 400px) {
+  .recipient-section .ens-value {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 401px) {
+  .recipient-section .ens-value {
+    font-size: 18px;
+  }
 }
 
 .recipient-name {
@@ -1158,7 +1171,7 @@
 
 /* Recipient info styles */
 .recipient-info {
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .recipient-header {
@@ -1374,13 +1387,6 @@
   .payment-summary {
     padding: 12px;
     font-size: 0.85rem;
-  }
-  
-  .recipient-avatar,
-  .recipient-avatar-placeholder {
-    width: 60px;
-    height: 60px;
-    font-size: 22px;
   }
   
   .recipient-header {

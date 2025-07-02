@@ -89,8 +89,8 @@
 
 .profile-avatar {
   flex-shrink: 0;
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
 }
 
 .profile-avatar .avatar-image {
@@ -413,6 +413,22 @@
   }
 }
 
+@media (max-width: 400px) {
+  .profile-avatar {
+    width: 64px;
+    height: 64px;
+  }
+  .profile-handle {
+    font-size: 17px;
+  }
+  .profile-display-name {
+    font-size: 15px;
+  }
+  .user-did {
+    font-size: 9px;
+  }
+}
+
 @media (max-width: 428px) {
   /* Make address values smaller and more readable on mobile */
   .address-value {
@@ -616,7 +632,7 @@
     font-size: 11px;
   }
 
-  .address-record .address-header code {
+  .address_record .address-header code {
     font-size: 12px;
   }
   
