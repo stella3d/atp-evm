@@ -762,11 +762,6 @@
   gap: 4px;
 }
 
-/* Compact recipient profile spacing when there are more than 3 tokens */
-.payment-modal:has(.token-list .token-item:nth-child(4)) .recipient-details {
-  gap: 3.6px; /* 10% smaller than the default 4px */
-}
-
 /* Dark mode compact styles */
 @media (prefers-color-scheme: dark) {
   .token-list:has(.token-item:nth-child(4)) .token-name {
@@ -1200,16 +1195,16 @@
 }
 
 .recipient-avatar {
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
 }
 
 .recipient-avatar-placeholder {
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
@@ -1225,9 +1220,15 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   min-width: 0;
   align-self: center;
+}
+
+.recipient-details .user-did {
+  font-size: 10px;
+  margin: 0px;
+  color: darkgrey
 }
 
 .recipient-name {
