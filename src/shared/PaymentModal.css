@@ -620,6 +620,72 @@
   }
 }
 
+/* Compact styling when there are more than 3 tokens */
+.token-list:has(.token-item:nth-child(4)) .token-item {
+  padding: 6px 10px;
+}
+
+/* Extra compact styling when there are more than 4 tokens */
+.token-list:has(.token-item:nth-child(5)) .token-item {
+  padding: 4px 10px;
+}
+
+.token-list:has(.token-item:nth-child(4)) .token-logo-container {
+  width: 20px;
+  height: 20px;
+}
+
+.token-list:has(.token-item:nth-child(4)) .token-logo,
+.token-list:has(.token-item:nth-child(4)) .token-logo-placeholder {
+  width: 20px;
+  height: 20px;
+  font-size: 8px;
+}
+
+.token-list:has(.token-item:nth-child(4)) .token-symbol {
+  font-size: 0.9rem;
+}
+
+.token-list:has(.token-item:nth-child(4)) .token-name {
+  font-size: 0.75rem;
+}
+
+.token-list:has(.token-item:nth-child(4)) .token-balance {
+  font-size: 0.8rem;
+}
+
+.token-list:has(.token-item:nth-child(4)) .token-balance-label {
+  font-size: 0.65rem;
+}
+
+.token-list:has(.token-item:nth-child(4)) .token-info {
+  gap: 0.5px;
+}
+
+.token-list:has(.token-item:nth-child(4)) .token-header {
+  gap: 4px;
+}
+
+/* Compact recipient profile spacing when there are more than 3 tokens */
+.payment-modal:has(.token-list .token-item:nth-child(4)) .recipient-details {
+  gap: 3.6px; /* 10% smaller than the default 4px */
+}
+
+/* Dark mode compact styles */
+@media (prefers-color-scheme: dark) {
+  .token-list:has(.token-item:nth-child(4)) .token-name {
+    color: #ccc;
+  }
+
+  .token-list:has(.token-item:nth-child(4)) .token-balance-label {
+    color: #aaa;
+  }
+
+  .token-list:has(.token-item:nth-child(4)) .token-balance {
+    color: #fff;
+  }
+}
+
 .amount-input {
   margin-top: 16px;
 }
