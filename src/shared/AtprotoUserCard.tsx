@@ -34,6 +34,37 @@ export const AtprotoUserCard: React.FC<AtprotoUserCardProps> = ({
     }
   };
 
+  if (variant === 'profile') {
+    return (
+      <div 
+        className={`atproto-user-card ${variant} ${clickable ? 'clickable' : ''}`}
+        onClick={handleClick}
+        title={clickable && handle ? `View @${handle} on Bluesky` : undefined}
+      >
+        <div className="atproto-main-row">
+          <div className="atproto-avatar-section">
+            {avatar ? (
+              <img 
+                src={avatar} 
+                alt={`${handle || name} avatar`}
+                className="atproto-avatar"
+              />
+            ) : (
+              <div className="atproto-avatar-placeholder">
+                {getDisplayInitial()}
+              </div>
+            )}
+          </div>
+          <div className="atproto-details">
+            {name && <div className="atproto-name">{name}</div>}
+            {handle && <div className="atproto-handle">@{handle}</div>}
+          </div>
+        </div>
+        {showDid && did && <div className="atproto-did">{did}</div>}
+      </div>
+    );
+  }
+
   return (
     <div 
       className={`atproto-user-card ${variant} ${clickable ? 'clickable' : ''}`}
