@@ -8,6 +8,8 @@
   animation: slideIn 0.2s ease-out;
   max-width: min(920px, calc(100vw - 8px));
   min-width: 250px;
+  width: 100%;
+  margin: 16px auto 0 auto;
   margin-left: 4px;
   margin-right: 4px;
   box-sizing: border-box;
@@ -138,6 +140,10 @@
   color: #0f1419;
   line-height: 1.4;
   margin-bottom: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
 }
 
 .user-info label {
