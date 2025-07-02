@@ -416,6 +416,10 @@
   font-size: 16px;
 }
 
+.ens-name .ens-value {
+  font-weight: 640;
+}
+
 @media (max-width: 400px) {
   .recipient-section .ens-value {
     font-size: 16px;
