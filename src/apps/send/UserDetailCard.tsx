@@ -289,6 +289,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         recipientAddress={paymentModal.recipientAddress}
         recipientName={selectedUser.displayName || undefined}
         recipientHandle={selectedUser.handle || undefined}
+        recipientDid={selectedUser.did || undefined}
         recipientAvatar={selectedUser.avatar || undefined}
         chainId={paymentModal.chainId}
       />

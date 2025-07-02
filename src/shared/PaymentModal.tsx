@@ -70,6 +70,7 @@ interface PaymentModalProps {
   recipientName?: string;
   recipientHandle?: string;
   recipientAvatar?: string;
+  recipientDid?: string;
   chainId?: number;
 }
 
@@ -80,6 +81,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   recipientName,
   recipientHandle,
   recipientAvatar,
+  recipientDid,
   chainId = 1
 }) => {
   const { address, isConnected } = useAccount();
@@ -550,6 +552,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       <div className="recipient-details">
                         {recipientName && <div className="recipient-name">{recipientName}</div>}
                         {recipientHandle && <div className="recipient-handle">@{recipientHandle}</div>}
+                        {recipientDid && <div className="user-did" style={{ textAlign: 'left', marginTop: '4px' }}>{recipientDid}</div>}
                       </div>
                     </div>
                   </div>
