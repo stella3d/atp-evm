@@ -42,7 +42,7 @@ function SendApp() {
 
   return (
     <>
-      <h1>DID Pay Demo</h1>
+      <h1>ATPay</h1>
       <p>This demo lets you send value to a recipient based on their ATProto DID & linked Ethereum wallet.</p>
       <SearchUsers 
         onUserSelect={handleUserSelect} 

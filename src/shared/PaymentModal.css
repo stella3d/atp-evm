@@ -299,7 +299,7 @@
   background: #f0f8ff;
   border: 1px solid #d0e7ff;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   margin: 0 auto;
   width: fit-content;
   min-width: 50%;
@@ -1367,7 +1367,7 @@
     font-size: 0.65rem;
   }
   .ens-name {
-    font-size: 0.75rem;
+    font-size: 0.95rem;
     padding: 2px 6px;
   }
   .ens-label {
