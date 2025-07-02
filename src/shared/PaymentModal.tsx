@@ -491,7 +491,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 </button>
               )}
             </div>
-            <h3>Send Payment</h3>
+            <h3>Send</h3>
             <div className="header-right">
               <button type="button" className="close-button" onClick={onClose}>×</button>
             </div>
