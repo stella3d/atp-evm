@@ -51,17 +51,19 @@ function SendApp() {
       <QueryClientProvider client={queryClient}>
         <h1>ATPay</h1>
         <p>This demo lets you send value to a recipient based on their ATProto DID & linked Ethereum wallet.</p>
-        <SearchUsers 
-          onUserSelect={handleUserSelect} 
-          onUsersUpdate={handleUsersUpdate} 
-        />
-        <WalletConnectionCard />
-        {selectedUser && (
-          <UserDetailCard 
-            selectedUser={selectedUser} 
-            onClose={handleCloseCard}
+        <div className="app-container">
+          <SearchUsers 
+            onUserSelect={handleUserSelect} 
+            onUsersUpdate={handleUsersUpdate} 
           />
-        )}
+          <WalletConnectionCard />
+          {selectedUser && (
+            <UserDetailCard 
+              selectedUser={selectedUser} 
+              onClose={handleCloseCard}
+            />
+          )}
+        </div>
       </QueryClientProvider>
     </WagmiProvider>
   );

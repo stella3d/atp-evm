@@ -55,3 +55,8 @@ h1 {
   font-size: 2.5em;
   color: #4ecdc4;
 }
+
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
