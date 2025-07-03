@@ -20,6 +20,30 @@ interface UserDetailCardProps {
   triggerPayment?: DefinedDidString | null; // DID to trigger payment for
 }
 
+const linkifyText = (text: string): React.ReactNode[] => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+  return text.split(urlRegex).map((part, index) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: '#1d9bf0',
+            textDecoration: 'underline',
+          }}
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+};
+
 // Inner component that uses wagmi hooks
 const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onClose, triggerPayment }) => {
   const { isConnected } = useAccount();
@@ -179,7 +203,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
           {selectedUser.description && (
             <div className="profile-description">
               {selectedUser.description.split('\n').map((line, index) => (
-                <p key={index}>{line}</p>
+                <p key={index}>{linkifyText(line)}</p>
               ))}
             </div>
           )}
