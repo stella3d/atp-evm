@@ -127,30 +127,71 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         const records = await fetchAddressControlRecords(selectedUser.did, selectedUser.pds);
         console.log('Raw address records:', records);
         
-        // Deduplicate records by address, keeping the most recent one for each unique address
-        const addressMap = new Map<string, AddressControlRecord>();
+        // Group records by address, collecting all chains for each address
+        const addressMap = new Map<string, {
+          address: string;
+          chains: Array<{
+            chainId: number;
+            record: AddressControlRecord;
+            issuedAt: string;
+          }>;
+          mostRecentRecord: AddressControlRecord;
+        }>();
         
         for (const record of records) {
           const address = record.value?.siwe?.address?.toLowerCase();
           if (!address) continue; // Skip records without valid addresses
           
-          const existingRecord = addressMap.get(address);
-          if (!existingRecord) {
+          const chainId = record.value?.siwe?.chainId || 1;
+          const issuedAt = record.value?.siwe?.issuedAt || '';
+          
+          const existingEntry = addressMap.get(address);
+          if (!existingEntry) {
             // First time seeing this address
-            addressMap.set(address, record);
+            addressMap.set(address, {
+              address,
+              chains: [{ chainId, record, issuedAt }],
+              mostRecentRecord: record
+            });
           } else {
-            // Address already exists, keep the more recent one
-            const currentDate = new Date(record.value?.siwe?.issuedAt || 0);
-            const existingDate = new Date(existingRecord.value?.siwe?.issuedAt || 0);
+            // Address already exists, add this chain
+            const existingChain = existingEntry.chains.find(c => c.chainId === chainId);
+            if (!existingChain) {
+              // New chain for this address
+              existingEntry.chains.push({ chainId, record, issuedAt });
+            } else {
+              // Same chain, keep the more recent one
+              const currentDate = new Date(issuedAt);
+              const existingDate = new Date(existingChain.issuedAt);
+              
+              if (currentDate > existingDate) {
+                existingChain.record = record;
+                existingChain.issuedAt = issuedAt;
+              }
+            }
             
-            if (currentDate > existingDate) {
-              addressMap.set(address, record);
+            // Update the most recent record for this address
+            const currentDate = new Date(issuedAt);
+            const mostRecentDate = new Date(existingEntry.mostRecentRecord.value?.siwe?.issuedAt || '');
+            
+            if (currentDate > mostRecentDate) {
+              existingEntry.mostRecentRecord = record;
             }
           }
         }
         
-        // Convert back to array
-        const deduplicatedRecords = Array.from(addressMap.values());
+        // Convert back to array, using the most recent record for each address but keeping chain info
+        const deduplicatedRecords = Array.from(addressMap.values()).map(entry => {
+          // Attach chain information to the most recent record
+          const recordWithChains = { 
+            ...entry.mostRecentRecord,
+            chains: entry.chains.sort((a, b) => {
+              // Sort chains by most recent first
+              return new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime();
+            })
+          };
+          return recordWithChains;
+        });
         
         setAddressRecords(deduplicatedRecords);
 
@@ -246,6 +287,22 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                 const address = record.value?.siwe?.address || 'Unknown address';
                 const issuedAt = record.value?.siwe?.issuedAt;
                 const chainId = record.value?.siwe?.chainId;
+                
+                // Get all chains for this address (from our enhanced record)
+                const chains: Array<{
+                  chainId: number;
+                  record: AddressControlRecord;
+                  issuedAt: string;
+                }> = (record as AddressControlRecord & { 
+                  chains?: Array<{
+                    chainId: number;
+                    record: AddressControlRecord;
+                    issuedAt: string;
+                  }>;
+                }).chains || [{ chainId: chainId || 1, record, issuedAt: issuedAt || '' }];
+                
+                // Use the most recent chain for the primary action
+                const primaryChain = chains[0];
 
                 return (
                   <div key={record.uri || index} className="address-record">
@@ -258,16 +315,26 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         )}
                       </div>
                       {issuedAt && (
-						<div className="address-metadata">
-
-							<div className="address-date">
-							{new Date(issuedAt).toLocaleDateString()} at {new Date(issuedAt).toLocaleTimeString()}
-							</div>
-							⛓️
-							<div className="chain-info">
-								{getChainName(chainId)}
-							</div>
-						</div>
+                        <div className="address-metadata">
+                          <div className="address-date">
+                            {new Date(primaryChain.issuedAt).toLocaleDateString()} at {new Date(primaryChain.issuedAt).toLocaleTimeString()}
+                          </div>
+                          ⛓️
+                          <div className="chain-info">
+                            {chains.length === 1 ? (
+                              getChainName(primaryChain.chainId)
+                            ) : (
+                              <span>
+                                {chains.map((chain: { chainId: number; record: AddressControlRecord; issuedAt: string }, idx: number) => (
+                                  <span key={chain.chainId}>
+                                    {getChainName(chain.chainId)}
+                                    {idx < chains.length - 1 ? ', ' : ''}
+                                  </span>
+                                ))}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       )}
                       
                       {showValidationChecks && (() => {
@@ -307,7 +374,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         setPaymentModal({
                           isOpen: true,
                           recipientAddress: address as `0x${string}`,
-                          chainId: chainId || 1,
+                          chainId: primaryChain.chainId || 1,
                         });
                       }}
                     >
