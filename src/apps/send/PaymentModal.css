@@ -14,8 +14,8 @@
 .payment-modal {
   background: white;
   border-radius: 12px;
-  max-width: 440px;
-  min-width: 250px;
+  max-width: 448px;
+  min-width: 268px;
   width: 90vw;
   max-height: 96vh;
   overflow-y: auto;
@@ -1349,7 +1349,7 @@
     font-size: 16px;
   }
 }
-@media (min-width: 470px) and (max-width: 489px) {
+@media (min-width: 470px) and (max-width: 487px) {
   .recipient-address-display code {
     font-size: 15px;
   }
