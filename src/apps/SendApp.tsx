@@ -28,12 +28,9 @@ function SendApp() {
     const payParam = urlParams.get('pay');
     
     if (userParam) {
-      console.log(`Found user parameter in URL: ${userParam}`);
       setPreSelectedUser(userParam);
-      
       // If pay parameter is present and equals "true", enable payment modal
       if (payParam === 'true') {
-        console.log('Payment modal will be triggered after user selection');
         setShouldOpenPayment(true);
       }
     }
@@ -68,7 +65,6 @@ function SendApp() {
   };
 
   const handleTriggerPayment = (userDid: DefinedDidString) => {
-    console.log(`Triggering payment for user: ${userDid}`);
     setTriggerPayment(userDid);
     // Reset after a short delay to prevent modal from reopening
     setTimeout(() => setTriggerPayment(null), 1000);
