@@ -27,12 +27,12 @@ export default function WalletOptions() {
       } 
       return;
     } 
-    if (connector.id === 'coinbaseWalletSDK') {
+    //if (connector.id === 'coinbaseWalletSDK') {
       // we can add this back if people ask, but for now, we're not promoting Coinbase.
-    } else {
-      // allow other connectors by default
-      allowedConnectors.push(connector);
-    }
+    //} else {
+    // allow other connectors by default
+    allowedConnectors.push(connector);
+    //}
   });
 
   console.log('Allowed Connectors:', allowedConnectors);
