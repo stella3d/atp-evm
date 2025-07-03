@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { createPublicClient, http, formatUnits, erc20Abi } from 'viem';
 import { chainForId } from './WalletConnector.tsx';
 
@@ -120,91 +120,94 @@ export const useTokenBalances = (chainId?: number) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Get native token balance using wagmi
-  const { data: nativeBalance } = useBalance({
-    address,
-    chainId,
-  });
-
-  useEffect(() => {
+  const fetchTokenBalances = async () => {
     if (!isConnected || !address || !chainId) {
       setTokenBalances([]);
       return;
     }
 
-    const fetchTokenBalances = async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const chain = chainForId(chainId);
-        if (!chain) {
-          throw new Error(`Unsupported chain ID: ${chainId}`);
-        }
-
-        const client = createPublicClient({
-          chain,
-          transport: http()
-        });
-
-        const balances: TokenBalance[] = [];
-
-        // Add native token balance
-        if (nativeBalance) {
-          balances.push({
-            address: 'native',
-            symbol: chain.nativeCurrency.symbol,
-            name: chain.nativeCurrency.name,
-            balance: formatUnits(nativeBalance.value, nativeBalance.decimals),
-            decimals: nativeBalance.decimals,
-            chainId,
-            logoUrl: getNativeTokenLogo(chainId),
-          });
-        }
-
-        // Fetch ERC20 token balances
-        const tokens = COMMON_TOKENS[chainId] || [];
-        
-        for (const token of tokens) {
-          try {
-            // Only fetch balance - use token metadata from COMMON_TOKENS
-            const balance = await client.readContract({
-              address: token.address,
-              abi: erc20Abi,
-              functionName: 'balanceOf',
-              args: [address],
-            });
-
-            const formattedBalance = formatUnits(balance as bigint, token.decimals);
-            
-            // Only include tokens with non-zero balance
-            if (parseFloat(formattedBalance) > 0) {
-              balances.push({
-                address: token.address,
-                symbol: token.symbol,
-                name: token.name,
-                balance: formattedBalance,
-                decimals: token.decimals,
-                chainId,
-                logoUrl: token.logoUrl,
-              });
-            }
-          } catch (tokenError) {
-            console.warn(`Failed to fetch balance for token ${token.symbol}:`, tokenError);
-          }
-        }
-
-        setTokenBalances(balances);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch token balances');
-        console.error('Error fetching token balances:', err);
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const chain = chainForId(chainId);
+      if (!chain) {
+        throw new Error(`Unsupported chain ID: ${chainId}`);
       }
-    };
 
+      const client = createPublicClient({
+        chain,
+        transport: http()
+      });
+
+      const balances: TokenBalance[] = [];
+
+      try {
+        const nativeBalance = await client.getBalance({ address });
+        balances.push({
+          address: 'native',
+          symbol: chain.nativeCurrency.symbol,
+          name: chain.nativeCurrency.name,
+          balance: formatUnits(nativeBalance, chain.nativeCurrency.decimals),
+          decimals: chain.nativeCurrency.decimals,
+          chainId,
+          logoUrl: getNativeTokenLogo(chainId),
+        });
+      } catch (nativeError) {
+        console.warn('failed to fetch native balance:', nativeError);
+        // Still add native token with 0 balance if fetch fails
+        balances.push({
+          address: 'native',
+          symbol: chain.nativeCurrency.symbol,
+          name: chain.nativeCurrency.name,
+          balance: '0',
+          decimals: chain.nativeCurrency.decimals,
+          chainId,
+          logoUrl: getNativeTokenLogo(chainId),
+        });
+      }
+
+      // Fetch ERC20 token balances
+      const tokens = COMMON_TOKENS[chainId] || [];
+      
+      for (const token of tokens) {
+        try {
+          const balance = await client.readContract({
+            address: token.address,
+            abi: erc20Abi,
+            functionName: 'balanceOf',
+            args: [address],
+          });
+
+          const formattedBalance = formatUnits(balance as bigint, token.decimals);
+          
+          // Include all tokens, even with zero balance
+          balances.push({
+            address: token.address,
+            symbol: token.symbol,
+            name: token.name,
+            balance: formattedBalance,
+            decimals: token.decimals,
+            chainId,
+            logoUrl: token.logoUrl,
+          });
+        } catch (tokenError) {
+          console.warn(`failed to fetch balance for token ${token.symbol}:`, tokenError);
+        }
+      }
+
+      setTokenBalances(balances);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch token balances');
+      console.error('error fetching token balances:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchTokenBalances();
-  }, [address, chainId, isConnected, nativeBalance]);
+  }, [address, chainId, isConnected]);
 
-  return { tokenBalances, loading, error, refetch: () => {} };
+  return { tokenBalances, loading, error, refetch: fetchTokenBalances };
 };
