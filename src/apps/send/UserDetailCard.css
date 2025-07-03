@@ -539,19 +539,19 @@
 
 }
 
-@media (min-width: 548px) {
+@media (min-width: 556px) {
   .address-value.address-link code {
     font-size: 19px;
   }
 }
 
-@media (min-width: 524px) and (max-width: 547px) {
+@media (min-width: 526px) and (max-width: 555px) {
   .address-value.address-link code {
     font-size: 18px;
   }
 }
 
-@media (min-width: 500px) and (max-width: 523px) {
+@media (min-width: 500px) and (max-width: 525px) {
   .address-value.address-link code {
     font-size: 17px;
   }

@@ -1342,10 +1342,14 @@
   }
 }
 
-
-
 /* Responsive font size adjustments for AddressLink components */
-@media (min-width: 470px) and (max-width: 480px) {
+
+@media (min-width: 490px) {
+  .recipient-address-display code {
+    font-size: 16px;
+  }
+}
+@media (min-width: 470px) and (max-width: 489px) {
   .recipient-address-display code {
     font-size: 15px;
   }
@@ -1471,7 +1475,6 @@
   border: 1px solid #ddd;
   border-radius: 6px;
   font-family: monospace;
-  font-size: 0.9rem;
   box-sizing: border-box;
   text-align: center;
   padding: 4px 6px;
