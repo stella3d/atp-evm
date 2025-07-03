@@ -82,6 +82,8 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
     recipientAddress: '0x0' as `0x${string}`,
     chainId: 1,
   });
+  // Track selected chain for each address
+  const [selectedChains, setSelectedChains] = useState<Map<string, number>>(new Map());
 
   // Flag to show/hide validation checks
   const showValidationChecks = false;
@@ -303,6 +305,16 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                 
                 // Use the most recent chain for the primary action
                 const primaryChain = chains[0];
+                
+                // Get the currently selected chain for this address
+                const currentSelectedChainId = selectedChains.get(address) || primaryChain.chainId;
+                
+                // Generate button text based on chain count
+                const getButtonText = (chainId: number) => {
+                  if (!isConnected) return 'Connect Wallet to Send';
+                  if (chains.length === 1) return 'Send';
+                  return `Send on ${getChainName(chainId)}`;
+                };
 
                 return (
                   <div key={record.uri || index} className="address-record">
@@ -362,24 +374,66 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                       })()}
                     </div>
                     
-                    <button 
-                      type="button" 
-                      className="send-payment-button"
-                      onClick={() => {
-                        if (!isConnected) {
-                          // Show wallet connection UI instead of opening payment modal
-                          alert('Please connect your wallet first to send payments');
-                          return;
-                        }
-                        setPaymentModal({
-                          isOpen: true,
-                          recipientAddress: address as `0x${string}`,
-                          chainId: primaryChain.chainId || 1,
-                        });
-                      }}
-                    >
-                      {isConnected ? 'Send' : 'Connect Wallet to Send'}
-                    </button>
+                    <div className="send-payment-section">
+                      {chains.length === 1 ? (
+                        <button 
+                          type="button" 
+                          className="send-payment-button"
+                          onClick={() => {
+                            if (!isConnected) {
+                              alert('Please connect your wallet first to send payments');
+                              return;
+                            }
+                            setPaymentModal({
+                              isOpen: true,
+                              recipientAddress: address as `0x${string}`,
+                              chainId: currentSelectedChainId,
+                            });
+                          }}
+                        >
+                          {getButtonText(currentSelectedChainId)}
+                        </button>
+                      ) : (
+                        <div className="multi-chain-send-controls">
+                          <div className="unified-send-control">
+                            <button 
+                              type="button" 
+                              className="send-payment-button unified"
+                              onClick={() => {
+                                if (!isConnected) {
+                                  alert('Please connect your wallet first to send payments');
+                                  return;
+                                }
+                                setPaymentModal({
+                                  isOpen: true,
+                                  recipientAddress: address as `0x${string}`,
+                                  chainId: currentSelectedChainId,
+                                });
+                              }}
+                            >
+                              <span className="button-text button-text-mobile">Send</span>
+                            </button>
+                            <div className="chain-selector-row">
+                              <span className="chain-on-label">on</span>
+                              <select 
+                                className="chain-selector unified"
+                                value={currentSelectedChainId}
+                                onChange={(e) => {
+                                  const selectedChainId = parseInt(e.target.value);
+                                  setSelectedChains(prev => new Map(prev.set(address, selectedChainId)));
+                                }}
+                              >
+                                {chains.map((chain: { chainId: number; record: AddressControlRecord; issuedAt: string }) => (
+                                  <option key={chain.chainId} value={chain.chainId}>
+                                    {getChainName(chain.chainId)}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               })}

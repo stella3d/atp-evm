@@ -268,6 +268,171 @@
   text-align: left;
 }
 
+.send-payment-section {
+  flex-shrink: 0;
+}
+
+.multi-chain-send-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.unified-send-control {
+  display: flex;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #1d9bf0;
+  background: #1d9bf0;
+  transition: all 0.2s;
+}
+
+.unified-send-control:hover {
+  box-shadow: 0 2px 8px rgba(29, 155, 240, 0.3);
+  border-color: #106ebe;
+}
+
+.unified-send-control:hover .send-payment-button.unified,
+.unified-send-control:hover .chain-selector.unified {
+  background: #106ebe;
+}
+
+.send-payment-button.unified {
+  background: #1d9bf0;
+  color: white;
+  border: none;
+  border-radius: 0;
+  padding: 7px 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.send-payment-button.unified:hover {
+  background: #106ebe;
+}
+
+.chain-selector.unified {
+  background: #1d9bf0;
+  color: white;
+  border: none;
+  border-radius: 0;
+  padding: 7px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 40px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.chain-selector.unified::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 1px;
+  height: 60%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-50%);
+}
+
+.chain-selector.unified:hover {
+  background: #106ebe;
+}
+
+.chain-selector.unified:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* Desktop layout - separate "on" label from button */
+@media (min-width: 621px) {
+  .multi-chain-send-controls {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+  }
+  
+  .unified-send-control {
+    display: contents;
+  }
+  
+  .send-payment-button.unified {
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 16px;
+    flex: none;
+  }
+  
+  .button-text-desktop {
+    display: inline;
+  }
+  
+  .button-text-mobile {
+    display: none;
+  }
+  
+  .chain-selector-row {
+    display: none;
+  }
+  
+  .chain-on-label {
+    color: #536471;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 4px;
+  }
+  
+  .chain-selector.unified {
+    border-radius: 6px;
+    padding: 10px 12px;
+    background-position: calc(100% - 8px) center;
+    border: 1px solid #e1e5e9;
+    background: #f7f9fa;
+    color: #1d9bf0;
+    min-width: 100px;
+    flex: none;
+  }
+  
+  .chain-selector.unified::before {
+    display: none;
+  }
+  
+  .chain-selector.unified:hover {
+    background: #e3f2fd;
+    border-color: #1d9bf0;
+  }
+  
+  .send-payment-button.compact {
+    width: auto;
+    font-size: 16px;
+    padding: 10px 16px;
+  }
+  
+  .chain-selector {
+    width: auto;
+    min-width: 100px;
+  }
+}
+
 .send-payment-button {
   background: #1d9bf0;
   color: white;
@@ -280,10 +445,58 @@
   transition: background-color 0.2s;
   white-space: nowrap;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.send-payment-button .button-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.send-payment-button .chain-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.send-payment-button.compact {
+  padding: 7px 9px;
+  font-size: 16px;
+  min-width: 60px;
 }
 
 .send-payment-button:hover {
   background: #106ebe;
+}
+
+.chain-selector {
+  background: #f7f9fa;
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+  padding: 7px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 80px;
+  color: #1d9bf0;
+}
+
+.chain-selector:hover {
+  background: #e3f2fd;
+  border-color: #1d9bf0;
+}
+
+.chain-selector:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(29, 155, 240, 0.2);
+  border-color: #1d9bf0;
 }
 
 .wallet-connection-section {
@@ -340,6 +553,116 @@
   .send-payment-button {
     width: 100%;
     margin-top: 4px;
+  }
+  
+  .send-payment-section {
+    width: 100%;
+  }
+  
+  /* Mobile layout: Large "Send" button, gap, "on" label, dropdown */
+  .multi-chain-send-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    align-items: stretch;
+  }
+  
+  .unified-send-control {
+    display: contents;
+  }
+  
+  .send-payment-button.unified {
+    background: #1d9bf0;
+    color: white;
+    border: 1px solid #1d9bf0;
+    border-radius: 6px;
+    padding: 14px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    min-height: 48px;
+    width: 80%;
+    max-width: 280px;
+    margin: 0 auto;
+    order: 1;
+  }
+  
+  .button-text-desktop {
+    display: none;
+  }
+  
+  .button-text-mobile {
+    display: inline;
+  }
+  
+  .send-payment-button.unified:hover {
+    background: #106ebe;
+  }
+  
+  .chain-selector-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    order: 2;
+    margin-top: 4px;
+    width: 80%;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .chain-on-label {
+    color: #536471;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .chain-selector.unified {
+    border: 1px solid #e1e5e9;
+    background: #f7f9fa;
+    color: #1d9bf0;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 140px;
+    min-height: 40px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d9bf0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+  }
+  
+  .chain-selector.unified:hover {
+    background: #e3f2fd;
+    border-color: #1d9bf0;
+  }
+  
+  .chain-selector.unified:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(29, 155, 240, 0.3);
+  }
+  
+  .send-payment-button.compact {
+    width: 100%;
+    font-size: 18px;
+    padding: 16px 20px;
+    min-height: 48px;
+  }
+  
+  .chain-selector {
+    width: 100%;
+    min-width: auto;
+    padding: 12px 16px;
+    font-size: 16px;
+    min-height: 44px;
   }
   
   /* Reset address metadata width constraint on mobile */
@@ -535,6 +858,22 @@
 
   .wallet-connection-section label {
     color: #cccccc;
+  }
+
+  .chain-selector {
+    background: #2d2d2d;
+    border-color: #404040;
+    color: #4da6ff;
+  }
+
+  .chain-selector:hover {
+    background: #3d3d3d;
+    border-color: #4da6ff;
+  }
+
+  .chain-selector:focus {
+    box-shadow: 0 0 0 2px rgba(77, 166, 255, 0.2);
+    border-color: #4da6ff;
   }
 
 }
