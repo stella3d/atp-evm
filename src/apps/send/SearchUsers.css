@@ -67,12 +67,27 @@
 }
 
 .users-list {
-  max-height: 255px;
+  min-height: 150px;
+  max-height: 252px;
   overflow-y: auto;
   border: 1px solid #eee;
   border-radius: 4px;
-  width: 100%;
+  background: #f9f9f9;
+  max-width: 96%;
+  min-width: 72%;
+  align-self: center;
+  gap: 0px;
 }
+
+.users-list .atpro
+
+@media (max-width: 372px) {
+  .users-list {
+    max-height: 250px;
+  }
+}
+
+
 
 /* Webkit-based browsers (Chrome, Safari) */
 .users-list::-webkit-scrollbar {
@@ -174,7 +189,12 @@
   color: #f4212e;
 }
 
-/* Dark mode styles */
+/* Thin border between search result items */
+.search-users .users-list > div:not(:first-child) {
+  border-top: 1px solid #e1e5e9;
+}
+
+/* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .search-box {
     background: transparent;
@@ -199,7 +219,7 @@
   }
 
   .users-list {
-    background: #1a1a1a;
+    background: #2d2d2d;
     border-color: #404040;
   }
 
@@ -242,5 +262,69 @@
 
   .users-list::-webkit-scrollbar-thumb:hover {
     background: #777777;
+  }
+
+  /* Border between items in dark mode */
+  .search-users .users-list > div:not(:first-child) {
+    border-top-color: #444;
+  }
+
+  /* Reduce contrast of payment cards */
+  .search-users .atproto-user-card.payment {
+    background: #232323;
+    border-color: #444;
+  }
+}
+
+/* Compact list card styling in SearchUsers */
+.search-users .atproto-user-card.payment {
+  padding: 4px 8px;
+  margin: 1px;
+}
+
+.search-users .atproto-user-card.payment .atproto-avatar,
+.search-users .atproto-user-card.payment .atproto-avatar-placeholder {
+  width: 40px;
+  height: 40px;
+}
+
+/* Wrapper for user card responsiveness */
+.user-card-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  min-width: 60%;
+  max-width: 800px;
+}
+
+@media (max-width: 372px) {
+  .user-card-wrapper {
+    min-width: 50%;
+    max-width: 700px;
+  }
+}
+
+/* Further shrink text under 356px */
+@media (max-width: 356px) {
+  .search-users .users-list .atproto-name {
+    font-size: calc(1.26rem - 2px);
+  }
+  .search-users .users-list .atproto-handle {
+    font-size: calc(1.26rem - 2px);
+  }
+  .search-users .users-list .atproto-did {
+    font-size: 10px
+  }
+}
+
+@media (max-width: 372px) {
+  .search-users .users-list .atproto-name {
+    font-size: calc(1.26rem - 1px);
+  }
+  .search-users .users-list .atproto-handle {
+    font-size: calc(1.26rem - 1px);
+  }
+  .search-users .users-list .atproto-did {
+    font-size: 9px
   }
 }

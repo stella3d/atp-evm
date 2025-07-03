@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { fetchUsersWithAddressRecord, enrichUsersProgressively } from '../../shared/fetch.ts';
 import './SearchUsers.css';
 import type { DefinedDidString, EnrichedUser } from "../../shared/common.ts";
+import { AtprotoUserCard } from '../../shared/AtprotoUserCard';
 
 // Utility functions for user identity resolution
 function isDidString(input: string): input is DefinedDidString {
@@ -272,40 +273,27 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
         )}
       </div>
 
-      <div className="users-list">
+      <div className="users-list" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {filteredUsers.length === 0 ? (
           <div className="no-results">
             {searchTerm ? 'No users match your search.' : 'No users found.'}
           </div>
         ) : (
           filteredUsers.map((user) => (
-            <div 
+            <div
               key={user.did}
-              className="user-item"
-              onClick={() => handleUserClick(user)}
+              className="user-card-wrapper"
             >
-              <div className="user-avatar">
-                {user.avatar ? (
-                  <img 
-                    src={user.avatar} 
-                    alt={`${user.handle || user.did} avatar`}
-                    className="avatar-image"
-                  />
-                ) : (
-                  <div className="avatar-placeholder">
-                    {(user.handle || user.displayName || user.did).charAt(0).toUpperCase()}
-                  </div>
-                )}
-              </div>
-              <div className="user-info">
-                <div className="user-handle">
-                  {user.handle ? `@${user.handle}` : 'No handle'}
-                </div>
-                {user.displayName && (
-                  <div className="user-display-name">{user.displayName}</div>
-                )}
-                <div className="user-did">{user.did}</div>
-              </div>
+              <AtprotoUserCard
+                name={user.displayName}
+                handle={user.handle}
+                did={user.did}
+                avatar={user.avatar}
+                clickable={true}
+                onClick={() => handleUserClick(user)}
+                variant="payment"
+                showDid={true}
+              />
             </div>
           ))
         )}
