@@ -14,6 +14,7 @@ export interface AddressControlRecord {
       domain: string;
       [key: string]: unknown;
     };
+    alsoOn?: number[]; // List of other chain IDs this address is active on
     [key: string]: unknown;
   };
 }
@@ -86,7 +87,7 @@ export function uid(length = 96): string {
 // Chain ID to friendly name mapping
 export const CHAIN_NAMES: Record<number, string> = {
   1: 'Ethereum',
-  8453: 'Base',
+  8543: 'Base',
   10: 'Optimism',
   42161: 'Arbitrum',
   137: 'Polygon',
@@ -100,7 +101,7 @@ export function getChainName(chainId: number): string {
 export function getChainClass(chainId: number): string {
   const chainClassMap: Record<number, string> = {
     1: 'ethereum',
-    8453: 'base', 
+    8543: 'base', 
     10: 'optimism',
     42161: 'arbitrum'
   };
@@ -110,7 +111,7 @@ export function getChainClass(chainId: number): string {
 export function getDoraNetworkSlug(chainId: number): string {
   const ondoraSlugMap: Record<number, string> = {
     1: 'ethereum',
-    8453: 'base',
+    8543: 'base',
     10: 'optimism', 
     42161: 'arbitrum',
     137: 'polygon'

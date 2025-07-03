@@ -392,13 +392,11 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                       {(() => {
                         const siwe = (record.value?.siwe || {}) as any;
                         const on = Number(siwe.chainId) || 1;
-                        console.log(`before alsoOn: Available chains for ${address}:`, on);
 
                         const alsoOn: number[] = Array.isArray(record.value.alsoOn)
                           ? record.value.alsoOn.map((c: any) => Number(c)).filter((n: number) => !isNaN(n))
                           : [];
                         const chainIds = Array.from(new Set([on, ...alsoOn]));
-                        console.log(`Available chains for ${address}:`, chainIds);
 
                         const selected = selectedChains[record.uri] ?? chainIds[0];
                         return (
