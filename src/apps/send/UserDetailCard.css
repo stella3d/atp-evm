@@ -244,6 +244,7 @@
   align-items: center;
   gap: 8px;
   margin-top: 4px;
+  margin-left: 6px;
   flex-wrap: wrap;
   max-width: 70%;
 }

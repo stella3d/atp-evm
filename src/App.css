@@ -14,6 +14,19 @@ html, body {
   text-align: center;
 }
 
+/* Reduce padding on very small screens to prevent layout issues */
+@media (max-width: 400px) {
+  #root {
+    padding: 1rem 1rem 2rem 1rem;
+  }
+}
+
+@media (max-width: 350px) {
+  #root {
+    padding: 1rem 0.5rem 2rem 0.5rem;
+  }
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
