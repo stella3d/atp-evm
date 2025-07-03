@@ -181,16 +181,18 @@ export const useTokenBalances = (chainId?: number) => {
 
           const formattedBalance = formatUnits(balance as bigint, token.decimals);
           
-          // Include all tokens, even with zero balance
-          balances.push({
-            address: token.address,
-            symbol: token.symbol,
-            name: token.name,
-            balance: formattedBalance,
-            decimals: token.decimals,
-            chainId,
-            logoUrl: token.logoUrl,
-          });
+          // Only include ERC-20 tokens with non-zero balance
+          if (parseFloat(formattedBalance) > 0) {
+            balances.push({
+              address: token.address,
+              symbol: token.symbol,
+              name: token.name,
+              balance: formattedBalance,
+              decimals: token.decimals,
+              chainId,
+              logoUrl: token.logoUrl,
+            });
+          }
         } catch (tokenError) {
           console.warn(`failed to fetch balance for token ${token.symbol}:`, tokenError);
         }
