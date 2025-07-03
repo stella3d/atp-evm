@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
-import type { EnrichedUser, AddressControlRecord } from "../../shared/common.ts";
+import type { EnrichedUser, AddressControlRecord, DefinedDidString } from "../../shared/common.ts";
 import { getChainName } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
-import { PaymentModal } from "../../shared/PaymentModal.tsx";
+import { PaymentModal } from "./PaymentModal.tsx";
 import { AddressLink } from "../../shared/AddressLink.tsx";
 import { AtprotoUserCard } from "../../shared/AtprotoUserCard.tsx";
 import { ConnectWallet } from "../../shared/WalletConnector.tsx";
@@ -17,10 +17,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 interface UserDetailCardProps {
   selectedUser: EnrichedUser;
   onClose?: () => void;
+  triggerPayment?: DefinedDidString | null; // DID to trigger payment for
 }
 
 // Inner component that uses wagmi hooks
-const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onClose }) => {
+const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onClose, triggerPayment }) => {
   const { isConnected } = useAccount();
   const [addressRecords, setAddressRecords] = useState<AddressControlRecord[]>([]);
   const [loadingRecords, setLoadingRecords] = useState(false);
@@ -38,6 +39,34 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
 
   // Flag to show/hide validation checks
   const showValidationChecks = false;
+
+  // Handle automatic payment modal trigger
+  useEffect(() => {
+    if (triggerPayment && triggerPayment === selectedUser.did) {
+      console.log(`Auto-triggering payment modal for user: ${selectedUser.did}`);
+      
+      if (addressRecords.length === 0) {
+        console.warn('Cannot trigger payment: user has no address records');
+        return;
+      }
+      
+      // Get the first address record
+      const firstRecord = addressRecords[0];
+      const address = firstRecord.value?.siwe?.address;
+      const chainId = firstRecord.value?.siwe?.chainId || 1;
+      
+      if (address && isAddress(address)) {
+        setPaymentModal({
+          isOpen: true,
+          recipientAddress: address as `0x${string}`,
+          chainId: chainId,
+        });
+        console.log(`Payment modal opened for address: ${address} on chain ${chainId}`);
+      } else {
+        console.warn('First address record is not valid for payment');
+      }
+    }
+  }, [triggerPayment, selectedUser.did, addressRecords]);
 
   useEffect(() => {
     const loadAddressRecords = async () => {
@@ -268,13 +297,13 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
 };
 
 // Main component that provides Wagmi context
-export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, onClose }) => {
+export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, onClose, triggerPayment }) => {
   const queryClient = new QueryClient();
 
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <UserDetailCardInner selectedUser={selectedUser} onClose={onClose} />
+        <UserDetailCardInner selectedUser={selectedUser} onClose={onClose} triggerPayment={triggerPayment} />
       </QueryClientProvider>
     </WagmiProvider>
   );

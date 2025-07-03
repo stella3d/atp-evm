@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionReceipt, useWriteContract, useEnsName } from 'wagmi';
 import { isAddress, parseUnits } from 'viem';
-import { useTokenBalances, type TokenBalance } from './useTokenBalances.ts';
-import { getChainName, getChainClass, getDoraTransactionUrl } from './common.ts';
-import { AddressLink } from './AddressLink.tsx';
-import { AtprotoUserCard } from './AtprotoUserCard.tsx';
+import { useTokenBalances, type TokenBalance } from '../../shared/useTokenBalances.ts';
+import { getChainName, getChainClass, getDoraTransactionUrl } from '../../shared/common.ts';
+import { AddressLink } from '../../shared/AddressLink.tsx';
+import { AtprotoUserCard } from '../../shared/AtprotoUserCard.tsx';
 import './PaymentModal.css';
 
 // ERC20 ABI for transfer function

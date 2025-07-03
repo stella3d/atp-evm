@@ -17,6 +17,27 @@ function SendApp() {
   const [_oauthSession, setOauthSession] = useState<OAuthSession | null>(null);
   const [selectedUser, setSelectedUser] = useState<EnrichedUser | null>(null);
   const [enrichedUsers, setEnrichedUsers] = useState<EnrichedUser[]>([]);
+  const [preSelectedUser, setPreSelectedUser] = useState<string | undefined>(undefined);
+  const [shouldOpenPayment, setShouldOpenPayment] = useState<boolean>(false);
+  const [triggerPayment, setTriggerPayment] = useState<DefinedDidString | null>(null);
+
+  // Extract URL parameters on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(globalThis.location.search);
+    const userParam = urlParams.get('user');
+    const payParam = urlParams.get('pay');
+    
+    if (userParam) {
+      console.log(`Found user parameter in URL: ${userParam}`);
+      setPreSelectedUser(userParam);
+      
+      // If pay parameter is present and equals "true", enable payment modal
+      if (payParam === 'true') {
+        console.log('Payment modal will be triggered after user selection');
+        setShouldOpenPayment(true);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -46,6 +67,13 @@ function SendApp() {
     setSelectedUser(null);
   };
 
+  const handleTriggerPayment = (userDid: DefinedDidString) => {
+    console.log(`Triggering payment for user: ${userDid}`);
+    setTriggerPayment(userDid);
+    // Reset after a short delay to prevent modal from reopening
+    setTimeout(() => setTriggerPayment(null), 1000);
+  };
+
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
@@ -54,13 +82,17 @@ function SendApp() {
         <div className="app-container">
           <SearchUsers 
             onUserSelect={handleUserSelect} 
-            onUsersUpdate={handleUsersUpdate} 
+            onUsersUpdate={handleUsersUpdate}
+            preSelectedUser={preSelectedUser}
+            shouldOpenPayment={shouldOpenPayment}
+            onTriggerPayment={handleTriggerPayment}
           />
           <WalletConnectionCard />
           {selectedUser && (
             <UserDetailCard 
               selectedUser={selectedUser} 
               onClose={handleCloseCard}
+              triggerPayment={triggerPayment}
             />
           )}
         </div>
