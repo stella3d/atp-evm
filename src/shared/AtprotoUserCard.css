@@ -162,7 +162,8 @@
 
 /* DID styles */
 .atproto-did {
-  font-size: 10px;
+  font-size: 11px;
+  font-family: monospace;
   margin: 0;
   color: darkgrey;
   text-align: left;
@@ -173,7 +174,6 @@
   color: #536471;
   text-align: center;
   margin-top: 0;
-  font-family: monospace;
   font-weight: 500;
   line-height: 1.2;
   display: block;
