@@ -75,6 +75,7 @@ function SendApp() {
       <QueryClientProvider client={queryClient}>
         <h1>ATPay</h1>
         <p>This demo lets you send value to a recipient based on their ATProto DID & linked Ethereum wallet.</p>
+        <p style={{ color: 'coral', fontWeight: 'bold' }}>IF YOU ARE USING THIS FROM A PUBLIC URL, IT IS PRE-RELEASE SOFTWARE</p>
         <div className="app-container">
           <SearchUsers 
             onUserSelect={handleUserSelect} 
