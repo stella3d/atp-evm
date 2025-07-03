@@ -282,7 +282,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         <>
           Your wallet is connected to {renderNetworkWithIndicator(currentChainId)} (Chain {currentChainId}), 
           but this transaction requires {renderNetworkWithIndicator(chainId)} (Chain {chainId}). 
-          <p>Please switch networks to complete this transaction.</p>
         </>
       );
     } 

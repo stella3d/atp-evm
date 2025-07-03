@@ -265,15 +265,14 @@
 /* Chain-specific colors for chain-name */
 .chain-name.ethereum {
   color: #4a90e2;
-  background: #f0f8ff;
-  opacity: 0.8;
+  background: #e6f2ff; /* lighter blue */
+  opacity: 0.9;
 }
 
 .chain-name.base {
-  color: #0052cc;
-  background: #1976d2;
-  color: white;
-  opacity: 0.8;
+  color: #fff;
+  background: #003399; /* darker, bolder blue */
+  opacity: 0.95;
 }
 
 .chain-name.arbitrum {
@@ -340,7 +339,7 @@
 /* Chain-specific colors for chain-indicator */
 .chain-indicator.ethereum {
   color: #4a90e2;
-  background: rgba(240, 248, 255, 0.8);
+  background: #e6f2ff; /* lighter blue */
 }
 
 .chain-indicator.base {
@@ -508,12 +507,12 @@
   /* Dark mode chain-specific colors for chain-indicator */
   .chain-indicator.ethereum {
     color: #a5d8ff;
-    background: rgba(37, 99, 235, 0.8);
+    background: rgba(39, 129, 232, 0.8);
   }
 
   .chain-indicator.base {
     color: #bfdbfe;
-    background: rgba(29, 78, 216, 0.8);
+    background: rgba(20, 70, 206, 0.8);
   }
 
   .chain-indicator.arbitrum {
