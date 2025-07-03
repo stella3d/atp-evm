@@ -119,18 +119,12 @@ export const useTokenBalances = (chainId?: number) => {
   const [tokenBalances, setTokenBalances] = useState<TokenBalance[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [refetchTrigger, setRefetchTrigger] = useState(0);
 
   // Get native token balance using wagmi
-  const { data: nativeBalance, refetch: refetchNativeBalance } = useBalance({
+  const { data: nativeBalance } = useBalance({
     address,
     chainId,
   });
-
-  const refetch = async () => {
-    await refetchNativeBalance();
-    setRefetchTrigger(prev => prev + 1);
-  };
 
   useEffect(() => {
     if (!isConnected || !address || !chainId) {
@@ -155,23 +149,17 @@ export const useTokenBalances = (chainId?: number) => {
 
         const balances: TokenBalance[] = [];
 
-        if (nativeBalance && nativeBalance.value !== undefined) {
-          const nativeBalanceFormatted = formatUnits(nativeBalance.value, nativeBalance.decimals);
-          //const nativeBalanceNum = parseFloat(nativeBalanceFormatted);
-          //console.log(`native balance check: ${nativeBalanceFormatted} ${chain.nativeCurrency.symbol} (${nativeBalanceNum})`);
-          
-          // Always add native token, even if balance is 0, to prevent disappearing
+        // Add native token balance
+        if (nativeBalance) {
           balances.push({
             address: 'native',
             symbol: chain.nativeCurrency.symbol,
             name: chain.nativeCurrency.name,
-            balance: nativeBalanceFormatted,
+            balance: formatUnits(nativeBalance.value, nativeBalance.decimals),
             decimals: nativeBalance.decimals,
             chainId,
             logoUrl: getNativeTokenLogo(chainId),
           });
-        } else {
-          //console.warn('native balance not available:', nativeBalance);
         }
 
         // Fetch ERC20 token balances
@@ -206,7 +194,6 @@ export const useTokenBalances = (chainId?: number) => {
           }
         }
 
-        console.log(`Final token balances for chain ${chainId}:`, balances.map(b => `${b.symbol}: ${b.balance}`));
         setTokenBalances(balances);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch token balances');
@@ -217,7 +204,7 @@ export const useTokenBalances = (chainId?: number) => {
     };
 
     fetchTokenBalances();
-  }, [address, chainId, isConnected, nativeBalance?.value, nativeBalance?.decimals, refetchTrigger]);
+  }, [address, chainId, isConnected, nativeBalance]);
 
-  return { tokenBalances, loading, error, refetch };
+  return { tokenBalances, loading, error, refetch: () => {} };
 };
