@@ -114,8 +114,10 @@ const getNativeTokenLogo = (chainId: number): string => {
   return logoMap[chainId] || ETH_LOGO_URL;
 };
 
-export const useTokenBalances = (chainId?: number) => {
-  const { address, isConnected } = useAccount();
+export const useTokenBalances = (address?: `0x${string}`, chainId?: number) => {
+  console.info(`[${new Date().toISOString()}] useTokenBalances called: `, { address, chainId });
+
+  const { isConnected } = useAccount();
   const [tokenBalances, setTokenBalances] = useState<TokenBalance[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

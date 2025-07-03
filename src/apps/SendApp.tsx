@@ -10,6 +10,7 @@ import { UserDetailCard } from "./send/UserDetailCard.tsx";
 import { WalletConnectionCard } from './send/WalletConnectionCard.tsx';
 import type { DefinedDidString, EnrichedUser } from "../shared/common.ts";
 import { config } from '../shared/WalletConnector.tsx';
+import { TokenBalancesProvider, TokenBalanceLoader } from '../shared/TokenBalanceProvider.tsx';
 
 const queryClient = new QueryClient();
 
@@ -73,26 +74,29 @@ function SendApp() {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <h1>ATPay</h1>
-        <p>This demo lets you send value to a recipient based on their ATProto identity & linked Ethereum wallet.</p>
-        <p style={{ color: 'coral', fontWeight: 'bold' }}>IF YOU ARE USING THIS FROM A PUBLIC URL, IT IS PRE-RELEASE SOFTWARE</p>
-        <div className="app-container">
-          <SearchUsers 
-            onUserSelect={handleUserSelect} 
-            onUsersUpdate={handleUsersUpdate}
-            preSelectedUser={preSelectedUser}
-            shouldOpenPayment={shouldOpenPayment}
-            onTriggerPayment={handleTriggerPayment}
-          />
-          <WalletConnectionCard />
-          {selectedUser && (
-            <UserDetailCard 
-              selectedUser={selectedUser} 
-              onClose={handleCloseCard}
-              triggerPayment={triggerPayment}
+        <TokenBalancesProvider>
+          <h1>ATPay</h1>
+          <p>This demo lets you send value to a recipient based on their ATProto identity & linked Ethereum wallet.</p>
+          <p style={{ color: 'coral', fontWeight: 'bold' }}>IF YOU ARE USING THIS FROM A PUBLIC URL, IT IS PRE-RELEASE SOFTWARE</p>
+          <div className="app-container">
+            <SearchUsers 
+              onUserSelect={handleUserSelect} 
+              onUsersUpdate={handleUsersUpdate}
+              preSelectedUser={preSelectedUser}
+              shouldOpenPayment={shouldOpenPayment}
+              onTriggerPayment={handleTriggerPayment}
             />
-          )}
-        </div>
+            <WalletConnectionCard />
+            {selectedUser && (
+              <UserDetailCard 
+                selectedUser={selectedUser} 
+                onClose={handleCloseCard}
+                triggerPayment={triggerPayment}
+              />
+            )}
+            <TokenBalanceLoader />
+          </div>
+        </TokenBalancesProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

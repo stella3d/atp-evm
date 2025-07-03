@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionReceipt, useWriteContract, useEnsName } from 'wagmi';
 import { isAddress, parseUnits } from 'viem';
-import { useTokenBalances, type TokenBalance } from '../../shared/useTokenBalances.ts';
+import { type TokenBalance } from '../../shared/useTokenBalances.ts';
+import { useTokenBalancesContext } from '../../shared/TokenBalanceProvider.tsx';
 import { getChainName, getChainClass, getDoraTransactionUrl } from '../../shared/common.ts';
 import { AddressLink } from '../../shared/AddressLink.tsx';
 import { AtprotoUserCard } from '../../shared/AtprotoUserCard.tsx';
@@ -96,6 +97,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [errorType, setErrorType] = useState<'user_rejected' | 'wrong_chain' | 'insufficient_funds' | 'other' | null>(null);
   const [amountError, setAmountError] = useState<string | null>(null);
   const [amountWarning, setAmountWarning] = useState<{type: 'gentle' | 'strong', message: string} | null>(null);
+
+  const { balances: tokenBalances, loading: loadingBalances } = useTokenBalancesContext();
 
   // Helper function to check for large payment warnings
   const checkLargePaymentWarning = (amount: number, token: TokenBalance) => {
@@ -293,8 +296,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     );
   };
 
-  const { tokenBalances, loading: loadingBalances } = useTokenBalances(chainId);
-  
   // Get ENS name for the recipient address
   const { data: ensName } = useEnsName({
     address: isAddress(customRecipient) ? customRecipient : undefined,
