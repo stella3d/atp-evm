@@ -1005,8 +1005,7 @@
 }
 
 .confirm-button {
-  font-size: 1.4rem; /* Increased from 1.3rem - adds about 3px */
-  padding: 8px 20px; /* Reduced vertical padding to keep button height minimal */
+  font-size: 1.3rem;
 }
 
 .confirm-button:hover, .send-button:hover, .done-button:hover {
@@ -1745,12 +1744,5 @@
   .payment-modal {
     max-width: 420px;
     width: 92vw;
-  }
-}
-
-/* Send button responsive width */
-@media (max-width: 600px) {
-  .confirm-button {
-    max-width: 90%;
   }
 }

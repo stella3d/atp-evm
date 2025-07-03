@@ -270,21 +270,14 @@
   color: white;
   border: none;
   border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 20px;
+  padding: 7px 11px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
   white-space: nowrap;
   flex-shrink: 0;
 }
-
-@media (max-width: 600px) {
-  .send-payment-button {
-    max-width: 80%;
-    min-width: 60%;
-    margin: 0 auto;
-  }
 
 .send-payment-button:hover {
   background: #106ebe;
@@ -369,6 +362,11 @@
   
   .address-date {
     font-size: 0.8rem;
+  }
+  
+  .send-payment-button {
+    padding: 9px 15px;
+    font-size: 17px;
   }
   
   /* Card content padding adjustments */
