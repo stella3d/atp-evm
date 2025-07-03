@@ -174,7 +174,7 @@
 .records-list {
   display: flex;
   flex-direction: column;
-  width: 98%;
+  width: 96%;
   gap: 8px;
   margin: 0 auto;
 }
@@ -596,30 +596,15 @@
   }
 }
 
-@media (max-width: 422px) {
-  .address-header code {
-    font-size: 13px;
-  }
+@media (max-width: 428px) {
   .address-record .address-header code {
-    font-size: 13px;
+    font-size: 12px;
   }
 }
 
 @media (max-width: 400px) {
-  .address-value.address-link {
-    font-size: 12px;
-  }
-  
-  .address-header code {
-    font-size: 11px;
-  }
-
-  .address_record .address-header code {
-    font-size: 12px;
-  }
-  
-  .recipient-address-display .address-link {
-    font-size: 11px;
+  .address-record .address-header code {
+    font-size: 11.5px;
   }
 }
 
