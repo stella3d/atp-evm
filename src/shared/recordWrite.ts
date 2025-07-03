@@ -13,6 +13,7 @@ type SignatureString = `0x${string}`;
 export type AddressControlRecord = {
   '$type': 'club.stellz.evm.addressControl',
   address: AtprotoBytesField;
+  alsoOn?: bigint[]; // List of other chain IDs this address is active on
   signature: AtprotoBytesField;
   siwe: SiweLexiconObject;
 };

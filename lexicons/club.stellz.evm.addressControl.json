@@ -10,6 +10,14 @@
           "type": "bytes",
           "description": "Ethereum address as bytes (20 bytes)"
         },
+        "alsoOn": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "description": "Chain ID of a Ethereum VM network"
+          },
+          "description": "List of all Chain IDs (besides the one in the sign-in message, though you can include it) that the holder of this address is also active on & accepts tokens thru."
+        },
         "signature": { 
           "type": "bytes",
           "description": "Sign in With Ethereum message signature as bytes"

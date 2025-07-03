@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { EnrichedUser, AddressControlRecord, DefinedDidString } from "../../shared/common.ts";
-import { getChainName } from "../../shared/common.ts";
+import { getChainName, getChainClass } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
 import { PaymentModal } from "./PaymentModal.tsx";
@@ -82,9 +82,24 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
     recipientAddress: '0x0' as `0x${string}`,
     chainId: 1,
   });
+  // Track selected chain per address record
+  const [selectedChains, setSelectedChains] = useState<Record<string, number>>({});
 
   // Flag to show/hide validation checks
   const showValidationChecks = false;
+
+  // Initialize default selected chain when addressRecords change
+  useEffect(() => {
+    const defaults: Record<string, number> = {};
+    addressRecords.forEach(rec => {
+      const siwe = (rec.value?.siwe || {}) as any;
+      const base = siwe.chainId || 1;
+      const alsoOn: number[] = Array.isArray(siwe.alsoOn) ? siwe.alsoOn : [];
+      const ids = Array.from(new Set([base, ...alsoOn]));
+      defaults[rec.uri] = ids[0];
+    });
+    setSelectedChains(defaults);
+  }, [addressRecords]);
 
   // Handle automatic payment modal trigger
   useEffect(() => {
@@ -185,12 +200,22 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
           // Attach chain information to the most recent record
           const recordWithChains = { 
             ...entry.mostRecentRecord,
-            chains: entry.chains.sort((a, b) => {
-              // Sort chains by most recent first
-              return new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime();
-            })
+            chains: entry.chains.sort((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime())
           };
           return recordWithChains;
+        });
+        
+        // include any extra chains specified in "alsoOn"
+        deduplicatedRecords.forEach(rec => {
+          const siwe = (rec.value?.siwe || {}) as any;
+          if (Array.isArray(siwe.alsoOn)) {
+            siwe.alsoOn.forEach((chainId: number) => {
+              if (!rec.chains.find(c => c.chainId === chainId)) {
+                rec.chains.push({ chainId, record: rec, issuedAt: rec.value.siwe.issuedAt });
+              }
+            });
+            rec.chains.sort((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime());
+          }
         });
         
         setAddressRecords(deduplicatedRecords);
@@ -362,24 +387,55 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                       })()}
                     </div>
                     
-                    <button 
-                      type="button" 
-                      className="send-payment-button"
-                      onClick={() => {
-                        if (!isConnected) {
-                          // Show wallet connection UI instead of opening payment modal
-                          alert('Please connect your wallet first to send payments');
-                          return;
-                        }
-                        setPaymentModal({
-                          isOpen: true,
-                          recipientAddress: address as `0x${string}`,
-                          chainId: primaryChain.chainId || 1,
-                        });
-                      }}
-                    >
-                      {isConnected ? 'Send' : 'Connect Wallet to Send'}
-                    </button>
+                    <div className="send-buttons-container">
+                      {/* Dropdown + Send button */}
+                      {(() => {
+                        const siwe = (record.value?.siwe || {}) as any;
+                        const on = Number(siwe.chainId) || 1;
+                        console.log(`before alsoOn: Available chains for ${address}:`, on);
+
+                        const alsoOn: number[] = Array.isArray(record.value.alsoOn)
+                          ? record.value.alsoOn.map((c: any) => Number(c)).filter((n: number) => !isNaN(n))
+                          : [];
+                        const chainIds = Array.from(new Set([on, ...alsoOn]));
+                        console.log(`Available chains for ${address}:`, chainIds);
+
+                        const selected = selectedChains[record.uri] ?? chainIds[0];
+                        return (
+                          <div className="send-controls">
+                            <select
+                              value={selected}
+                              onChange={e => setSelectedChains(prev => ({ ...prev, [record.uri]: Number(e.target.value) }))}
+                              className="chain-select"
+                            >
+                              {chainIds.map(id => (
+                                <option key={id} value={id}>
+                                  {getChainName(id)}
+                                </option>
+                              ))}
+                            </select>
+                            <span className="chain-count">({chainIds.length})</span>
+                            <button
+                              type="button"
+                              className="send-payment-button"
+                              onClick={() => {
+                                if (!isConnected) {
+                                  alert('Please connect your wallet first to send payments');
+                                  return;
+                                }
+                                setPaymentModal({
+                                  isOpen: true,
+                                  recipientAddress: address as `0x${string}`,
+                                  chainId: selected,
+                                });
+                              }}
+                            >
+                              Send
+                            </button>
+                          </div>
+                        );
+                      })()}
+                    </div>
                   </div>
                 );
               })}

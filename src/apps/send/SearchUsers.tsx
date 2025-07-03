@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { fetchUsersWithAddressRecord, enrichUsersProgressively } from '../../shared/fetch.ts';
 import './SearchUsers.css';
 import type { DefinedDidString, EnrichedUser } from "../../shared/common.ts";
-import { AtprotoUserCard } from '../../shared/AtprotoUserCard';
+import { AtprotoUserCard } from '../../shared/AtprotoUserCard.tsx';
 
 // Utility functions for user identity resolution
 function isDidString(input: string): input is DefinedDidString {
