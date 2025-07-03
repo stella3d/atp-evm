@@ -240,8 +240,8 @@
 @media (max-width: 400px) {
   .atproto-avatar,
   .atproto-avatar-placeholder {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
   }
 
   .atproto-avatar-placeholder {
@@ -258,5 +258,9 @@
 
   .atproto-user-card.profile .atproto-did {
     font-size: 12px;
+  }
+
+  .recipient-info .atproto-did {
+    font-size: 9px;
   }
 }

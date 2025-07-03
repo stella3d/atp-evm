@@ -533,15 +533,21 @@
 
 }
 
-@media (max-width: 492px) {
+@media (min-width: 500px) {
   .recipient-address-display .address-link {
-    font-size: 14px;
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 499px) {
+  .recipient-address-display .address-link {
+    font-size: 15.5px;
   }
 }
 
 @media (max-width: 470px) {
-  .address-header code {
-    font-size: 16px;
+  .recipient-address-display .address-link {
+    font-size: 15px;
   }
 }
 
@@ -560,26 +566,20 @@
   .address-header code {
     font-size: 14px;
   }
+}
+
+@media (max-width: 436px) {
   .recipient-address-display .address-link {
-    font-size: 13px;
+    font-size: 14px;
   }
 }
 
 @media (max-width: 422px) {
-  .address-value.address-link {
-    font-size: 13px !important;
-  }
-  
   .address-header code {
     font-size: 13px;
   }
-
   .address-record .address-header code {
     font-size: 13px;
-  }
-  
-  .recipient-address-display .address-link {
-    font-size: 12px;
   }
 }
 

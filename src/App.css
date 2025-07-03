@@ -9,6 +9,7 @@ html, body {
 
 #root {
   max-width: 1280px;
+  min-width: 320px;
   padding: 1rem 2rem 2rem 2rem;
   text-align: center;
 }
@@ -58,5 +59,6 @@ h1 {
 
 .app-container {
   max-width: 800px;
+  min-width: 320px;
   margin: 0 auto;
 }
