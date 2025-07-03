@@ -22,8 +22,11 @@ interface UserDetailCardProps {
 
 const linkifyText = (text: string): React.ReactNode[] => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const handleRegex = /(\s@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,})/g;
+  // Combined regex to split by both URLs and handles
+  const combinedRegex = /(https?:\/\/[^\s]+|\s@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,})/g;
 
-  return text.split(urlRegex).map((part, index) => {
+  return text.split(combinedRegex).map((part, index) => {
     if (part.match(urlRegex)) {
       return (
         <a
@@ -38,6 +41,25 @@ const linkifyText = (text: string): React.ReactNode[] => {
         >
           {part}
         </a>
+      );
+    } else if (part.match(handleRegex)) {
+      // Remove the space and @ symbol for the URL but keep them in the display text
+      const handleWithoutSpaceAndAt = part.trim().substring(1);
+      return (
+        <span key={index}>
+          {part.charAt(0)}
+          <a
+            href={`https://bsky.app/profile/${handleWithoutSpaceAndAt}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: '#1d9bf0',
+              textDecoration: 'underline',
+            }}
+          >
+            {part.trim()}
+          </a>
+        </span>
       );
     }
     return part;
@@ -289,7 +311,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         });
                       }}
                     >
-                      {isConnected ? 'Send Payment' : 'Connect Wallet to Send'}
+                      {isConnected ? 'Send' : 'Connect Wallet to Send'}
                     </button>
                   </div>
                 );
@@ -300,7 +322,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         
         {!isConnected && (
           <div className="wallet-connection-section">
-            <label>Connect Wallet to Send Payments:</label>
+            <label>Connect Wallet to Send:</label>
             <ConnectWallet />
           </div>
         )}

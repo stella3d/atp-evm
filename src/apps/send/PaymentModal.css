@@ -1005,7 +1005,9 @@
 }
 
 .confirm-button {
-  font-size: 1.3rem;
+  font-size: 1.75rem;
+  font-weight: 720;
+  padding: 8px 24px;
 }
 
 .confirm-button:hover, .send-button:hover, .done-button:hover {
@@ -1205,188 +1207,6 @@
   }
 }
 
-/* Mobile responsive styles for medium phone screens (typically 375px-480px) */
-@media (max-width: 480px) {
-  /* Make modal content more compact */
-  .modal-header {
-    padding: 6px;
-  }
-  
-  .modal-header h3 {
-    font-size: 1.2rem;
-  }
-  
-  .change-wallet-btn {
-    font-size: 0.7rem;
-    padding: 3px 6px;
-  }
-  
-  .modal-content {
-    padding: 4px 12px 8px 12px;
-  }
-  
-  /* Reduce text sizes throughout */
-  .wallet-status p {
-    font-size: 0.8rem;
-  }
-  
-  .wallet-info code {
-    font-size: 0.8rem;
-  }
-  
-  .token-selection label,
-  .amount-input label {
-    font-size: 0.9rem;
-  }
-  
-  .recipient-input {
-    font-size: 0.9rem;
-  }
-  
-  .ens-header {
-    font-size: 0.82rem;
-  }
-  
-  .ens-label {
-    font-size: 0.7rem;
-  }
-  
-  /* Token list items more compact */
-  .token-item {
-    padding: 10px 12px;
-  }
-  
-  .token-symbol {
-    font-size: 0.9rem;
-  }
-  
-  .token-name {
-    font-size: 0.75rem;
-  }
-  
-  .token-balance {
-    font-size: 0.8rem;
-  }
-  
-  .token-balance-label {
-    font-size: 0.6rem;
-  }
-  
-  /* Amount input adjustments */
-  .amount-row input {
-    font-size: 0.9rem;
-  }
-  
-  /* Amount token display adjustments for mobile */
-  .amount-token-logo-container {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .amount-token-logo,
-  .amount-token-logo-placeholder {
-    width: 16px;
-    height: 16px;
-    font-size: 7px;
-  }
-  
-  .amount-token-display {
-    gap: 4px;
-  }
-  
-  /* Payment summary more compact */
-  .payment-summary {
-    padding: 12px;
-    font-size: 0.85rem;
-  }
-  
-  .recipient-header {
-    font-size: 0.92rem;
-  }
-  
-  /* Make action buttons stack vertically on very small screens but keep them centered and pill-shaped */
-  .modal-actions {
-    flex-direction: column;
-    gap: 8px;
-    margin: 20px auto 0 auto;
-    align-items: center; /* Center the buttons */
-    max-width: 200px;
-    min-width: 150px;
-  }
-  
-  .confirm-button, 
-  .send-button, 
-  .done-button {
-    /* Keep buttons as centered pills with smaller, cleaner sizing */
-    width: auto;
-    max-width: 180px;
-    min-width: 120px;
-    align-self: center;
-    padding: 10px 16px;
-    font-size: 1rem;
-    /* Make button background more subtle on small screens - only background, not text */
-    background: rgba(40, 167, 69, 0.8);
-    /* Prevent text overflow and ensure button stays readable */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .back-button, 
-  .cancel-button {
-    width: auto;
-    min-width: 120px;
-    max-width: 200px;
-    padding: 12px 20px;
-    font-size: 0.9rem;
-    /* Prevent text overflow and ensure button stays readable */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  /* Disconnect button adjustments */
-  .disconnect-btn {
-    font-size: 0.75rem;
-    padding: 6px 12px;
-  }
-  
-  /* Max button adjustments */
-  .max-button {
-    font-size: 0.75rem;
-    padding: 3px 8px;
-  }
-  
-  /* Transaction hash display */
-  .tx-hash {
-    font-size: 0.75rem;
-    padding: 6px;
-  }
-  
-  /* Loading and status text */
-  .loading {
-    font-size: 0.85rem;
-    padding: 16px;
-  }
-  
-  .no-tokens {
-    font-size: 0.85rem;
-    padding: 16px;
-  }
-  
-  .step-sending,
-  .step-success,
-  .step-error {
-    padding: 16px 0;
-  }
-  
-  .step-sending p,
-  .step-success p,
-  .step-error p {
-    font-size: 0.9rem;
-  }
-}
-
 /* Additional styles for very small screens (320px-375px) */
 @media (max-width: 375px) {
   .payment-modal {
@@ -1415,7 +1235,7 @@
     max-width: 160px;
     min-width: 100px;
     padding: 10px 12px;
-    font-size: 0.85rem;
+    font-size: 0.92rem;
   }
 }
 
@@ -1525,8 +1345,7 @@
 
 
 /* Responsive font size adjustments for AddressLink components */
-
-@media (max-width: 480px) {
+@media (min-width: 470px) and (max-width: 480px) {
   .recipient-address-display code {
     font-size: 15px;
   }
@@ -1546,7 +1365,7 @@
 
 @media (max-width: 422px) {
   .address-value.address-link {
-    font-size: 13px !important;
+    font-size: 13px;
   }
   
   .recipient-address-display code {

@@ -661,7 +661,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   disabled={!selectedToken || !amount || !customRecipient || parseFloat(amount) <= 0 || isTransactionPending || !!amountError}
                   onClick={handleSendPayment}
                 >
-                  {isTransactionPending ? 'Sending...' : `Send ${selectedToken?.symbol || 'Payment'}`}
+                  {isTransactionPending ? 'Sending...' : `Send ${selectedToken?.symbol || ''}`}
                 </button>
                 </div>
             </div>
