@@ -89,6 +89,7 @@ export const CHAIN_NAMES: Record<number, string> = {
   1: 'Ethereum',
   8543: 'Base',
   10: 'Optimism',
+  100: 'Gnosis Chain',
   42161: 'Arbitrum',
   137: 'Polygon',
   56: 'BNB Chain'
@@ -103,6 +104,7 @@ export const CHAIN_COLORS: Record<number, string> = {
   1: '#627EEA',     // Ethereum - blue
   8543: '#0052FF',  // Base - blue
   10: '#FF0420',    // Optimism - red
+  100: 'rgb(62, 105, 87)', // Gnosis Chain - dark green
   42161: '#2D374B', // Arbitrum - dark blue/gray
   137: '#8247E5',   // Polygon - purple
   56: '#F3BA2F'     // BNB Chain - yellow
@@ -132,9 +134,7 @@ export function getDoraNetworkSlug(chainId: number): string {
   const ondoraSlugMap: Record<number, string> = {
     1: 'ethereum',
     8543: 'base',
-    10: 'optimism', 
     42161: 'arbitrum',
-    137: 'polygon'
   };
   return ondoraSlugMap[chainId] || 'ethereum'; // default to ethereum
 }
