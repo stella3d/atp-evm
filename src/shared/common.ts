@@ -102,10 +102,10 @@ export function getChainName(chainId: number): string {
 // Chain ID to brand color mapping
 export const CHAIN_COLORS: Record<number, string> = {
   1: '#627EEA',     // Ethereum - blue
-  8543: '#0052FF',  // Base - blue
+  8543: 'rgb(0, 82, 255)',  // Base - blue
   10: '#FF0420',    // Optimism - red
   100: 'rgb(62, 105, 87)', // Gnosis Chain - dark green
-  42161: '#2D374B', // Arbitrum - dark blue/gray
+  42161: '#213147', // Arbitrum - dark blue/gray
   137: '#8247E5',   // Polygon - purple
   56: '#F3BA2F'     // BNB Chain - yellow
 };

@@ -278,7 +278,7 @@
 
 .chain-name.arbitrum {
   color: #e85a4f;
-  background: #fff5f5;
+  background: #213147;
   opacity: 0.8;
 }
 
@@ -350,7 +350,7 @@
 
 .chain-indicator.arbitrum {
   color: #e85a4f;
-  background: rgba(255, 245, 245, 0.8);
+  background: #213147;
 }
 
 .chain-indicator.optimism {
@@ -473,7 +473,7 @@
 
   .chain-name.arbitrum {
     color: #fdba74;
-    background: #92400e;
+    background: #213147
   }
 
   .chain-name.optimism {
@@ -518,7 +518,7 @@
 
   .chain-indicator.arbitrum {
     color: #fed7aa;
-    background: rgba(194, 65, 12, 0.8);
+    background: #213147;
   }
 
   .chain-indicator.optimism {
