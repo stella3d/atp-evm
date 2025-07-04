@@ -255,7 +255,7 @@
   font-weight: 600;
   flex: 1;
   max-width: 25%;
-  text-align: left;
+  text-align: center;
 }
 
 .address-date {
@@ -265,7 +265,8 @@
   align-items: center;
   flex: 1;
   max-width: 70%;
-  text-align: left;
+  text-align: center;
+  justify-content: center;
 }
 
 .send-payment-button {
@@ -656,6 +657,8 @@
   flex: 1;
   max-width: 25%;
   min-width: 80px;
+  height: 42px; /* Match send button height */
+  box-sizing: border-box;
 }
 
 .chain-select:hover {
@@ -663,7 +666,7 @@
 }
 
 .chain-label {
-  font-size: 12px;
+  font-size: 14px;
   color: #536471;
   font-weight: 600;
   white-space: nowrap;
