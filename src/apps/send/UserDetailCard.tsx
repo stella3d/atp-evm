@@ -411,7 +411,8 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                               className="send-payment-button"
                               style={{
                                 background: getChainGradient(selected),
-                                color: 'white'
+                                color: 'white',
+                                filter: 'blur(0.25px)'
                               }}
                               onClick={() => {
                                 if (!isConnected) {

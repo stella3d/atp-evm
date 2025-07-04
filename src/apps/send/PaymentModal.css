@@ -283,8 +283,8 @@
 }
 
 .chain-name.optimism {
-  color: #cc0066;
-  background: #fce4ec;
+  color: white;
+  background: #ff0420;
   opacity: 0.8;
 }
 
@@ -354,8 +354,8 @@
 }
 
 .chain-indicator.optimism {
-  color: #cc0066;
-  background: rgba(252, 228, 236, 0.8);
+  color: white;
+  background: #ff0420;
 }
 
 .recipient-input {
@@ -477,8 +477,8 @@
   }
 
   .chain-name.optimism {
-    color: #f9a8d4;
-    background: #831843;
+    color: white;
+    background: #ff0420;
   }
 
   .disconnect-btn {
@@ -522,8 +522,8 @@
   }
 
   .chain-indicator.optimism {
-    color: #fbb6ce;
-    background: rgba(157, 23, 77, 0.8);
+    color: white;
+    background: #ff0420;
   }
 
   .recipient-name {

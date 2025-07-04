@@ -87,7 +87,7 @@ export function uid(length = 96): string {
 // Chain ID to friendly name mapping
 export const CHAIN_NAMES: Record<number, string> = {
   1: 'Ethereum',
-  8543: 'Base',
+  8453: 'Base',
   10: 'Optimism',
   100: 'Gnosis',
   42161: 'Arbitrum',
@@ -102,12 +102,10 @@ export function getChainName(chainId: number): string {
 // Chain ID to brand color mapping
 export const CHAIN_COLORS: Record<number, string> = {
   1: '#627EEA',     // Ethereum - blue
-  8543: 'rgb(0, 82, 255)',  // Base - blue
-  10: '#FF0420',    // Optimism - red
+  8453: 'rgb(0, 82, 255)',  // Base - blue
+  10: '#ff0420',    // Optimism - red
   100: 'rgb(62, 105, 87)', // Gnosis Chain - dark green
   42161: '#213147', // Arbitrum - dark blue/gray
-  137: '#8247E5',   // Polygon - purple
-  56: '#F3BA2F'     // BNB Chain - yellow
 };
 
 export function getChainColor(chainId: number): string {
@@ -116,27 +114,36 @@ export function getChainColor(chainId: number): string {
 
 export function getChainGradient(chainId: number): string {
   const chainColor = getChainColor(chainId);
-  // Create a radial gradient that will animate by changing circle size
-  return `radial-gradient(circle at 50% 50%, ${chainColor} 0%, #1d9bf0 50%, ${chainColor} 100%)`;
+  
+  // Special handling for chains with colors that don't mesh well with base blue
+  if (chainId === 10 || chainId === 42161) { // Optimism or Arbitrum
+    // Keep base blue in center, gradient towards (but not reaching) chain color at edges
+    return `radial-gradient(circle at 50% 50%, #1d9bf0 0%, #1d9bf0 60%, ${chainColor}40 100%)`;
+  }
+  
+  // Default gradient for other chains
+  // Spends more time on standard blue before transitioning to brand color
+  return `radial-gradient(circle at 50% 50%, ${chainColor} 0%, #1d9bf0 30%, #1d9bf0 70%, ${chainColor} 100%)`;
 }
 
 export function getChainClass(chainId: number): string {
   const chainClassMap: Record<number, string> = {
     1: 'ethereum',
-    8543: 'base', 
+    8453: 'base',
     10: 'optimism',
+    100: 'gnosis',
     42161: 'arbitrum'
   };
   return chainClassMap[chainId] || 'ethereum'; // default to ethereum styling
 }
 
-export function getDoraNetworkSlug(chainId: number): string {
+export function getDoraNetworkSlug(chainId: number): string | null {
   const ondoraSlugMap: Record<number, string> = {
     1: 'ethereum',
-    8543: 'base',
+    8453: 'base',
     42161: 'arbitrum',
   };
-  return ondoraSlugMap[chainId] || 'ethereum'; // default to ethereum
+  return ondoraSlugMap[chainId] || null; // default to ethereum
 }
 
 export function getDoraTransactionUrl(txHash: string, chainId: number): string {
