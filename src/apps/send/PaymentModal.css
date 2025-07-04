@@ -264,15 +264,14 @@
 
 /* Chain-specific colors for chain-name */
 .chain-name.ethereum {
-  color: #4a90e2;
-  background: #f0f8ff;
+  color: white;
+  background: #627EEA;
   opacity: 0.8;
 }
 
 .chain-name.base {
-  color: #0052cc;
-  background: #1976d2;
   color: white;
+  background: rgb(0, 82, 255);
   opacity: 0.8;
 }
 
@@ -285,6 +284,12 @@
 .chain-name.optimism {
   color: white;
   background: #ff0420;
+  opacity: 0.8;
+}
+
+.chain-name.gnosis {
+  color: white;
+  background: rgb(62, 105, 87);
   opacity: 0.8;
 }
 
@@ -339,13 +344,13 @@
 
 /* Chain-specific colors for chain-indicator */
 .chain-indicator.ethereum {
-  color: #4a90e2;
-  background: rgba(240, 248, 255, 0.8);
+  color: white;
+  background: #627EEA;
 }
 
 .chain-indicator.base {
   color: white;
-  background: rgba(25, 118, 210, 0.8);
+  background: rgb(0, 82, 255);
 }
 
 .chain-indicator.arbitrum {
@@ -356,6 +361,11 @@
 .chain-indicator.optimism {
   color: white;
   background: #ff0420;
+}
+
+.chain-indicator.gnosis {
+  color: white;
+  background: rgb(62, 105, 87);
 }
 
 .recipient-input {
@@ -462,13 +472,13 @@
 
   /* Dark mode chain-specific colors for chain-name */
   .chain-name.ethereum {
-    color: #93c5fd;
-    background: #1e3a8a;
+    color: white;
+    background: #627EEA;
   }
 
   .chain-name.base {
-    color: #93c5fd;
-    background: #1e3a8a;
+    color: white;
+    background: rgb(0, 82, 255);
   }
 
   .chain-name.arbitrum {
@@ -479,6 +489,11 @@
   .chain-name.optimism {
     color: white;
     background: #ff0420;
+  }
+
+  .chain-name.gnosis {
+    color: white;
+    background: rgb(62, 105, 87);
   }
 
   .disconnect-btn {
@@ -507,13 +522,13 @@
 
   /* Dark mode chain-specific colors for chain-indicator */
   .chain-indicator.ethereum {
-    color: #a5d8ff;
-    background: rgba(37, 99, 235, 0.8);
+    color: white;
+    background: #627EEA;
   }
 
   .chain-indicator.base {
-    color: #bfdbfe;
-    background: rgba(29, 78, 216, 0.8);
+    color: white;
+    background: rgb(0, 82, 255);
   }
 
   .chain-indicator.arbitrum {
@@ -524,6 +539,11 @@
   .chain-indicator.optimism {
     color: white;
     background: #ff0420;
+  }
+
+  .chain-indicator.gnosis {
+    color: white;
+    background: rgba(62, 105, 87, 0.8);
   }
 
   .recipient-name {
