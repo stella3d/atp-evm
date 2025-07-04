@@ -347,25 +347,14 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         <div className="address-metadata">
                           <div className="metadata-column">
                             <div className="metadata-label">⛓️</div>
-                            <div className="chain-info">
-                              {chains.length === 1 ? (
-                                getChainName(primaryChain.chainId)
-                              ) : (
-                                <span>
-                                  {chains.map((chain: { chainId: number; record: AddressControlRecord; issuedAt: string }, idx: number) => (
-                                    <span key={chain.chainId}>
-                                      {getChainName(chain.chainId)}
-                                      {idx < chains.length - 1 ? ', ' : ''}
-                                    </span>
-                                  ))}
-                                </span>
-                              )}
+                            <div className="domain-info">
+                              {getChainName(primaryChain.chainId)}
                             </div>
                           </div>
                           
                           <div className="metadata-column">
                             <div className="metadata-label">🌐</div>
-                            <div className="domain-info">{domain}</div>
+                            <div className="domain-info">{domain === 'wallet-link.stellz.club' ? `✅ ${domain}` : domain}</div>
                           </div>
                           
                           <div className="metadata-column">

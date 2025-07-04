@@ -600,11 +600,15 @@
   }
 
   .domain-info {
-    color: #cccccc;
+    color: lightgray !important;
   }
 
   .address-date {
     color: #cccccc;
+  }
+
+  .metadata-label {
+    opacity: 0.8;
   }
 }
 
@@ -745,7 +749,7 @@
 
 .domain-info {
   font-size: 12px;
-  color: #536471;
+  color: gray;
   text-align: center;
   word-wrap: break-word;
   line-height: 1.2;
