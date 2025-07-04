@@ -430,7 +430,6 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                                 </option>
                               ))}
                             </select>
-                            <span className="chain-count">({chainIds.length})</span>
                           </div>
                         );
                       })()}
