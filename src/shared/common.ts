@@ -112,6 +112,12 @@ export function getChainColor(chainId: number): string {
   return CHAIN_COLORS[chainId] || '#627EEA'; // default to Ethereum blue
 }
 
+export function getChainGradient(chainId: number): string {
+  const chainColor = getChainColor(chainId);
+  // Create a gradient from the main button color (#1d9bf0) in the middle to chain color on the outside
+  return `linear-gradient(45deg, ${chainColor}, #1d9bf0, ${chainColor})`;
+}
+
 export function getChainClass(chainId: number): string {
   const chainClassMap: Record<number, string> = {
     1: 'ethereum',
