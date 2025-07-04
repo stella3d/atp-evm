@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { EnrichedUser, AddressControlRecord, DefinedDidString } from "../../shared/common.ts";
-import { getChainName, getChainClass } from "../../shared/common.ts";
+import { getChainName, getChainColor } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
 import { PaymentModal } from "./PaymentModal.tsx";
@@ -404,6 +404,10 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                             <button
                               type="button"
                               className="send-payment-button"
+                              style={{
+                                backgroundColor: getChainColor(selected),
+                                color: 'white'
+                              }}
                               onClick={() => {
                                 if (!isConnected) {
                                   alert('Please connect your wallet first to send payments');

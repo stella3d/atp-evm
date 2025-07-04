@@ -98,6 +98,20 @@ export function getChainName(chainId: number): string {
   return CHAIN_NAMES[chainId] || `Chain ${chainId}`;
 }
 
+// Chain ID to brand color mapping
+export const CHAIN_COLORS: Record<number, string> = {
+  1: '#627EEA',     // Ethereum - blue
+  8543: '#0052FF',  // Base - blue
+  10: '#FF0420',    // Optimism - red
+  42161: '#2D374B', // Arbitrum - dark blue/gray
+  137: '#8247E5',   // Polygon - purple
+  56: '#F3BA2F'     // BNB Chain - yellow
+};
+
+export function getChainColor(chainId: number): string {
+  return CHAIN_COLORS[chainId] || '#627EEA'; // default to Ethereum blue
+}
+
 export function getChainClass(chainId: number): string {
   const chainClassMap: Record<number, string> = {
     1: 'ethereum',
