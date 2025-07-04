@@ -283,6 +283,8 @@
   flex-shrink: 0;
   max-width: 60%;
   min-width: 30%;
+  height: 42px;
+  box-sizing: border-box;
 }
 
 .send-payment-button:hover {
