@@ -313,6 +313,9 @@
   height: 42px;
   box-sizing: border-box;
   animation: gradientShift 20s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .send-payment-button:hover {
