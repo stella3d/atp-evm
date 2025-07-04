@@ -116,8 +116,8 @@ export function getChainColor(chainId: number): string {
 
 export function getChainGradient(chainId: number): string {
   const chainColor = getChainColor(chainId);
-  // Create a gradient from the main button color (#1d9bf0) in the middle to chain color on the outside
-  return `linear-gradient(45deg, ${chainColor}, #1d9bf0, ${chainColor})`;
+  // Create a radial gradient that will animate by changing circle size
+  return `radial-gradient(circle at 50% 50%, ${chainColor} 0%, #1d9bf0 50%, ${chainColor} 100%)`;
 }
 
 export function getChainClass(chainId: number): string {

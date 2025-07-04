@@ -328,6 +328,8 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                 
                 // Use the most recent chain for the primary action
                 const primaryChain = chains[0];
+                // Extract domain from SIWE record
+                const domain = record.value?.siwe?.domain;
 
                 return (
                   <div key={record.uri || index} className="address-record">
@@ -340,25 +342,39 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         )}
                       </div>
                       {issuedAt && (
+                        <div>
+                        <div className="domain-info" style={{ fontWeight: 720 }}>signed on</div>
                         <div className="address-metadata">
-                          <div className="address-date">
-                            {new Date(primaryChain.issuedAt).toLocaleDateString()} at {new Date(primaryChain.issuedAt).toLocaleTimeString()}
+                          <div className="metadata-column">
+                            <div className="metadata-label">⛓️</div>
+                            <div className="chain-info">
+                              {chains.length === 1 ? (
+                                getChainName(primaryChain.chainId)
+                              ) : (
+                                <span>
+                                  {chains.map((chain: { chainId: number; record: AddressControlRecord; issuedAt: string }, idx: number) => (
+                                    <span key={chain.chainId}>
+                                      {getChainName(chain.chainId)}
+                                      {idx < chains.length - 1 ? ', ' : ''}
+                                    </span>
+                                  ))}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                          ⛓️
-                          <div className="chain-info">
-                            {chains.length === 1 ? (
-                              getChainName(primaryChain.chainId)
-                            ) : (
-                              <span>
-                                {chains.map((chain: { chainId: number; record: AddressControlRecord; issuedAt: string }, idx: number) => (
-                                  <span key={chain.chainId}>
-                                    {getChainName(chain.chainId)}
-                                    {idx < chains.length - 1 ? ', ' : ''}
-                                  </span>
-                                ))}
-                              </span>
-                            )}
+                          
+                          <div className="metadata-column">
+                            <div className="metadata-label">🌐</div>
+                            <div className="domain-info">{domain}</div>
                           </div>
+                          
+                          <div className="metadata-column">
+                            <div className="metadata-label">🕛</div>
+                            <div className="address-date">
+                              {new Date(primaryChain.issuedAt).toLocaleDateString()}<br />
+                            </div>
+                          </div>
+                        </div>
                         </div>
                       )}
                       
