@@ -401,18 +401,6 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         const selected = selectedChains[record.uri] ?? chainIds[0];
                         return (
                           <div className="send-controls">
-                            <select
-                              value={selected}
-                              onChange={e => setSelectedChains(prev => ({ ...prev, [record.uri]: Number(e.target.value) }))}
-                              className="chain-select"
-                            >
-                              {chainIds.map(id => (
-                                <option key={id} value={id}>
-                                  {getChainName(id)}
-                                </option>
-                              ))}
-                            </select>
-                            <span className="chain-count">({chainIds.length})</span>
                             <button
                               type="button"
                               className="send-payment-button"
@@ -430,6 +418,19 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                             >
                               Send
                             </button>
+                            <span className="chain-label">on</span>
+                            <select
+                              value={selected}
+                              onChange={e => setSelectedChains(prev => ({ ...prev, [record.uri]: Number(e.target.value) }))}
+                              className="chain-select"
+                            >
+                              {chainIds.map(id => (
+                                <option key={id} value={id}>
+                                  {getChainName(id)}
+                                </option>
+                              ))}
+                            </select>
+                            <span className="chain-count">({chainIds.length})</span>
                           </div>
                         );
                       })()}

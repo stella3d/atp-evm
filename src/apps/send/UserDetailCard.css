@@ -183,7 +183,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 6px;
   background: #f7f9fa;
   border: 1px solid #e1e5e9;
   border-radius: 6px;
@@ -280,6 +280,8 @@
   transition: background-color 0.2s;
   white-space: nowrap;
   flex-shrink: 0;
+  max-width: 60%;
+  min-width: 30%;
 }
 
 .send-payment-button:hover {
@@ -319,7 +321,6 @@
   .address-record {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
   }
 
   .address-record .address-value {
@@ -334,12 +335,6 @@
   
   .address-info {
     width: 100%;
-  }
-  
-  /* Send payment button adjustments - full width on mobile */
-  .send-payment-button {
-    width: 100%;
-    margin-top: 4px;
   }
   
   /* Reset address metadata width constraint on mobile */
@@ -375,6 +370,8 @@
   .send-payment-button {
     padding: 9px 15px;
     font-size: 17px;
+      max-width: 60%;
+  min-width: 30%;
   }
   
   /* Card content padding adjustments */
@@ -537,6 +534,28 @@
     color: #cccccc;
   }
 
+  .chain-select {
+    background: rgba(29, 155, 240, 0.5);
+    color: white;
+  }
+
+  .chain-select:hover {
+    background: rgba(16, 110, 190, 0.8);
+  }
+
+  .chain-label {
+    color: #cccccc;
+  }
+
+  .chain-select option {
+    background: #2d2d2d;
+    color: #e0e0e0;
+  }
+
+  .chain-count {
+    color: #cccccc;
+  }
+
 }
 
 @media (min-width: 558px) {
@@ -625,4 +644,58 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
+}
+
+/* Send controls styling */
+.send-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.chain-select {
+  background: rgba(29, 155, 240, 0.5);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 11px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  flex: 1;
+  max-width: 25%;
+  min-width: 80px;
+}
+
+.chain-select:hover {
+  background: rgba(16, 110, 190, 0.8);
+}
+
+.chain-label {
+  font-size: 12px;
+  color: #536471;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.chain-select option {
+  background: white;
+  color: #0f1419;
+  padding: 4px 8px;
+}
+
+.chain-count {
+  font-size: 12px;
+  color: #536471;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.send-controls .send-payment-button {
+  flex: 3;
+  max-width: none;
+  min-width: 120px;
 }
