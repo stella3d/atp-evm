@@ -3,7 +3,8 @@ import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionRec
 import { isAddress, parseUnits } from 'viem';
 import { type TokenBalance } from '../../shared/useTokenBalances.ts';
 import { useTokenBalancesContext } from '../../shared/TokenBalanceProvider.tsx';
-import { getChainName, getChainClass, getDoraTransactionUrl } from '../../shared/common.ts';
+import { getChainName, getDoraTransactionUrl } from '../../shared/common.ts';
+import { ChainIndicator } from '../../shared/ChainIndicator.tsx';
 import { AddressLink } from '../../shared/AddressLink.tsx';
 import { AtprotoUserCard } from '../../shared/AtprotoUserCard.tsx';
 import './PaymentModal.css';
@@ -260,13 +261,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   // Helper function to render a network name with chain indicator styling
   const renderNetworkWithIndicator = (chainId: number) => {
-    const chainName = getChainName(chainId);
-    const chainClass = getChainClass(chainId);
-    
     return (
-      <span className={`chain-indicator ${chainClass}`}>
-        {chainName}
-      </span>
+      <ChainIndicator chainId={chainId} variant="payment-modal" />
     );
   };
 
@@ -515,7 +511,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           {step === 'select' && (
             <div className="step-select">
               <div className="recipient-section">
-                <label>Recipient on<span className={`chain-indicator ${getChainClass(chainId)}`}>{getChainName(chainId)}</span></label>
+                <label>Recipient on <ChainIndicator chainId={chainId} variant="payment-modal" /></label>
                 <div className="recipient-address-display">
                   <AddressLink address={customRecipient} className="recipient-input" />
                 </div>

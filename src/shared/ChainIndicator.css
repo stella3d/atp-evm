@@ -1,0 +1,109 @@
+/* Base chain indicator styles */
+.chain-indicator {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  color: white;
+}
+
+.chain-indicator-compact {
+  padding: 1px 4px;
+  font-size: 0.7rem;
+  border-radius: 3px;
+}
+
+.chain-indicator-payment-modal {
+  font-size: inherit; /* Inherit from parent context (20px in PaymentModal) */
+  font-weight: 600;
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin-left: 4px;
+}
+
+.chain-indicator-icon {
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.chain-indicator-emoji {
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* Chain-specific colors for light mode */
+.chain-indicator.ethereum {
+  background-color: #627EEA;
+  color: white;
+}
+
+.chain-indicator.base {
+  background-color: rgb(0, 82, 255);
+  color: white;
+}
+
+.chain-indicator.arbitrum {
+  background-color: #213147;
+  color: #e85a4f;
+}
+
+.chain-indicator.optimism {
+  background-color: #ff0420;
+  color: white;
+}
+
+.chain-indicator.gnosis {
+  background-color: rgb(62, 105, 87);
+  color: white;
+}
+
+.chain-indicator.polygon {
+  background-color: #8247e5;
+  color: white;
+}
+
+.chain-indicator.bnb-chain {
+  background-color: #f3ba2f;
+  color: #000;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .chain-indicator.ethereum {
+    background-color: rgba(98, 126, 234, 0.8);
+    color: #a5d8ff;
+  }
+
+  .chain-indicator.base {
+    background-color: rgba(0, 82, 255, 0.8);
+    color: #bfdbfe;
+  }
+
+  .chain-indicator.arbitrum {
+    background-color: #213147;
+    color: #fed7aa;
+  }
+
+  .chain-indicator.optimism {
+    background-color: #ff0420;
+    color: white;
+  }
+
+  .chain-indicator.gnosis {
+    background-color: rgba(62, 105, 87, 0.8);
+    color: #a7f3d0;
+  }
+
+  .chain-indicator.polygon {
+    background-color: rgba(130, 71, 229, 0.8);
+    color: #ddd6fe;
+  }
+
+  .chain-indicator.bnb-chain {
+    background-color: rgba(243, 186, 47, 0.8);
+    color: #000;
+  }
+}
