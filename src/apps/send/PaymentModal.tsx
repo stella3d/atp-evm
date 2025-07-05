@@ -180,7 +180,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       // This is definitely a wrong chain error - update the message with specific chain info
       const currentChainName = getChainName(currentChainId);
       const expectedChainName = getChainName(chainId);
-      err.message = `Your wallet is connected to ${currentChainName} (Chain ${currentChainId}), but this transaction requires ${expectedChainName} (Chain ${chainId}). Please switch networks to complete this transaction.`;
+      err.message = `Your wallet is connected to ${currentChainName} (Chain ${currentChainId}), but this transaction requires ${expectedChainName} (Chain ${chainId}).`;
       return true;
     }
     
@@ -223,7 +223,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         const expectedChainName = getChainName(chainId);
         return {
           type: 'wrong_chain',
-          message: `Your wallet is connected to ${currentChainName} (Chain ${currentChainId}), but this transaction requires ${expectedChainName} (Chain ${chainId}). Please switch networks to complete this transaction.`
+          message: `Your wallet is connected to ${currentChainName} (Chain ${currentChainId}), but this transaction requires ${expectedChainName} (Chain ${chainId}).`
         };
       } else {
         // Fallback for when we can't extract chain info
@@ -281,8 +281,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       return (
         <>
           Your wallet is connected to {renderNetworkWithIndicator(currentChainId)} (Chain {currentChainId}), 
-          but this transaction requires {renderNetworkWithIndicator(chainId)} (Chain {chainId}). 
-          <p>Please switch networks to complete this transaction.</p>
+          but this transaction requires {renderNetworkWithIndicator(chainId)} (Chain {chainId}).
         </>
       );
     } 

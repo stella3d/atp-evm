@@ -272,7 +272,7 @@
   gap: 12px;
   margin-top: 8px;
   margin-left: 6px;
-  max-width: 90%;
+  max-width: 96%;
   font-size: 0.8em;
   justify-content: space-between;
 }
@@ -354,14 +354,6 @@
 .wallet-connection-section h2 {
   margin: 2px;
 }
-
-/* Responsive width adjustments for address-metadata */
-@media (max-width: 720px) and (min-width: 621px) {
-  .address-metadata {
-    max-width: 85%;
-  }
-}
-
 
 /* Layout changes for screens up to 620px (phones, small tablets) */
 @media (max-width: 620px) {
