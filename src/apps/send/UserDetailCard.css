@@ -102,7 +102,7 @@
 .card-content {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .user-profile {
@@ -129,7 +129,8 @@
 }
 
 .profile-description p {
-  margin: 4px 0;
+  margin: 2px 0;
+
 }
 
 .user-info label {
