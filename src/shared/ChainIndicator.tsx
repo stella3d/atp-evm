@@ -9,8 +9,6 @@ export enum SupportedChain {
   OPTIMISM = 10,
   GNOSIS = 100,
   ARBITRUM = 42161,
-  POLYGON = 137,
-  BNB_CHAIN = 56
 }
 
 // Chain ID to icon mapping
@@ -18,10 +16,8 @@ const CHAIN_ICONS: Record<number, string> = {
   1: '/chain_logos/ethereum.svg',
   8453: '/chain_logos/base.svg',
   10: '⚡', // Optimism - using emoji as fallback
-  100: '🟢', // Gnosis - using emoji as fallback
-  42161: '🔵', // Arbitrum - using emoji as fallback
-  137: '🟣', // Polygon - using emoji as fallback
-  56: '🟡' // BNB Chain - using emoji as fallback
+  100: '/chain_logos/gnosis.png', // Gnosis - using emoji as fallback
+  42161: '/chain_logos/arbitrum.svg'
 };
 
 interface ChainIndicatorProps {
@@ -63,8 +59,8 @@ export const ChainIndicator: React.FC<ChainIndicatorProps> = ({
     const emojiSize = variant === 'compact' ? '10px' : 
                      variant === 'payment-modal' ? '20px' : '12px';
 
-    // If it's an SVG file, render as img
-    if (chainIcon && chainIcon.startsWith('/')) {
+    // If it's an .svg/.png file, render as img
+    if (chainIcon && (chainIcon.endsWith('.svg') || chainIcon.endsWith('.png'))) {
       return (
         <img 
           src={chainIcon} 
