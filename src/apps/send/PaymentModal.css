@@ -255,9 +255,9 @@
 }
 
 .chain-name {
-  font-weight: 500;
+  font-weight: 600;
   padding: 1px 4px;
-  border-radius: 3px;
+  border-radius: 4px;
   font-size: 0.75rem;
   opacity: 0.8;
 }
@@ -336,7 +336,7 @@
 }
 
 .chain-indicator {
-  font-weight: 500;
+  font-weight: 600;
   padding: 1px 4px;
   border-radius: 3px;
   margin-left: 4px;

@@ -207,8 +207,8 @@
 
 .address-record {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
   gap: 6px;
   background: #f7f9fa;
   border: 1px solid #e1e5e9;
@@ -217,7 +217,7 @@
 }
 
 .address-info {
-  flex-grow: 1;
+  width: 100%;
   min-width: 0;
 }
 
@@ -364,12 +364,6 @@
 
 /* Layout changes for screens up to 620px (phones, small tablets) */
 @media (max-width: 620px) {
-  /* Fix address record layout to prevent button overlap */
-  .address-record {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
   .address-record .address-value {
     font-size: 17px;
   }
@@ -377,11 +371,6 @@
   .address-value {
     font-size: 15px;
     word-break: break-word;
-  }
-  
-  
-  .address-info {
-    width: 100%;
   }
   
   /* Reset address metadata width constraint on mobile */
