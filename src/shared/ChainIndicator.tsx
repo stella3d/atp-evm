@@ -15,8 +15,8 @@ export enum SupportedChain {
 const CHAIN_ICONS: Record<number, string> = {
   1: '/chain_logos/ethereum.svg',
   8453: '/chain_logos/base.svg',
-  10: '⚡', // Optimism - using emoji as fallback
-  100: '/chain_logos/gnosis.png', // Gnosis - using emoji as fallback
+  10: '/chain_logos/optimism.svg',
+  100: '/chain_logos/gnosis.png',
   42161: '/chain_logos/arbitrum.svg'
 };
 
