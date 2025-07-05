@@ -353,8 +353,8 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                           </div>
                           
                           <div className="metadata-column">
-                            <div className="metadata-label">🌐</div>
-                            <div className="domain-info">{domain === 'wallet-link.stellz.club' ? `✅ ${domain}` : domain}</div>
+                            <div className="metadata-label">{domain === 'wallet-link.stellz.club' ? `🌐 ✅` : '🌐 ⚠️'}</div>
+                            <div className="domain-info">{domain}</div>
                           </div>
                           
                           <div className="metadata-column">
