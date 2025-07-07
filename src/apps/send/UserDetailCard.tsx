@@ -139,7 +139,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
       setRecordsError(null);
       try {
         const records = await fetchAddressControlRecords(selectedUser.did, selectedUser.pds);
-        console.log('Raw address records:', records);
+        //console.log('Raw address records:', records);
         
         // Group records by address, collecting all chains for each address
         const addressMap = new Map<string, {
