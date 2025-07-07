@@ -163,16 +163,14 @@ const batchProcessDids = async (dids: DefinedDidString[]): Promise<EnrichedUser[
         // Only use handle if it was verified
         if (candidateHandle && verificationResults.get(candidateHandle) === true) {
           handle = candidateHandle;
-          console.log(`Verified handle ${handle} for DID ${did}`);
-          
           // Fetch profile data for verified handle
           try {
             profileData = await fetchBlueskyProfile(handle);
           } catch (error) {
-            console.warn(`Failed to fetch profile for verified handle ${handle}:`, error);
+            console.warn(`failed to fetch profile for verified handle ${handle}:`, error);
           }
         } else if (candidateHandle) {
-          console.warn(`Handle ${candidateHandle} failed verification for DID ${did} - hiding profile`);
+          console.warn(`handle ${candidateHandle} failed verification for DID ${did} - hiding profile`);
         }
         
         return {
