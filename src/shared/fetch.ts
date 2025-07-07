@@ -506,8 +506,6 @@ export const enrichUsersProgressively = async (
         // Only use handle if it was verified
         if (candidateHandle && verificationResults.get(candidateHandle) === true) {
           handle = candidateHandle;
-          console.log(`Verified handle ${handle} for DID ${did}`);
-          
           // Fetch profile data for verified handle
           try {
             profileData = await fetchBlueskyProfile(handle);
