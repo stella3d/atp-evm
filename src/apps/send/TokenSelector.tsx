@@ -1,5 +1,5 @@
 import React from 'react';
-import { TokenBalance } from '../../shared/useTokenBalances.ts';
+import { type TokenBalance } from '../../shared/useTokenBalances.ts';
 
 interface TokenSelectorProps {
   loadingBalances: boolean;

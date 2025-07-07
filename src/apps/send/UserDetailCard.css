@@ -167,8 +167,8 @@
 
 .address-records label {
   display: block;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 720;
   color: #536471;
   margin-bottom: 8px;
 }
@@ -408,6 +408,10 @@
   .card-header h3 {
     font-size: 1.2rem;
   }
+
+  .address-records label {
+    font-size: 18px;
+  }
 }
 
 @media (max-width: 400px) {
@@ -441,6 +445,9 @@
 @media (max-width: 386px) {
   .address-meta-value {
     font-size: 8.5px;
+  }
+  .address-records label {
+    font-size: 17px;
   }
 }
 
@@ -557,8 +564,6 @@
 
   .address-records label {
     color: #cccccc;
-    font-size: 16px;
-    font-weight: 700;
   }
 
   .loading-records {

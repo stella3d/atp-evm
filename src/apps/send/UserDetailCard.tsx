@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { isAddress } from 'viem';
-import { useAccount } from 'wagmi';
+import { useAccount, WagmiProvider } from 'wagmi';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { EnrichedUser, AddressControlRecord, DefinedDidString } from "../../shared/common.ts";
 import { getChainName, getChainColor, getChainGradient } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
@@ -11,8 +12,6 @@ import { AtprotoUserCard } from "../../shared/AtprotoUserCard.tsx";
 import { ConnectWallet } from "../../shared/WalletConnector.tsx";
 import { config } from '../../shared/WalletConnector.tsx';
 import './UserDetailCard.css';
-import { WagmiProvider } from "wagmi";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 interface UserDetailCardProps {
   selectedUser: EnrichedUser;
@@ -399,7 +398,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         const on = Number(siwe.chainId) || 1;
 
                         const alsoOn: number[] = Array.isArray(record.value.alsoOn)
-                          ? record.value.alsoOn.map((c: any) => Number(c)).filter((n: number) => !isNaN(n))
+                          ? record.value.alsoOn.filter((n) => !isNaN(n))
                           : [];
                         const chainIds = Array.from(new Set([on, ...alsoOn]));
 
