@@ -262,9 +262,8 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  margin-top: 8px;
-  margin-left: 6px;
-  max-width: 96%;
+  margin: 6px 2px 6px 2px;
+  max-width: 99%;
   font-size: 0.8em;
   justify-content: space-between;
 }
@@ -360,9 +359,7 @@
     word-break: break-word;
   }
   
-  /* Reset address metadata width constraint on mobile */
   .address-metadata {
-    max-width: 95%;
     gap: 8px;
   }
 
