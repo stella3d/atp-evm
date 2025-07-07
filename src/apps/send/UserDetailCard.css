@@ -258,14 +258,6 @@
   text-decoration: underline;
 }
 
-/* Dark mode styles for address-value AddressLink */
-@media (prefers-color-scheme: dark) {
-  .address-value.address-link:hover {
-    background: rgba(29, 155, 240, 0.2);
-    color: #4da6ff;
-  }
-}
-
 .address-metadata {
   display: flex;
   align-items: flex-start;
@@ -275,6 +267,13 @@
   max-width: 96%;
   font-size: 0.8em;
   justify-content: space-between;
+}
+
+@media (prefers-color-scheme: dark) {
+  .address-value.address-link:hover {
+    background: rgba(29, 155, 240, 0.2);
+    color: #4da6ff;
+  }
 }
 
 .metadata-column {
@@ -302,9 +301,9 @@
   line-height: 1.2;
 }
 
-.address-date {
+.address-meta-value {
   font-size: 12px;
-  color: #536471;
+  color: gray;
   text-align: center;
   word-wrap: break-word;
   line-height: 1.2;
@@ -355,7 +354,6 @@
   margin: 2px;
 }
 
-/* Layout changes for screens up to 620px (phones, small tablets) */
 @media (max-width: 620px) {
   .address-value {
     font-size: 15px;
@@ -377,27 +375,16 @@
   }
 }
 
-/* Text size and spacing changes for screens up to 480px */
 @media (max-width: 480px) {
-  /* Make address values smaller and more readable on mobile */
-  .address-value {
-    font-size: 13px;
+  .address-meta-value {
+    font-size: 11px;
   }
 
   .records-list .address-header code {
     font-size: 15px;
   }
-  
-  /* Make other elements more compact too */
+
   .chain-info {
-    font-size: 11px;
-  }
-
-  .domain-info {
-    font-size: 11px;
-  }
-
-  .address-date {
     font-size: 11px;
   }
   
@@ -593,12 +580,8 @@
     color: #4da6ff;
   }
 
-  .domain-info {
+  .address-meta-value {
     color: lightgray !important;
-  }
-
-  .address-date {
-    color: #cccccc;
   }
 
   .metadata-label {
@@ -624,7 +607,7 @@
   }
 }
 
-@media (min-width: 500px) and (max-width: 516px) {
+@media (min-width: 500px) and (max-width: 515px) {
   .address-value.address-link code {
     font-size: 16.5px;
   }
@@ -644,28 +627,21 @@
   .recipient-address-display .address-link {
     font-size: 15px;
   }
+  
+  
+
+}
+
+@media (max-width: 454px) {
+  .address-value.address-link code {
+    font-size: 14px;
+  }
 }
 
 /* Responsive font size adjustments for AddressLink components */
-
-@media (max-width: 446px) {
+@media (max-width: 444px) {
   .address-record .address-header code {
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 452px) {
-  .address-value.address-link {
-    font-size: 14px;
-  }
-  .address-header code {
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 436px) {
-  .recipient-address-display .address-link {
-    font-size: 14px;
+    font-size: 13.5px;
   }
 }
 
@@ -746,12 +722,4 @@
   max-width: none;
   min-width: 100px;
   font-size: 32px;
-}
-
-.domain-info {
-  font-size: 12px;
-  color: gray;
-  text-align: center;
-  word-wrap: break-word;
-  line-height: 1.2;
 }

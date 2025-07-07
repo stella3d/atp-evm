@@ -343,23 +343,23 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                       </div>
                       {issuedAt && (
                         <div>
-                        <div className="domain-info" style={{ fontWeight: 720 }}>signed on</div>
+                        <div style={{ color: 'gray', fontWeight: 720 }}>signed on</div>
                         <div className="address-metadata">
                           <div className="metadata-column">
                             <div className="metadata-label">⛓️</div>
-                            <div className="domain-info">
+                            <div className="address-meta-value">
                               {getChainName(primaryChain.chainId)}
                             </div>
                           </div>
                           
                           <div className="metadata-column">
                             <div className="metadata-label">{domain === 'wallet-link.stellz.club' ? `🌐 ✅` : '🌐 ⚠️'}</div>
-                            <div className="domain-info">{domain}</div>
+                            <div className="address-meta-value">{domain}</div>
                           </div>
                           
                           <div className="metadata-column">
                             <div className="metadata-label">🕛</div>
-                            <div className="address-date">
+                            <div className="address-meta-value">
                               {new Date(primaryChain.issuedAt).toLocaleDateString()}<br />
                             </div>
                           </div>
