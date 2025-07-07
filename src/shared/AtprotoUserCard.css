@@ -161,6 +161,14 @@
   margin-bottom: 0;
 }
 
+/* Handle verification warning */
+.handle-warning {
+  margin-left: 4px;
+  font-size: 0.8em;
+  opacity: 0.8;
+  cursor: help;
+}
+
 /* DID styles */
 .atproto-did {
   font-size: 10px;

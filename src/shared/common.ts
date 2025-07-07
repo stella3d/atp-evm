@@ -23,6 +23,7 @@ export interface AddressControlRecord {
 export interface EnrichedUser {
   did: DefinedDidString;
   handle?: string;
+  handleVerified?: boolean; // Whether the handle has been verified to belong to this DID
   displayName?: string;
   avatar?: string;
   description?: string;

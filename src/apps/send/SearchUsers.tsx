@@ -167,11 +167,14 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
 
   // simple case-insensitive substring match - no attempt to rank results yet
   const filteredUsers = useMemo(() => {
+    // First filter to only show users with handles (verification is already done in fetch.ts)
+    const usersWithHandles = users.filter(user => user.handle);
+    
     if (!searchTerm.trim()) {
-      return users;
+      return usersWithHandles;
     }
     const searchLower = searchTerm.toLowerCase();
-    return users.filter(user => 
+    return usersWithHandles.filter(user => 
 	  // handles & DIDs are already lowercase
       user.handle?.includes(searchLower) ||
 	  user.did.includes(searchLower) ||
@@ -289,10 +292,10 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
                 handle={user.handle}
                 did={user.did}
                 avatar={user.avatar}
-                clickable={true}
+                clickable
                 onClick={() => handleUserClick(user)}
                 variant="payment"
-                showDid={true}
+                showDid
               />
             </div>
           ))

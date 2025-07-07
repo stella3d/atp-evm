@@ -1,5 +1,4 @@
 import type { DefinedDidString, EnrichedUser, EnrichedUserCacheEntry, AddressControlRecord } from "./common.ts";
-import { BLOCKLISTED_DIDS } from "./spam.ts";
 
 // Cache configuration
 const CACHE_DURATION = import.meta.env.DEV 
@@ -65,15 +64,10 @@ export const fetchUsersWithAddressRecord = async (): Promise<DefinedDidString[]>
   // using regular fetch skips needing OAuth permissions
   const res = await fetch('https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=club.stellz.evm.addressControl');
   const data: ResponseShape = await res.json();
-  const users = data.repos
-    .map(r => r.did)
-    .filter(did => !BLOCKLISTED_DIDS.includes(did)); // remove blocklisted DIDs
-
-    console.log(users);
+  const users = data.repos.map(r => r.did);
 
   // Cache the new data
   setCachedData(users);
-  console.log('Fetched and cached new users data');
   
   return users;
 }
@@ -124,37 +118,77 @@ const batchProcessDids = async (dids: DefinedDidString[]): Promise<EnrichedUser[
     const batch = dids.slice(i, i + BATCH_SIZE);
     console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(dids.length / BATCH_SIZE)}`);
     
-    const batchResults = await Promise.allSettled(
+    // First, resolve DID documents and extract candidate handles
+    const didProcessingResults = await Promise.allSettled(
       batch.map(async (did) => {
         try {
-          // Resolve DID document to get handle and PDS
           const didDoc = await resolveDid(did);
-          const handle = extractHandleFromDidDoc(didDoc);
+          const candidateHandle = extractHandleFromDidDoc(didDoc);
           const pds = extractPdsFromDidDoc(didDoc);
-          
-          // Fetch profile if we have a handle
-          let profileData = null;
-          if (handle) {
-            profileData = await fetchBlueskyProfile(handle);
-          }
           
           return {
             did,
-            handle,
+            candidateHandle,
             pds,
-            displayName: profileData?.displayName,
-            avatar: profileData?.avatar,
-            description: profileData?.description
-          } as EnrichedUser;
+            didDoc
+          };
         } catch (error) {
-          console.warn(`Failed to enrich user ${did}:`, error);
-          return { did } as EnrichedUser;
+          console.warn(`Failed to resolve DID document for ${did}:`, error);
+          return { did, candidateHandle: undefined, pds: undefined, didDoc: null };
         }
       })
     );
     
+    // Collect handles that need verification
+    const handlesToVerify: Array<{ handle: string; did: DefinedDidString }> = [];
+    const processedResults = didProcessingResults.map((result) => {
+      if (result.status === 'fulfilled' && result.value.candidateHandle) {
+        handlesToVerify.push({
+          handle: result.value.candidateHandle,
+          did: result.value.did
+        });
+      }
+      return result.status === 'fulfilled' ? result.value : null;
+    }).filter((result): result is NonNullable<typeof result> => result !== null);
+    
+    // Batch verify all handles for this batch
+    const verificationResults = await batchVerifyHandles(handlesToVerify);
+    
+    // Now fetch profiles only for verified handles
+    const finalResults = await Promise.allSettled(
+      processedResults.map(async ({ did, candidateHandle, pds }) => {
+        let handle: string | undefined = undefined;
+        let profileData = null;
+        
+        // Only use handle if it was verified
+        if (candidateHandle && verificationResults.get(candidateHandle) === true) {
+          handle = candidateHandle;
+          console.log(`Verified handle ${handle} for DID ${did}`);
+          
+          // Fetch profile data for verified handle
+          try {
+            profileData = await fetchBlueskyProfile(handle);
+          } catch (error) {
+            console.warn(`Failed to fetch profile for verified handle ${handle}:`, error);
+          }
+        } else if (candidateHandle) {
+          console.warn(`Handle ${candidateHandle} failed verification for DID ${did} - hiding profile`);
+        }
+        
+        return {
+          did,
+          handle,
+          handleVerified: !!handle, // True only if handle exists and was verified
+          pds,
+          displayName: profileData?.displayName,
+          avatar: profileData?.avatar,
+          description: profileData?.description
+        } as EnrichedUser;
+      })
+    );
+    
     // Add successful results to the enriched users array
-    batchResults.forEach((result) => {
+    finalResults.forEach((result) => {
       if (result.status === 'fulfilled') {
         enrichedUsers.push(result.value);
       }
@@ -189,7 +223,7 @@ const resolveDid = async (did: DefinedDidString): Promise<DidDocument> => {
   return response.json();
 };
 
-// Extract handle from DID document
+// Extract handle from DID document (UNSAFE - needs verification)
 const extractHandleFromDidDoc = (didDoc: DidDocument): string | undefined => {
   const alsoKnownAs = didDoc.alsoKnownAs;
   if (!Array.isArray(alsoKnownAs)) return undefined;
@@ -202,6 +236,75 @@ const extractHandleFromDidDoc = (didDoc: DidDocument): string | undefined => {
   }
   
   return undefined;
+};
+
+// Verify that a handle actually resolves to the expected DID using ATProto
+const verifyHandleOwnership = async (handle: string, expectedDid: DefinedDidString): Promise<boolean> => {
+  try {
+    const response = await fetch(
+      `https://public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(handle)}`
+    );
+    
+    if (!response.ok) {
+      console.warn(`Failed to resolve handle ${handle} for verification: ${response.status}`);
+      return false;
+    }
+    
+    const data = await response.json();
+    const resolvedDid = data.did;
+    
+    // Verify the resolved DID matches what we expect
+    const matches = resolvedDid === expectedDid;
+    if (!matches) {
+      console.warn(`Handle ${handle} resolved to ${resolvedDid} but expected ${expectedDid}`);
+    }
+    
+    return matches;
+  } catch (error) {
+    console.warn(`Error verifying handle ${handle}:`, error);
+    return false;
+  }
+};
+
+// Batch verify handles to avoid rate limiting (max 6 concurrent requests)
+const HANDLE_VERIFICATION_BATCH_SIZE = 6;
+
+const batchVerifyHandles = async (
+  handleDidPairs: Array<{ handle: string; did: DefinedDidString }>
+): Promise<Map<string, boolean>> => {
+  const results = new Map<string, boolean>();
+  
+  // Process in batches of 6 to avoid rate limiting
+  for (let i = 0; i < handleDidPairs.length; i += HANDLE_VERIFICATION_BATCH_SIZE) {
+    const batch = handleDidPairs.slice(i, i + HANDLE_VERIFICATION_BATCH_SIZE);
+    
+    const batchResults = await Promise.allSettled(
+      batch.map(async ({ handle, did }) => {
+        const isValid = await verifyHandleOwnership(handle, did);
+        return { handle, isValid };
+      })
+    );
+    
+    // Collect results from this batch
+    batchResults.forEach((result) => {
+      if (result.status === 'fulfilled') {
+        results.set(result.value.handle, result.value.isValid);
+      } else {
+        // If verification failed, mark as invalid
+        const failedHandle = batch[batchResults.indexOf(result)]?.handle;
+        if (failedHandle) {
+          results.set(failedHandle, false);
+        }
+      }
+    });
+    
+    // Small delay between batches to avoid rate limiting
+    if (i + HANDLE_VERIFICATION_BATCH_SIZE < handleDidPairs.length) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }
+  
+  return results;
 };
 
 // Extract PDS from DID document
@@ -293,9 +396,6 @@ export const fetchAddressControlRecords = async (
     }
     
     const data = await response.json();
-    console.log(`Raw response for ${did}:`, data);
-    console.log(`Found ${data.records?.length || 0} address control records for ${did}`);
-    
     const records = data.records || [];
     
     // Cache the response
@@ -358,44 +458,89 @@ export const enrichUsersProgressively = async (
     const batch = userDids.slice(i, i + BATCH_SIZE);
     console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(userDids.length / BATCH_SIZE)} for progressive enrichment`);
     
-    const batchResults = await Promise.allSettled(
+    // First, resolve DID documents and extract candidate handles
+    const didProcessingResults = await Promise.allSettled(
       batch.map(async (did, batchIndex) => {
         const actualIndex = i + batchIndex;
         try {
-          // Resolve DID document to get handle and PDS
           const didDoc = await resolveDid(did);
-          const handle = extractHandleFromDidDoc(didDoc);
+          const candidateHandle = extractHandleFromDidDoc(didDoc);
           const pds = extractPdsFromDidDoc(didDoc);
           
-          // Fetch profile if we have a handle
-          let profileData = null;
-          if (handle) {
-            profileData = await fetchBlueskyProfile(handle);
-          }
-          
           return {
-            index: actualIndex,
-            enrichedUser: {
-              did,
-              handle,
-              pds,
-              displayName: profileData?.displayName,
-              avatar: profileData?.avatar,
-              description: profileData?.description
-            } as EnrichedUser
+            actualIndex,
+            did,
+            candidateHandle,
+            pds
           };
         } catch (error) {
-          console.warn(`Failed to enrich user ${did}:`, error);
-          return {
-            index: actualIndex,
-            enrichedUser: { did } as EnrichedUser
+          console.warn(`Failed to resolve DID document for ${did}:`, error);
+          return { 
+            actualIndex, 
+            did, 
+            candidateHandle: undefined, 
+            pds: undefined 
           };
         }
       })
     );
     
+    // Collect handles that need verification
+    const handlesToVerify: Array<{ handle: string; did: DefinedDidString }> = [];
+    const processedResults = didProcessingResults.map((result) => {
+      if (result.status === 'fulfilled') {
+        if (result.value.candidateHandle) {
+          handlesToVerify.push({
+            handle: result.value.candidateHandle,
+            did: result.value.did
+          });
+        }
+        return result.value;
+      }
+      return null;
+    }).filter((result): result is NonNullable<typeof result> => result !== null);
+    
+    // Batch verify all handles for this batch
+    const verificationResults = await batchVerifyHandles(handlesToVerify);
+    
+    // Now fetch profiles only for verified handles
+    const finalResults = await Promise.allSettled(
+      processedResults.map(async ({ actualIndex, did, candidateHandle, pds }) => {
+        let handle: string | undefined = undefined;
+        let profileData = null;
+        
+        // Only use handle if it was verified
+        if (candidateHandle && verificationResults.get(candidateHandle) === true) {
+          handle = candidateHandle;
+          console.log(`Verified handle ${handle} for DID ${did}`);
+          
+          // Fetch profile data for verified handle
+          try {
+            profileData = await fetchBlueskyProfile(handle);
+          } catch (error) {
+            console.warn(`Failed to fetch profile for verified handle ${handle}:`, error);
+          }
+        } else if (candidateHandle) {
+          console.warn(`Handle ${candidateHandle} failed verification for DID ${did} - hiding profile`);
+        }
+        
+        return {
+          index: actualIndex,
+          enrichedUser: {
+            did,
+            handle,
+            handleVerified: !!handle, // True only if handle exists and was verified
+            pds,
+            displayName: profileData?.displayName,
+            avatar: profileData?.avatar,
+            description: profileData?.description
+          } as EnrichedUser
+        };
+      })
+    );
+    
     // Update the users array with enriched data from this batch
-    batchResults.forEach((result) => {
+    finalResults.forEach((result) => {
       if (result.status === 'fulfilled') {
         enrichedUsers[result.value.index] = result.value.enrichedUser;
       }
