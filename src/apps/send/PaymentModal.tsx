@@ -155,6 +155,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       return;
     }
 
+    // Ensure token belongs to the correct chain
+    if (token.chainId !== chainId) {
+      setAmountError(`token is for chain ${token.chainId} but expected chain ${chainId}`);
+      setAmountWarning(null);
+      return;
+    }
+
     const numericAmount = parseFloat(value);
     const tokenBalance = parseFloat(token.balance);
 
@@ -386,12 +393,20 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     }
   }, [isConnected, recipientChainBalances.length, recipientChainBalances, selectedToken]);
 
-  // Fetch balances for recipient's chain when modal opens
+  // Fetch balances for recipient's chain when modal opens or chainId changes
   React.useEffect(() => {
     if (isOpen && address && recipientChainBalances.length === 0 && !loadingBalances) {
       fetchBalancesForChain(chainId);
     }
   }, [isOpen, address, chainId, recipientChainBalances.length, loadingBalances, fetchBalancesForChain]);
+
+  // Clear validation errors when balances are loading for a new chain
+  React.useEffect(() => {
+    if (loadingBalances) {
+      setAmountError(null);
+      setAmountWarning(null);
+    }
+  }, [loadingBalances]);
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -413,7 +428,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     setCustomRecipient(recipientAddress);
   }, [recipientAddress]);
 
-  // Validate amount when selected token changes
+  // Reset selected token when chainId changes to prevent validation against wrong chain balances
+  React.useEffect(() => {
+    setSelectedToken(null);
+    setAmountError(null);
+    setAmountWarning(null);
+  }, [chainId]);
+
+  // Validate amount when selected token changes or chainId changes
   React.useEffect(() => {
     if (selectedToken && amount) {
       validateAmount(amount, selectedToken);
@@ -421,7 +443,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       setAmountError(null);
       setAmountWarning(null);
     }
-  }, [selectedToken, amount]);
+  }, [selectedToken, amount, chainId]);
 
   const handleSendPayment = () => {
     if (!selectedToken || !amount || !customRecipient) return;
@@ -430,6 +452,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       const categorized = categorizeError('Invalid recipient address');
       setError(categorized.message);
       setErrorType(categorized.type);
+      setStep('error');
+      return;
+    }
+
+    // Check if selected token belongs to the correct chain
+    if (selectedToken.chainId !== chainId) {
+      setError(`Selected token is for chain ${selectedToken.chainId} but transaction requires chain ${chainId}`);
+      setErrorType('other');
       setStep('error');
       return;
     }
