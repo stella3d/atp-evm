@@ -13,7 +13,7 @@
 
 .payment-modal {
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   max-width: 448px;
   min-width: 268px;
   width: 90vw;
@@ -1019,16 +1019,15 @@
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 1.2rem;
 }
 
 .confirm-button {
-  font-size: 1.75rem;
+  font-size: 1.9rem;
   font-weight: 720;
   padding: 8px 24px;
-
 }
 
 .confirm-button:hover, .send-button:hover, .done-button:hover {

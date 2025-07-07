@@ -1,7 +1,7 @@
 .user-detail-card {
   background: white;
   border: 1px solid #e1e5e9;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 6px 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-top: 16px;
@@ -213,7 +213,7 @@
   gap: 6px;
   background: #f7f9fa;
   border: 1px solid #e1e5e9;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 12px;
 }
 
@@ -312,7 +312,7 @@
   background: #1d9bf0;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 7px 11px;
   font-size: 28px;
   font-weight: 720;
@@ -716,7 +716,7 @@
 
 .chain-select {
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 7px 10px;
   font-size: 14px;
   font-weight: 600;
