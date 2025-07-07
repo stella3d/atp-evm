@@ -316,10 +316,6 @@ const extractPdsFromDidDoc = (didDoc: DidDocument): string | undefined => {
     s.id === '#atproto_pds'
   );
   
-  if (pdsService) {
-    console.log(`Found PDS for DID: ${pdsService.serviceEndpoint}`);
-  }
-  
   return pdsService?.serviceEndpoint;
 };
 
