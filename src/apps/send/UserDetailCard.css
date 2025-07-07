@@ -427,6 +427,19 @@
 
   .chain-select {
     padding: 7px 7px;
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 432px) and (max-width: 516px) {
+  .chain-select {
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 516px) {
+  .chain-select {
+    font-size: 14px;
   }
 }
 
@@ -465,10 +478,11 @@
     font-size: 11px;
   }
   
-  /* Even more compact padding */
+  /* Even more compact padding 
   .address-record {
     padding: 10px;
   }
+    */
   
   .send-payment-button {
     padding: 7px 11px;
@@ -723,7 +737,6 @@
   border: none;
   border-radius: 8px;
   padding: 7px 10px;
-  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -741,7 +754,7 @@
 
 .chain-label {
   font-size: 16px;
-  color: #536471;
+  color: darkgray;
   font-weight: 600;
   white-space: nowrap;
 }
