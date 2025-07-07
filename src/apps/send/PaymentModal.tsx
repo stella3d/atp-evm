@@ -527,17 +527,17 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 chainId={chainId}
               />
 
-              <ChainMismatchWarning
-                isWrongChain={isWrongChain}
-                currentWalletChainId={currentWalletChainId}
-                requiredChainId={chainId}
-              />
-
               <TokenSelector
                 loadingBalances={loadingBalances}
                 recipientChainBalances={recipientChainBalances}
                 selectedToken={selectedToken}
                 onTokenSelect={setSelectedToken}
+              />
+
+              <ChainMismatchWarning
+                isWrongChain={isWrongChain}
+                currentWalletChainId={currentWalletChainId}
+                requiredChainId={chainId}
               />
 
               <AmountInput
