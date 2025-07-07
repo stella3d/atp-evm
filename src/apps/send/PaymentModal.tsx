@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionReceipt, useWriteContract, useEnsName } from 'wagmi';
+import { useAccount, useDisconnect, useSendTransaction, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { isAddress, parseUnits } from 'viem';
 import { type TokenBalance } from '../../shared/useTokenBalances.ts';
 import { useTokenBalancesContext } from '../../shared/TokenBalanceProvider.tsx';
-import { getChainName, getDoraTransactionUrl } from '../../shared/common.ts';
-import { ChainIndicator } from '../../shared/ChainIndicator.tsx';
+import { getChainName } from '../../shared/common.ts';
 import { AddressLink } from '../../shared/AddressLink.tsx';
-import { AtprotoUserCard } from '../../shared/AtprotoUserCard.tsx';
+import { RecipientInfo } from './RecipientInfo.tsx';
+import { ChainMismatchWarning } from './ChainMismatchWarning.tsx';
+import { TokenSelector } from './TokenSelector.tsx';
+import { AmountInput } from './AmountInput.tsx';
+import { TransactionPending } from './TransactionPending.tsx';
+import { TransactionSuccess } from './TransactionSuccess.tsx';
+import { TransactionError } from './TransactionError.tsx';
 import './PaymentModal.css';
 
 // ERC20 ABI for transfer function
@@ -247,11 +252,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         };
       } else {
         // Fallback for when we can't extract chain info
-        const currentChainInfo = extractCurrentChainFromError(errorMessage);
-        const currentChainText = currentChainInfo ? ` You're currently connected to ${currentChainInfo}.` : '';
         return {
           type: 'wrong_chain',
-          message: `Your wallet is connected to the wrong network.${currentChainText} Please switch to ${getChainName(chainId)} to complete this transaction.`
+          message: `Your wallet is connected to the wrong network. Please switch to ${getChainName(chainId)} to complete this transaction.`
         };
       }
     }
@@ -269,53 +272,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     };
   };
 
-  // Helper function to extract current chain information from error messages
-  const extractCurrentChainFromError = (errorMessage: string): string | null => {
-    const currentChainId = extractCurrentChainIdFromError(errorMessage);
-    if (currentChainId !== null) {
-      return getChainName(currentChainId);
-    }
-    return null;
-  };
-
-  // Helper function to render a network name with chain indicator styling
-  const renderNetworkWithIndicator = (chainId: number) => {
-    return (
-      <ChainIndicator chainId={chainId} variant="payment-modal" />
-    );
-  };
-
-  // Helper function to render the wrong chain error message with styled chain indicators
-  const renderWrongChainError = (error: string) => {
-    console.warn(error);
-    // Try to extract chain IDs from the error message to render with styling
-    const currentChainId = extractCurrentChainIdFromError(error);
-    console.log('renderWrongChainError currentChainId:', currentChainId, 'expected chainId:', chainId);
-    if (currentChainId !== null) {
-      // We found the current chain ID in the error message
-      return (
-        <>
-          Your wallet is connected to {renderNetworkWithIndicator(currentChainId)} (Chain {currentChainId}), 
-          but this transaction requires {renderNetworkWithIndicator(chainId)} (Chain {chainId}).
-        </>
-      );
-    } 
-
-    // Final fallback - just show the expected network with styling
-    return (
-      <>
-        Your wallet is connected to the wrong network. 
-        Please switch to {renderNetworkWithIndicator(chainId)} to complete this transaction.
-      </>
-    );
-  };
-
-  // Get ENS name for the recipient address
-  const { data: ensName } = useEnsName({
-    address: isAddress(customRecipient) ? customRecipient : undefined,
-    chainId: 1, // ENS is on mainnet
-  });
-  
   const { sendTransaction, isPending: isSending } = useSendTransaction({
     mutation: {
       onSuccess: (hash) => {
@@ -562,161 +518,38 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         <div className="modal-content">
           {step === 'select' && (
             <div className="step-select">
-              <div className="recipient-section">
-                <label>Recipient on <ChainIndicator chainId={chainId} variant="payment-modal" /></label>
-                <div className="recipient-address-display">
-                  <AddressLink address={customRecipient} className="recipient-input" />
-                </div>
-                {ensName && (
-                  <div className="ens-info">
-                    <div className="ens-header">also known as</div>
-                    <div className="ens-name">
-                      <span className="ens-value">{ensName}</span>
-                    </div>
-                  </div>
-                )}
-                {(recipientName || recipientHandle) && (
-                  <div className="recipient-info">
-                    <div className="recipient-header">which is controlled by</div>
-                    <AtprotoUserCard
-                      name={recipientName}
-                      handle={recipientHandle}
-                      did={recipientDid}
-                      avatar={recipientAvatar}
-                      clickable={!!recipientHandle}
-                      variant="payment"
-                      showDid
-                    />
-                  </div>
-                )}
-              </div>
+              <RecipientInfo
+                recipientAddress={customRecipient}
+                recipientName={recipientName}
+                recipientHandle={recipientHandle}
+                recipientAvatar={recipientAvatar}
+                recipientDid={recipientDid}
+                chainId={chainId}
+              />
 
-              {/* Chain mismatch warning */}
-              {isWrongChain && (
-                <div className="chain-mismatch-warning">
-                  <div className="warning-content">
-                    <div className="warning-text">
-                      <div className="warning-title">⚠️ Network Switch Required</div>
-                      <div className="warning-message">
-                        Your wallet is currently connected on <ChainIndicator chainId={currentWalletChainId || 1} variant="payment-modal" />, 
-                        but this payment requires <ChainIndicator chainId={chainId} variant="payment-modal" />.
-                      </div>
+              <ChainMismatchWarning
+                isWrongChain={isWrongChain}
+                currentWalletChainId={currentWalletChainId}
+                requiredChainId={chainId}
+              />
 
-                    </div>
-                  </div>
-                </div>
-              )}
+              <TokenSelector
+                loadingBalances={loadingBalances}
+                recipientChainBalances={recipientChainBalances}
+                selectedToken={selectedToken}
+                onTokenSelect={setSelectedToken}
+              />
 
-              <div className="token-selection">
-                <label>Select Token</label>
-                {loadingBalances ? (
-                  <div className="loading">Loading token balances...</div>
-                ) : recipientChainBalances.length === 0 ? (
-                  <div className="no-tokens">No tokens with balance found</div>
-                ) : (
-                  <div className="token-list">
-                    {recipientChainBalances.map((token, index) => (
-                      <div 
-                        key={`${token.address}-${index}`}
-                        className={`token-item ${selectedToken === token ? 'selected' : ''}`}
-                        onClick={() => setSelectedToken(token)}
-                      >
-                        <div className="token-header">
-                          <div className="token-logo-container">
-                            {token.logoUrl && (
-                              <img 
-                                src={token.logoUrl} 
-                                alt={`${token.symbol} logo`}
-                                className="token-logo"
-                                onLoad={() => {
-                                }}
-                                onError={(e) => {
-                                  console.warn(`Token logo failed to load for ${token.symbol}:`, token.logoUrl);
-                                  e.currentTarget.style.display = 'none';
-                                  const placeholder = e.currentTarget.parentElement?.querySelector('.token-logo-placeholder') as HTMLElement;
-                                  if (placeholder) {
-                                    placeholder.classList.remove('hidden');
-                                  }
-                                }}
-                              />
-                            )}
-                            <div className={`token-logo-placeholder ${token.logoUrl ? 'hidden' : ''}`}>
-                              {token.symbol.charAt(0)}
-                            </div>
-                          </div>
-                          <div className="token-info">
-                            <div className="token-symbol">{token.symbol}</div>
-                            <div className="token-name">{token.name}</div>
-                          </div>
-                        </div>
-                        <div className="token-balance-section">
-                          <div className="token-balance-label">Balance</div>
-                          <div className="token-balance">
-                            {parseFloat(token.balance).toFixed(6)} {token.symbol}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className={`amount-input ${!selectedToken ? 'disabled' : ''}`}>
-                <label>Amount to Send</label>
-                <div className="amount-row">
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => {
-                      setAmount(e.target.value);
-                      validateAmount(e.target.value, selectedToken);
-                    }}
-                    placeholder={selectedToken ? "0.0" : "select a token"}
-                    step="any"
-                    max={selectedToken?.balance}
-                    disabled={!selectedToken}
-                  />
-                  <div className="amount-token-display">
-                    {selectedToken && selectedToken.logoUrl && (
-                      <div className="amount-token-logo-container">
-                        <img 
-                          src={selectedToken.logoUrl} 
-                          alt={`${selectedToken.symbol} logo`}
-                          className="amount-token-logo"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const placeholder = e.currentTarget.parentElement?.querySelector('.amount-token-logo-placeholder') as HTMLElement;
-                            if (placeholder) {
-                              placeholder.classList.remove('hidden');
-                            }
-                          }}
-                        />
-                        <div className={`amount-token-logo-placeholder ${selectedToken.logoUrl ? 'hidden' : ''}`}>
-                          {selectedToken.symbol.charAt(0)}
-                        </div>
-                      </div>
-                    )}
-                    {selectedToken && !selectedToken.logoUrl && (
-                      <div className="amount-token-logo-container">
-                        <div className="amount-token-logo-placeholder">
-                          {selectedToken.symbol.charAt(0)}
-                        </div>
-                      </div>
-                    )}
-                    <span className="token-symbol">{selectedToken?.symbol || '---'}</span>
-                  </div>
-                </div>
-                {amountError && (
-                  <div className="amount-error">
-                    {amountError}
-                  </div>
-                )}
-                {amountWarning && (
-                  <div className={`amount-warning ${amountWarning.type}`}>
-                    {amountWarning.message}
-                  </div>
-                )}
-              </div>
+              <AmountInput
+                selectedToken={selectedToken}
+                amount={amount}
+                amountError={amountError}
+                amountWarning={amountWarning}
+                onAmountChange={(value) => {
+                  setAmount(value);
+                  validateAmount(value, selectedToken);
+                }}
+              />
 
               <div className="modal-actions">
                 <button 
@@ -732,112 +565,50 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           )}
 
           {step === 'sending' && (
-            <div className="step-sending">
-              <div className="loading-spinner">⏳</div>
-              <h4>Transaction Sent</h4>
-              <p>Waiting for confirmation...</p>
-              {txHash && (
-                <div className="tx-hash">
-                  <div>Transaction Hash:</div>
-                  <code>{txHash}</code>
-                </div>
-              )}
-            </div>
+            <TransactionPending txHash={txHash} />
           )}
 
-          {step === 'success' && (
-            <div className="step-success">
-              <div className="success-icon">✅</div>
-              <h4>Payment Successful!</h4>
-              <p>Your payment has been confirmed on the blockchain.</p>
-              {txHash && (
-                <div className="tx-hash">
-                  <div>View Transaction: </div>
-                  <a 
-                    href={getDoraTransactionUrl(txHash, chainId)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="tx-hash-link"
-                  >
-                    <code>{txHash}</code>
-                  </a>
-                </div>
-              )}
-              <button type="button" className="done-button" onClick={onClose}>
-                Done
-              </button>
-            </div>
+          {step === 'success' && txHash && (
+            <TransactionSuccess
+              txHash={txHash}
+              chainId={chainId}
+              onDone={onClose}
+            />
           )}
 
           {step === 'error' && (
-            <div className="step-error">
-              <div className="error-icon">
-                {errorType === 'user_rejected' ? '🚫' : 
-                 errorType === 'wrong_chain' ? '⛓️' : 
-                 errorType === 'insufficient_funds' ? '💰' : '❌'}
-              </div>
-              <h4>
-                {errorType === 'user_rejected' ? 'Transaction Cancelled' :
-                 errorType === 'wrong_chain' ? 'Wrong Network' :
-                 errorType === 'insufficient_funds' ? 'Insufficient Funds' :
-                 'Payment Failed'}
-              </h4>
-              {errorType === 'other' ? (
-                <p>{error}</p>
-              ) : (
-                <p>
-                  {errorType === 'user_rejected' ? 'You cancelled the transaction in your wallet. No worries - you can try again when ready.' :
-                   errorType === 'wrong_chain' ? renderWrongChainError(error || '') :
-                   errorType === 'insufficient_funds' ? 'You don\'t have enough funds to complete this transaction. Please check your balance.' :
-                   error}
-                </p>
-              )}
-              {errorType === 'wrong_chain' && (
-                <div className="chain-help">
-                  <p>To complete this transaction, please:</p>
-                  <ol>
-                    <li>Open your wallet</li>
-                    <li>Switch to {renderNetworkWithIndicator(chainId)}</li>
-                    <li>Try the payment again</li>
-                  </ol>
-                </div>
-              )}
-              <div className="modal-actions">
-                <button type="button" className="back-button" onClick={async () => {
-                  if (errorType === 'wrong_chain') {
-                    // Clear all account-related state and forcefully disconnect wallet
-                    setSelectedToken(null);
-                    setAmount('');
-                    setTxHash(null);
-                    setError(null);
-                    setErrorType(null);
-                    setAmountError(null);
-                    
-                    // Force disconnect and clear cached state
-                    await forceDisconnectAndClearState(disconnect, isConnected);
-                    
-                    // Small delay to ensure state is cleared before closing
-                    setTimeout(() => {
-                      onClose();
-                    }, 100);
-                  } else {
-                    // For other errors, just go back to select step
-                    setStep('select');
-                    setError(null);
-                    setErrorType(null);
-                    setTxHash(null);
-                    setAmountWarning(null);
-                  }
-                }}>
-                  {errorType === 'user_rejected' ? 'Try Again' : 
-                   errorType === 'wrong_chain' ? 'Switch Network & Try Again' :
-                   'Try Again'}
-                </button>
-                <button type="button" className="cancel-button" onClick={onClose}>
-                  Cancel
-                </button>
-              </div>
-            </div>
+            <TransactionError
+              error={error}
+              errorType={errorType}
+              chainId={chainId}
+              onRetry={async () => {
+                if (errorType === 'wrong_chain') {
+                  // Clear all account-related state and forcefully disconnect wallet
+                  setSelectedToken(null);
+                  setAmount('');
+                  setTxHash(null);
+                  setError(null);
+                  setErrorType(null);
+                  setAmountError(null);
+                  
+                  // Force disconnect and clear cached state
+                  await forceDisconnectAndClearState(disconnect, isConnected);
+                  
+                  // Small delay to ensure state is cleared before closing
+                  setTimeout(() => {
+                    onClose();
+                  }, 100);
+                } else {
+                  // For other errors, just go back to select step
+                  setStep('select');
+                  setError(null);
+                  setErrorType(null);
+                  setTxHash(null);
+                  setAmountWarning(null);
+                }
+              }}
+              onCancel={onClose}
+            />
           )}
         </div>
       </div>
