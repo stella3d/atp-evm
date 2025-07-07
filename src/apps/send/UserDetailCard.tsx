@@ -358,7 +358,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                           </div>
                           
                           <div className="metadata-column">
-                            <div className="metadata-label">🕛</div>
+                            <div className="metadata-label">🗓️</div>
                             <div className="address-meta-value">
                               {new Date(primaryChain.issuedAt).toLocaleDateString()}<br />
                             </div>
