@@ -163,14 +163,18 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     }
 
     const numericAmount = parseFloat(value);
-    const tokenBalance = parseFloat(token.balance);
-
-    if (isNaN(numericAmount) || numericAmount <= 0) {
+    if (numericAmount < 0) {
+      setAmountWarning(null);
+      setAmountError('amount must be greater than 0');
+      return;
+    }
+    if (isNaN(numericAmount)) {
       setAmountError(null);
       setAmountWarning(null);
       return;
     }
 
+    const tokenBalance = parseFloat(token.balance);
     if (numericAmount > tokenBalance) {
       setAmountError(`amount exceeds your balance of ${token.balance} ${token.symbol}`);
       setAmountWarning(null);
