@@ -419,8 +419,41 @@
   }
 }
 
+@media (max-width: 432px) {
+  .address-meta-value {
+    font-size: 10px;
+  }
+
+  .chain-select {
+    padding: 7px 7px;
+  }
+}
+
+@media (max-width: 414px) {
+  .address-meta-value {
+    font-size: 9.5px;
+  }
+}
+
+@media (max-width: 400px) {
+  .address-meta-value {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 386px) {
+  .address-meta-value {
+    font-size: 8.5px;
+  }
+}
+
+@media (max-width: 364px) {
+  .address-meta-value {
+    font-size: 8px;
+  }
+}
+
 @media (max-width: 428px) {
-  /* Make address values smaller and more readable on mobile */
   .address-value {
     font-size: 11px;
   }
@@ -687,7 +720,7 @@
 .chain-select {
   border: none;
   border-radius: 6px;
-  padding: 7px 11px;
+  padding: 7px 10px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -695,7 +728,7 @@
   white-space: nowrap;
   flex: 1.5;
   max-width: 30%;
-  min-width: 90px;
+  min-width: 100px;
   height: 42px; /* Match send button height */
   box-sizing: border-box;
 }
