@@ -1624,3 +1624,68 @@
     width: 92vw;
   }
 }
+
+/* Chain mismatch warning */
+.chain-mismatch-warning {
+  margin: 16px 0;
+  padding: 0;
+}
+
+.chain-mismatch-warning .warning-content {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.chain-mismatch-warning .warning-icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.chain-mismatch-warning .warning-text {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.chain-mismatch-warning .warning-title {
+  font-weight: 600;
+  color: #856404;
+  margin-bottom: 4px;
+}
+
+.chain-mismatch-warning .warning-message {
+  color: #856404;
+  margin-bottom: 6px;
+}
+
+.chain-mismatch-warning .warning-action {
+  color: #6c5700;
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* Dark mode for chain mismatch warning */
+@media (prefers-color-scheme: dark) {
+  .chain-mismatch-warning .warning-content {
+    background: #2d1b00;
+    border-color: #4a3000;
+  }
+  
+  .chain-mismatch-warning .warning-title {
+    color: #ffb82e;
+  }
+  
+  .chain-mismatch-warning .warning-message {
+    color: #e6a429;
+  }
+  
+  .chain-mismatch-warning .warning-action {
+    color: #d9941f;
+  }
+}

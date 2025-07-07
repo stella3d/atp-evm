@@ -87,7 +87,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   recipientDid,
   chainId = 1
 }) => {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chain: walletChain } = useAccount();
   const { disconnect } = useDisconnect();
   const [selectedToken, setSelectedToken] = useState<TokenBalance | null>(null);
   const [amount, setAmount] = useState('');
@@ -99,7 +99,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [amountError, setAmountError] = useState<string | null>(null);
   const [amountWarning, setAmountWarning] = useState<{type: 'gentle' | 'strong', message: string} | null>(null);
 
-  const { balances: tokenBalances, loading: loadingBalances } = useTokenBalancesContext();
+  const { getBalancesForChain, fetchBalancesForChain, isLoadingChain } = useTokenBalancesContext();
+
+  // Get token balances specifically for the recipient's chain
+  const recipientChainBalances = getBalancesForChain(chainId);
+  const loadingBalances = isLoadingChain(chainId);
+
+  // Check if wallet chain matches expected chain
+  const isWrongChain = walletChain?.id !== chainId;
+  const currentWalletChainId = walletChain?.id;
 
   // Helper function to check for large payment warnings
   const checkLargePaymentWarning = (amount: number, token: TokenBalance) => {
@@ -372,8 +380,18 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   }, [isError, receiptError, step]);
 
   React.useEffect(() => {
-    // Modal starts directly in select step if wallet is connected
-  }, [isConnected, tokenBalances.length, tokenBalances]);
+    // Auto-select first token when balances are loaded for better UX
+    if (recipientChainBalances.length > 0 && !selectedToken) {
+      setSelectedToken(recipientChainBalances[0]);
+    }
+  }, [isConnected, recipientChainBalances.length, recipientChainBalances, selectedToken]);
+
+  // Fetch balances for recipient's chain when modal opens
+  React.useEffect(() => {
+    if (isOpen && address && recipientChainBalances.length === 0 && !loadingBalances) {
+      fetchBalancesForChain(chainId);
+    }
+  }, [isOpen, address, chainId, recipientChainBalances.length, loadingBalances, fetchBalancesForChain]);
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -539,15 +557,31 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 )}
               </div>
 
+              {/* Chain mismatch warning */}
+              {isWrongChain && (
+                <div className="chain-mismatch-warning">
+                  <div className="warning-content">
+                    <div className="warning-text">
+                      <div className="warning-title">⚠️ Network Switch Required</div>
+                      <div className="warning-message">
+                        Your wallet is currently connected on <ChainIndicator chainId={currentWalletChainId || 1} variant="payment-modal" />, 
+                        but this payment requires <ChainIndicator chainId={chainId} variant="payment-modal" />.
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="token-selection">
                 <label>Select Token</label>
                 {loadingBalances ? (
                   <div className="loading">Loading token balances...</div>
-                ) : tokenBalances.length === 0 ? (
+                ) : recipientChainBalances.length === 0 ? (
                   <div className="no-tokens">No tokens with balance found</div>
                 ) : (
                   <div className="token-list">
-                    {tokenBalances.map((token, index) => (
+                    {recipientChainBalances.map((token, index) => (
                       <div 
                         key={`${token.address}-${index}`}
                         className={`token-item ${selectedToken === token ? 'selected' : ''}`}
@@ -654,7 +688,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <button 
                   type="button" 
                   className="confirm-button"
-                  disabled={!selectedToken || !amount || !customRecipient || parseFloat(amount) <= 0 || isTransactionPending || !!amountError}
+                  disabled={!selectedToken || !amount || !customRecipient || parseFloat(amount) <= 0 || isTransactionPending || !!amountError || isWrongChain}
                   onClick={handleSendPayment}
                 >
                   {isTransactionPending ? 'Sending...' : `Send ${selectedToken?.symbol || ''}`}
