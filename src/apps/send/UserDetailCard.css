@@ -624,13 +624,13 @@
   }
 }
 
-@media (min-width: 500px) and (max-width: 515px) {
+@media (min-width: 500px) and (max-width: 516px) {
   .address-value.address-link code {
     font-size: 16.5px;
   }
 }
 
-@media (min-width: 480px) and (max-width: 499px) {
+@media (min-width: 480px) and (max-width: 500px) {
   .recipient-address-display .address-link {
     font-size: 15.5px;
   }
@@ -640,7 +640,7 @@
   }
 }
 
-@media (max-width: 470px) {
+@media (max-width: 480px) {
   .recipient-address-display .address-link {
     font-size: 15px;
   }
