@@ -1,4 +1,4 @@
-import { Agent, ComAtprotoRepoCreateRecord, ComAtprotoSyncGetRecord } from '@atproto/api'
+import { Agent, ComAtprotoRepoCreateRecord } from '@atproto/api'
 import { type OAuthSession } from "@atproto/oauth-client-browser";
 
 import { hexToBase64, type EvmAddressString } from "./common.ts";
@@ -95,30 +95,5 @@ export const writeAddressControlRecord = async (
     collection: ADDRESS_CONTROL_LEXICON_TYPE,
     record,
   });
-}
-
-
-export const fetchAddressControlRecords = async (
-  did: string,
-  oauth: OAuthSession,
-): Promise<ComAtprotoSyncGetRecord.Response[]> => {
-  const agent = new Agent(oauth);
-  const listResponse = await agent.com.atproto.repo.listRecords({
-    repo: did,
-    collection: ADDRESS_CONTROL_LEXICON_TYPE,
-    limit: 16,
-  });
-
-  const responses = await Promise.all(
-    listResponse.data.records.map(record =>
-      agent.com.atproto.sync.getRecord({
-        did: did,
-        collection: ADDRESS_CONTROL_LEXICON_TYPE,
-        rkey: record.uri.split('/').pop()!,
-      })
-    )
-  );
-
-  return responses
 }
 

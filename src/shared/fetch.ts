@@ -249,11 +249,33 @@ const fetchBlueskyProfile = async (handle: string): Promise<{
   }
 };
 
+// Cache duration for address control records
+const ADDRESS_RECORDS_CACHE_DURATION = 6 * 60 * 1000; // 6 minutes
+
 // Fetch address control records from user's PDS
 export const fetchAddressControlRecords = async (
   did: DefinedDidString, 
   pds: string
 ): Promise<AddressControlRecord[]> => {
+  const cacheKey = `listRecords_${did}`;
+  
+  // Check cache first
+  try {
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      console.log(`found cached value for ${cacheKey}`);
+      const { data, timestamp } = JSON.parse(cached);
+      if (Date.now() - timestamp < ADDRESS_RECORDS_CACHE_DURATION) {
+        return data;
+      }
+    }
+  } catch (error) {
+    console.error('Error reading from address records cache:', error);
+    localStorage.removeItem(cacheKey);
+  }
+
+  console.log(`no cached value for ${cacheKey}`);
+
   try {
     // Extract hostname from PDS URL
     const pdsUrl = new URL(pds);
@@ -262,7 +284,7 @@ export const fetchAddressControlRecords = async (
     console.log(`Fetching address records for ${did} from PDS: ${pdsHost}`);
     
     const response = await fetch(
-      `https://${pdsHost}/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=club.stellz.evm.addressControl`
+      `https://${pdsHost}/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=club.stellz.evm.addressControl&limit=16`
     );
     
     if (!response.ok) {
@@ -274,7 +296,19 @@ export const fetchAddressControlRecords = async (
     console.log(`Raw response for ${did}:`, data);
     console.log(`Found ${data.records?.length || 0} address control records for ${did}`);
     
-    return data.records || [];
+    const records = data.records || [];
+    
+    // Cache the response
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify({
+        data: records,
+        timestamp: Date.now()
+      }));
+    } catch (error) {
+      console.error('Error writing to address records cache:', error);
+    }
+    
+    return records;
   } catch (error) {
     console.warn(`Failed to fetch address control records for ${did}:`, error);
     return [];
