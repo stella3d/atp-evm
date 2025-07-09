@@ -1,4 +1,5 @@
 import type { DefinedDidString, EnrichedUser, EnrichedUserCacheEntry, AddressControlRecord } from "./common.ts";
+import { isDidString } from "./common.ts";
 
 // Cache configuration
 const CACHE_DURATION = import.meta.env.DEV 
@@ -241,32 +242,74 @@ const extractHandleFromDidDoc = (didDoc: DidDocument): string | undefined => {
   return undefined;
 };
 
-// Verify that a handle actually resolves to the expected DID using ATProto
-const verifyHandleOwnership = async (handle: string, expectedDid: DefinedDidString): Promise<boolean> => {
+// Cache for handle resolution results to avoid duplicate API calls
+const handleResolutionCache = new Map<string, { did: string; timestamp: number }>();
+const HANDLE_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Resolve a handle to DID with caching
+const resolveHandleWithCache = async (handle: string): Promise<string | null> => {
+  // Check cache first
+  const cached = handleResolutionCache.get(handle);
+  if (cached && (Date.now() - cached.timestamp) < HANDLE_CACHE_DURATION) {
+    return cached.did;
+  }
+  
   try {
     const response = await fetch(
       `https://public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(handle)}`
     );
     
     if (!response.ok) {
-      console.warn(`Failed to resolve handle ${handle} for verification: ${response.status}`);
-      return false;
+      console.warn(`Failed to resolve handle ${handle}: ${response.status}`);
+      return null;
     }
     
     const data = await response.json();
     const resolvedDid = data.did;
     
-    // Verify the resolved DID matches what we expect
-    const matches = resolvedDid === expectedDid;
-    if (!matches) {
-      console.warn(`Handle ${handle} resolved to ${resolvedDid} but expected ${expectedDid}`);
-    }
+    // Cache the result
+    handleResolutionCache.set(handle, { did: resolvedDid, timestamp: Date.now() });
     
-    return matches;
+    return resolvedDid;
   } catch (error) {
-    console.warn(`Error verifying handle ${handle}:`, error);
+    console.warn(`Error resolving handle ${handle}:`, error);
+    return null;
+  }
+};
+
+// Public function to resolve user identifier (handle or DID) to a DID
+export const resolveUserIdentifier = async (identifier: string): Promise<DefinedDidString | null> => {
+  const trimmed = identifier.trim();
+  
+  // If it's already a DID, return it
+  if (isDidString(trimmed)) {
+    return trimmed as DefinedDidString;
+  }
+  
+  // If it looks like a handle, resolve it to a DID using cached function
+  if (trimmed.includes('.') && !trimmed.startsWith('did:') && trimmed.length > 3) {
+    const resolvedDid = await resolveHandleWithCache(trimmed);
+    return resolvedDid && isDidString(resolvedDid) ? resolvedDid as DefinedDidString : null;
+  }
+  
+  return null;
+};
+
+// Verify that a handle actually resolves to the expected DID using ATProto
+const verifyHandleOwnership = async (handle: string, expectedDid: DefinedDidString): Promise<boolean> => {
+  const resolvedDid = await resolveHandleWithCache(handle);
+  
+  if (!resolvedDid) {
     return false;
   }
+  
+  // Verify the resolved DID matches what we expect
+  const matches = resolvedDid === expectedDid;
+  if (!matches) {
+    console.warn(`Handle ${handle} resolved to ${resolvedDid} but expected ${expectedDid}`);
+  }
+  
+  return matches;
 };
 
 // Batch verify handles to avoid rate limiting (max 6 concurrent requests)
@@ -345,7 +388,7 @@ const fetchBlueskyProfile = async (handle: string): Promise<BskyProfileMinimal |
     }
     
     const profile = await response.json();
-    console.log('profile:', profile);
+    //console.log('profile:', profile);
 
     return {
       createdAt: new Date(profile.createdAt),
@@ -356,7 +399,7 @@ const fetchBlueskyProfile = async (handle: string): Promise<BskyProfileMinimal |
       postsCount: profile.postsCount || 0
     };
   } catch (error) {
-    console.warn(`Failed to fetch profile for ${handle}:`, error);
+    console.warn(`failed to fetch profile for ${handle}:`, error);
     return null;
   }
 };
@@ -375,25 +418,25 @@ export const fetchAddressControlRecords = async (
   try {
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
-      console.log(`found cached value for ${cacheKey}`);
+      //console.log(`found cached value for ${cacheKey}`);
       const { data, timestamp } = JSON.parse(cached);
       if (Date.now() - timestamp < ADDRESS_RECORDS_CACHE_DURATION) {
         return data;
       }
     }
   } catch (error) {
-    console.error('Error reading from address records cache:', error);
+    console.error('error reading from address records cache:', error);
     localStorage.removeItem(cacheKey);
   }
 
-  console.log(`no cached value for ${cacheKey}`);
+  //console.log(`no cached value for ${cacheKey}`);
 
   try {
     // Extract hostname from PDS URL
     const pdsUrl = new URL(pds);
     const pdsHost = pdsUrl.hostname;
     
-    console.log(`Fetching address records for ${did} from PDS: ${pdsHost}`);
+    //console.log(`fetching address records for ${did} from PDS: ${pdsHost}`);
     
     const response = await fetch(
       `https://${pdsHost}/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=club.stellz.evm.addressControl&limit=16`

@@ -1,52 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { fetchUsersWithAddressRecord, enrichUsersProgressively } from '../../shared/fetch.ts';
+import { fetchUsersWithAddressRecord, enrichUsersProgressively, resolveUserIdentifier } from '../../shared/fetch.ts';
 import './SearchUsers.css';
 import type { DefinedDidString, EnrichedUser } from "../../shared/common.ts";
 import { AtprotoUserCard } from '../../shared/AtprotoUserCard.tsx';
-
-// Utility functions for user identity resolution
-function isDidString(input: string): input is DefinedDidString {
-  return input.startsWith('did:plc:') || input.startsWith('did:web:');
-}
-
-function isHandle(input: string): boolean {
-  // Bluesky handles are domain-like (e.g., alice.bsky.social, example.com)
-  // They should contain at least one dot and not start with did:
-  return !input.startsWith('did:') && input.includes('.') && input.length > 3;
-}
-
-// Resolve a user identifier (handle or DID) to a DID
-async function resolveUserIdentifier(identifier: string): Promise<DefinedDidString | null> {
-  const trimmed = identifier.trim();
-  
-  // If it's already a DID, return it
-  if (isDidString(trimmed)) {
-    return trimmed;
-  }
-  
-  // If it looks like a handle, resolve it to a DID
-  if (isHandle(trimmed)) {
-    try {
-      const response = await fetch(
-        `https://public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(trimmed)}`
-      );
-      
-      if (!response.ok) {
-        console.warn(`Failed to resolve handle ${trimmed}: ${response.status}`);
-        return null;
-      }
-      
-      const data = await response.json();
-      if (data.did && isDidString(data.did)) {
-        return data.did;
-      }
-    } catch (error) {
-      console.warn(`Error resolving handle ${trimmed}:`, error);
-    }
-  }
-  
-  return null;
-}
 
 interface SearchUsersProps {
   onUserSelect?: (user: DefinedDidString) => void;

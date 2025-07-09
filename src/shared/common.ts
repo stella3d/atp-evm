@@ -158,3 +158,14 @@ export function getDoraTransactionUrl(txHash: string, chainId: number): string {
   const networkSlug = getDoraNetworkSlug(chainId);
   return `https://ondora.xyz/network/${networkSlug}/interactions/${txHash}`;
 }
+
+// Utility functions for user identity resolution
+export function isDidString(input: string): input is DefinedDidString {
+  return input.startsWith('did:plc:') || input.startsWith('did:web:');
+}
+
+export function isHandle(input: string): boolean {
+  // Bluesky handles are domain-like (e.g., alice.bsky.social, example.com)
+  // They should contain at least one dot and not start with did:
+  return !input.startsWith('did:') && input.includes('.') && input.length > 3;
+}
