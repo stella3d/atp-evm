@@ -91,7 +91,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
   useEffect(() => {
     const defaults: Record<string, number> = {};
     addressRecords.forEach(rec => {
-      const siwe = (rec.value?.siwe || {}) as any;
+      const siwe = (rec.value?.siwe || {}) as { chainId?: number; alsoOn?: number[] };
       const base = siwe.chainId || 1;
       const alsoOn: number[] = Array.isArray(siwe.alsoOn) ? siwe.alsoOn : [];
       const ids = Array.from(new Set([base, ...alsoOn]));
@@ -206,7 +206,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         
         // include any extra chains specified in "alsoOn"
         deduplicatedRecords.forEach(rec => {
-          const siwe = (rec.value?.siwe || {}) as any;
+          const siwe = (rec.value?.siwe || {}) as { alsoOn?: number[] };
           if (Array.isArray(siwe.alsoOn)) {
             siwe.alsoOn.forEach((chainId: number) => {
               if (!rec.chains.find(c => c.chainId === chainId)) {
@@ -287,6 +287,41 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
             clickable={!!selectedUser.handle}
             showDid
           />
+          {(selectedUser.createdAt || selectedUser.followersCount !== undefined || selectedUser.postsCount !== undefined) && (
+            <div className="profile-stats">
+              <div className="stats-grid">
+                {selectedUser.createdAt && (
+                  <div className="stat-item">
+                    <span className="stat-label">Joined:</span>
+                    <span className="stat-value">
+                      {(() => {
+                        try {
+                          const date = selectedUser.createdAt instanceof Date 
+                            ? selectedUser.createdAt 
+                            : new Date(selectedUser.createdAt);
+                          return date.toLocaleDateString();
+                        } catch {
+                          return 'Unknown';
+                        }
+                      })()}
+                    </span>
+                  </div>
+                )}
+                {selectedUser.followersCount !== undefined && (
+                  <div className="stat-item">
+                    <span className="stat-label">Followers:</span>
+                    <span className="stat-value">{selectedUser.followersCount.toLocaleString()}</span>
+                  </div>
+                )}
+                {selectedUser.postsCount !== undefined && (
+                  <div className="stat-item">
+                    <span className="stat-label">Posts:</span>
+                    <span className="stat-value">{selectedUser.postsCount.toLocaleString()}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
           {selectedUser.description && (
             <div className="profile-description">
               {selectedUser.description.split('\n').map((line, index) => (
@@ -394,7 +429,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                     <div className="send-buttons-container">
                       {/* Dropdown + Send button */}
                       {(() => {
-                        const siwe = (record.value?.siwe || {}) as any;
+                        const siwe = (record.value?.siwe || {}) as { chainId?: number };
                         const on = Number(siwe.chainId) || 1;
 
                         const alsoOn: number[] = Array.isArray(record.value.alsoOn)

@@ -26,7 +26,7 @@ const getCachedData = (): DefinedDidString[] | null => {
     
     // Check if cache is still valid
     if ((now - entry.timestamp) < CACHE_DURATION) {
-      console.log('Using cached users data from localStorage');
+      console.log('using cached users data from localStorage');
       return entry.data;
     } else {
       // Cache expired, remove it
@@ -34,7 +34,7 @@ const getCachedData = (): DefinedDidString[] | null => {
       return null;
     }
   } catch (error) {
-    console.error('Error reading from cache:', error);
+    console.error('error reading from cache:', error);
     localStorage.removeItem(CACHE_KEY);
     return null;
   }
@@ -48,7 +48,7 @@ const setCachedData = (data: DefinedDidString[]): void => {
     };
     localStorage.setItem(CACHE_KEY, JSON.stringify(entry));
   } catch (error) {
-    console.error('Error writing to cache:', error);
+    console.error('error writing to cache:', error);
   }
 };
 
@@ -83,15 +83,19 @@ const getCachedEnrichedData = (): EnrichedUser[] | null => {
     
     // Check if cache is still valid
     if ((now - entry.timestamp) < CACHE_DURATION) {
-      console.log('Using cached enriched users data from localStorage');
-      return entry.data;
+      console.log('using cached enriched users data from localStorage');
+      const enrichedData = entry.data.map(user => ({
+        ...user,
+        createdAt: user.createdAt ? new Date(user.createdAt) : undefined
+      }));
+      return enrichedData;
     } else {
       // Cache expired, remove it
       localStorage.removeItem(ENRICHED_CACHE_KEY);
       return null;
     }
   } catch (error) {
-    console.error('Error reading enriched data from cache:', error);
+    console.error('error reading enriched data from cache:', error);
     localStorage.removeItem(ENRICHED_CACHE_KEY);
     return null;
   }
@@ -105,7 +109,7 @@ const setCachedEnrichedData = (data: EnrichedUser[]): void => {
     };
     localStorage.setItem(ENRICHED_CACHE_KEY, JSON.stringify(entry));
   } catch (error) {
-    console.error('Error writing enriched data to cache:', error);
+    console.error('error writing enriched data to cache:', error);
   }
 };
 
@@ -180,7 +184,10 @@ const batchProcessDids = async (dids: DefinedDidString[]): Promise<EnrichedUser[
           pds,
           displayName: profileData?.displayName,
           avatar: profileData?.avatar,
-          description: profileData?.description
+          description: profileData?.description,
+          createdAt: profileData?.createdAt,
+          followersCount: profileData?.followersCount,
+          postsCount: profileData?.postsCount
         } as EnrichedUser;
       })
     );
@@ -201,7 +208,6 @@ const batchProcessDids = async (dids: DefinedDidString[]): Promise<EnrichedUser[
   return enrichedUsers;
 };
 
-// DID Document interface
 interface DidDocument {
   alsoKnownAs?: string[];
   service?: Array<{
@@ -212,7 +218,6 @@ interface DidDocument {
   [key: string]: unknown;
 }
 
-// Resolve DID document
 const resolveDid = async (did: DefinedDidString): Promise<DidDocument> => {
   const response = await fetch(`https://plc.directory/${did}`);
   if (!response.ok) {
@@ -319,26 +324,36 @@ const extractPdsFromDidDoc = (didDoc: DidDocument): string | undefined => {
   return pdsService?.serviceEndpoint;
 };
 
-// Fetch Bluesky profile data
-const fetchBlueskyProfile = async (handle: string): Promise<{
-  displayName?: string;
+type BskyProfileMinimal = {
   avatar?: string;
+  createdAt: Date;
+  displayName?: string;
   description?: string;
-} | null> => {
+  followersCount: number;
+  postsCount: number;
+};
+
+// Fetch Bluesky profile data
+const fetchBlueskyProfile = async (handle: string): Promise<BskyProfileMinimal | null> => {
   try {
     const response = await fetch(
       `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${handle}`
     );
-    
+
     if (!response.ok) {
-      throw new Error(`Failed to fetch profile: ${response.status}`);
+      throw new Error(`failed to fetch profile: ${response.status}`);
     }
     
     const profile = await response.json();
+    console.log('profile:', profile);
+
     return {
+      createdAt: new Date(profile.createdAt),
       displayName: profile.displayName,
       avatar: profile.avatar,
-      description: profile.description
+      description: profile.description,
+      followersCount: profile.followersCount || 0,
+      postsCount: profile.postsCount || 0
     };
   } catch (error) {
     console.warn(`Failed to fetch profile for ${handle}:`, error);
@@ -525,7 +540,10 @@ export const enrichUsersProgressively = async (
             pds,
             displayName: profileData?.displayName,
             avatar: profileData?.avatar,
-            description: profileData?.description
+            description: profileData?.description,
+            createdAt: profileData?.createdAt,
+            followersCount: profileData?.followersCount,
+            postsCount: profileData?.postsCount
           } as EnrichedUser
         };
       })

@@ -29,6 +29,9 @@ export interface EnrichedUser {
   description?: string;
   pds?: string;
   addressControlRecords?: AddressControlRecord[];
+  createdAt?: Date;
+  followersCount?: number;
+  postsCount?: number;
 }
 
 // Cache entry for enriched user data
