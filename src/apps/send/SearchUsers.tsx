@@ -24,7 +24,6 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
   const pendingEnrichmentRef = useRef<Set<DefinedDidString>>(new Set());
   const enrichmentTimeoutRef = useRef<number | null>(null);
   
-  // Constants for lazy loading
   const INITIAL_LOAD_COUNT = 6;
   const BATCH_DELAY_MS = 300; // Wait 300ms to collect more users before batching
 
@@ -32,10 +31,8 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
   const enqueueBatchEnrichment = useCallback((userDid: DefinedDidString) => {
     if (enrichedUserDids.has(userDid)) return;
     
-    // Add to pending batch
     pendingEnrichmentRef.current.add(userDid);
     
-    // Clear existing timeout
     if (enrichmentTimeoutRef.current) {
       clearTimeout(enrichmentTimeoutRef.current);
     }
@@ -55,7 +52,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
         return newSet;
       });
       
-      console.log(`Lazy loading batch of ${batch.length} users:`, batch);
+      //console.log(`Lazy loading batch of ${batch.length} users:`, batch);
       
       try {
         await enrichUsersProgressively(batch, (updatedUsers: EnrichedUser[]) => {
@@ -198,7 +195,6 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
           return;
         }
         
-        // Create a basic enriched user object
         const basicUser: EnrichedUser = { did: resolvedDid };
         setUsers([basicUser]);
         if (onUsersUpdate) {
@@ -212,8 +208,6 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
         
         // Set search term to show what was resolved
         setSearchTerm(preSelectedUser);
-        
-        // Start enriching this specific user
         setEnriching(true);
         try {
           await enrichUsersProgressively([resolvedDid], (updatedUsers: EnrichedUser[]) => {
