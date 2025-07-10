@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { fetchUsersWithAddressRecord, enrichUsersProgressively, resolveUserIdentifier } from '../../shared/fetch.ts';
 import './SearchUsers.css';
 import type { DefinedDidString, EnrichedUser } from "../../shared/common.ts";
@@ -19,6 +19,109 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
   const [enriching, setEnriching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [allUserDids, setAllUserDids] = useState<DefinedDidString[]>([]);
+  const [enrichedUserDids, setEnrichedUserDids] = useState<Set<DefinedDidString>>(new Set());
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const pendingEnrichmentRef = useRef<Set<DefinedDidString>>(new Set());
+  const enrichmentTimeoutRef = useRef<number | null>(null);
+  
+  // Constants for lazy loading
+  const INITIAL_LOAD_COUNT = 6;
+  const BATCH_DELAY_MS = 300; // Wait 300ms to collect more users before batching
+
+  // Batched enrichment function for lazy loading
+  const enqueueBatchEnrichment = useCallback((userDid: DefinedDidString) => {
+    if (enrichedUserDids.has(userDid)) return;
+    
+    // Add to pending batch
+    pendingEnrichmentRef.current.add(userDid);
+    
+    // Clear existing timeout
+    if (enrichmentTimeoutRef.current) {
+      clearTimeout(enrichmentTimeoutRef.current);
+    }
+    
+    // Set new timeout to process batch
+    enrichmentTimeoutRef.current = setTimeout(async () => {
+      const batch = Array.from(pendingEnrichmentRef.current);
+      if (batch.length === 0) return;
+      
+      // Clear the pending set
+      pendingEnrichmentRef.current.clear();
+      
+      // Mark these as being enriched
+      setEnrichedUserDids(prev => {
+        const newSet = new Set(prev);
+        batch.forEach(did => newSet.add(did));
+        return newSet;
+      });
+      
+      console.log(`Lazy loading batch of ${batch.length} users:`, batch);
+      
+      try {
+        await enrichUsersProgressively(batch, (updatedUsers: EnrichedUser[]) => {
+          setUsers(prevUsers => {
+            const userMap = new Map(prevUsers.map(u => [u.did, u]));
+            // Update with enriched data
+            updatedUsers.forEach(enrichedUser => {
+              userMap.set(enrichedUser.did, enrichedUser);
+            });
+            
+            // Filter out users who failed handle verification
+            const newUsers = Array.from(userMap.values()).filter(user => 
+              user.handleVerified === true || user.handleVerified === undefined
+            );
+            
+            if (onUsersUpdate) {
+              onUsersUpdate(newUsers);
+            }
+            return newUsers;
+          });
+        });
+      } catch (err) {
+        console.warn(`Failed to enrich batch:`, err);
+      }
+    }, BATCH_DELAY_MS);
+  }, [enrichedUserDids, onUsersUpdate]);
+
+  // Intersection Observer for lazy loading
+  const observeUserCard = useCallback((node: HTMLElement | null, userDid: DefinedDidString) => {
+    if (!node) return;
+    
+    if (observerRef.current) {
+      observerRef.current.observe(node);
+    } else {
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const didAttr = entry.target.getAttribute('data-user-did');
+              if (didAttr && !enrichedUserDids.has(didAttr as DefinedDidString)) {
+                // Add to batch instead of enriching immediately
+                enqueueBatchEnrichment(didAttr as DefinedDidString);
+              }
+            }
+          });
+        },
+        { rootMargin: '150px' } // More eager - start loading when within 150px
+      );
+      observerRef.current.observe(node);
+    }
+    
+    // Set the DID as a data attribute for the observer
+    node.setAttribute('data-user-did', userDid);
+  }, [enrichedUserDids, enqueueBatchEnrichment]);
+
+  // Clean up observer and timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+      if (enrichmentTimeoutRef.current) {
+        clearTimeout(enrichmentTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Always load the initial user list first
   useEffect(() => {
@@ -36,16 +139,36 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
         }
         setLoading(false);
 
-        // If no pre-selected user, start progressive enrichment for all users
+        // If no pre-selected user, start lazy enrichment
         if (!preSelectedUser) {
-          setEnriching(true);
-          await enrichUsersProgressively(basicUsers, (updatedUsers: EnrichedUser[]) => {
-            setUsers(updatedUsers);
-            if (onUsersUpdate) {
-              onUsersUpdate(updatedUsers);
-            }
+          // Only enrich the first 6 users initially
+          const initialBatch = basicUsers.slice(0, INITIAL_LOAD_COUNT);
+          if (initialBatch.length > 0) {
+            setEnriching(true);
+            // Mark these as being enriched
+            setEnrichedUserDids(new Set(initialBatch));
+            
+      await enrichUsersProgressively(initialBatch, (updatedUsers: EnrichedUser[]) => {
+        setUsers(prevUsers => {
+          const userMap = new Map(prevUsers.map(u => [u.did, u]));
+          // Update with enriched data
+          updatedUsers.forEach(enrichedUser => {
+            userMap.set(enrichedUser.did, enrichedUser);
           });
-          setEnriching(false);
+          
+          // Filter out users who failed handle verification
+          const newUsers = Array.from(userMap.values()).filter(user => 
+            user.handleVerified === true || user.handleVerified === undefined
+          );
+          
+          if (onUsersUpdate) {
+            onUsersUpdate(newUsers);
+          }
+          return newUsers;
+        });
+      });
+            setEnriching(false);
+          }
         }
       } catch (err) {
         setError(`Failed to fetch users: ${err instanceof Error ? err.message : 'Unknown error'}`);
@@ -94,6 +217,8 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
         setEnriching(true);
         try {
           await enrichUsersProgressively([resolvedDid], (updatedUsers: EnrichedUser[]) => {
+            // For pre-selected users, we show them even if handle verification fails
+            // since the user specifically requested this user
             setUsers(updatedUsers);
             if (onUsersUpdate) {
               onUsersUpdate(updatedUsers);
@@ -123,17 +248,22 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
 
   // simple case-insensitive substring match - no attempt to rank results yet
   const filteredUsers = useMemo(() => {
-    // First filter to only show users with handles (verification is already done in fetch.ts)
-    const usersWithHandles = users.filter(user => user.handle);
+    // First filter to only include users with verified handles
+    // If a user hasn't been enriched yet (handleVerified is undefined), 
+    // we still show them temporarily until enrichment completes
+    const verifiedUsers = users.filter(user => 
+      user.handleVerified === true || user.handleVerified === undefined
+    );
     
     if (!searchTerm.trim()) {
-      return usersWithHandles;
+      return verifiedUsers;
     }
+    
     const searchLower = searchTerm.toLowerCase();
-    return usersWithHandles.filter(user => 
-	  // handles & DIDs are already lowercase
-      user.handle?.includes(searchLower) ||
-	  user.did.includes(searchLower) ||
+    return verifiedUsers.filter(user => 
+      // Search in handle (if available), DID, and display name (if available)
+      user.handle?.toLowerCase().includes(searchLower) ||
+      user.did.toLowerCase().includes(searchLower) ||
       user.displayName?.toLowerCase().includes(searchLower)
     );
   }, [users, searchTerm]);
@@ -176,7 +306,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
               Browse All Users Instead
             </button>
             <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
-              Only users who have linked their Ethereum wallets to their ATProto accounts can receive payments.
+              Only users who have linked their Ethereum wallets to their ATProto accounts and have verified handles can receive payments.
             </small>
           </div>
         )}
@@ -242,6 +372,12 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
             <div
               key={user.did}
               className="user-card-wrapper"
+              ref={(node) => {
+                // Only set up lazy loading if this user hasn't been enriched yet
+                if (node && !enrichedUserDids.has(user.did)) {
+                  observeUserCard(node, user.did);
+                }
+              }}
             >
               <AtprotoUserCard
                 name={user.displayName}

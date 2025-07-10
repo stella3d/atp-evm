@@ -27,7 +27,7 @@ const getCachedData = (): DefinedDidString[] | null => {
     
     // Check if cache is still valid
     if ((now - entry.timestamp) < CACHE_DURATION) {
-      console.log('using cached users data from localStorage');
+      //console.log('using cached users data from localStorage');
       return entry.data;
     } else {
       // Cache expired, remove it
@@ -84,7 +84,7 @@ const getCachedEnrichedData = (): EnrichedUser[] | null => {
     
     // Check if cache is still valid
     if ((now - entry.timestamp) < CACHE_DURATION) {
-      console.log('using cached enriched users data from localStorage');
+      //console.log('using cached enriched users data from localStorage');
       const enrichedData = entry.data.map(user => ({
         ...user,
         createdAt: user.createdAt ? new Date(user.createdAt) : undefined
@@ -159,46 +159,58 @@ const batchProcessDids = async (dids: DefinedDidString[]): Promise<EnrichedUser[
     // Batch verify all handles for this batch
     const verificationResults = await batchVerifyHandles(handlesToVerify);
     
-    // Now fetch profiles only for verified handles
-    const finalResults = await Promise.allSettled(
-      processedResults.map(async ({ did, candidateHandle, pds }) => {
-        let handle: string | undefined = undefined;
-        let profileData = null;
-        
-        // Only use handle if it was verified
-        if (candidateHandle && verificationResults.get(candidateHandle) === true) {
-          handle = candidateHandle;
-          // Fetch profile data for verified handle
-          try {
-            profileData = await fetchBlueskyProfile(handle);
-          } catch (error) {
-            console.warn(`failed to fetch profile for verified handle ${handle}:`, error);
-          }
-        } else if (candidateHandle) {
-          console.warn(`handle ${candidateHandle} failed verification for DID ${did} - hiding profile`);
-        }
-        
-        return {
-          did,
-          handle,
-          handleVerified: !!handle, // True only if handle exists and was verified
-          pds,
-          displayName: profileData?.displayName,
-          avatar: profileData?.avatar,
-          description: profileData?.description,
-          createdAt: profileData?.createdAt,
-          followersCount: profileData?.followersCount,
-          postsCount: profileData?.postsCount
-        } as EnrichedUser;
-      })
-    );
-    
-    // Add successful results to the enriched users array
-    finalResults.forEach((result) => {
-      if (result.status === 'fulfilled') {
-        enrichedUsers.push(result.value);
+    // Collect all verified handles for batched profile fetching
+    const verifiedHandles: string[] = [];
+    processedResults.forEach(({ candidateHandle }) => {
+      if (candidateHandle && verificationResults.get(candidateHandle) === true) {
+        verifiedHandles.push(candidateHandle);
       }
     });
+    
+    // Fetch all profiles in batches
+    const allProfileData = new Map<string, BskyProfileMinimal>();
+    for (let i = 0; i < verifiedHandles.length; i += PROFILE_BATCH_SIZE) {
+      const handleBatch = verifiedHandles.slice(i, i + PROFILE_BATCH_SIZE);
+      try {
+        const batchProfiles = await fetchBlueskyProfiles(handleBatch);
+        // Merge into the main profile map
+        batchProfiles.forEach((profile, handle) => {
+          allProfileData.set(handle, profile);
+        });
+      } catch (error) {
+        console.warn(`Failed to fetch profile batch:`, error);
+      }
+    }
+    
+    // Now create enriched users using the batched profile data
+    const finalResults = processedResults.map(({ did, candidateHandle, pds }) => {
+      let handle: string | undefined = undefined;
+      let profileData: BskyProfileMinimal | null = null;
+      
+      // Only use handle if it was verified
+      if (candidateHandle && verificationResults.get(candidateHandle) === true) {
+        handle = candidateHandle;
+        profileData = allProfileData.get(handle) || null;
+      } else if (candidateHandle) {
+        console.warn(`handle ${candidateHandle} failed verification for DID ${did} - hiding profile`);
+      }
+      
+      return {
+        did,
+        handle,
+        handleVerified: !!handle, // True only if handle exists and was verified
+        pds,
+        displayName: profileData?.displayName,
+        avatar: profileData?.avatar,
+        description: profileData?.description,
+        createdAt: profileData?.createdAt,
+        followersCount: profileData?.followersCount,
+        postsCount: profileData?.postsCount
+      } as EnrichedUser;
+    });
+    
+    // Add successful results to the enriched users array
+    enrichedUsers.push(...finalResults);
     
     // Small delay between batches to avoid rate limiting
     if (i + BATCH_SIZE < dids.length) {
@@ -244,13 +256,22 @@ const extractHandleFromDidDoc = (didDoc: DidDocument): string | undefined => {
 
 // Cache for handle resolution results to avoid duplicate API calls
 const handleResolutionCache = new Map<string, { did: string; timestamp: number }>();
-const HANDLE_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const HANDLE_CACHE_DURATION = 30 * 60 * 1000; // 30 minutes (longer cache)
+
+// Cache for profile data to avoid duplicate API calls
+const profileCache = new Map<string, { profile: BskyProfileMinimal; timestamp: number }>();
+const PROFILE_CACHE_DURATION = 15 * 60 * 1000; // 15 minutes
+
+// Cache for handle verification results
+const verificationCache = new Map<string, { isValid: boolean; timestamp: number }>();
+const VERIFICATION_CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 
 // Resolve a handle to DID with caching
 const resolveHandleWithCache = async (handle: string): Promise<string | null> => {
   // Check cache first
   const cached = handleResolutionCache.get(handle);
   if (cached && (Date.now() - cached.timestamp) < HANDLE_CACHE_DURATION) {
+    console.log(`Handle ${handle} resolved from cache`);
     return cached.did;
   }
   
@@ -297,10 +318,21 @@ export const resolveUserIdentifier = async (identifier: string): Promise<Defined
 
 // Verify that a handle actually resolves to the expected DID using ATProto
 const verifyHandleOwnership = async (handle: string, expectedDid: DefinedDidString): Promise<boolean> => {
+  // Check verification cache first
+  const cacheKey = `${handle}:${expectedDid}`;
+  const cached = verificationCache.get(cacheKey);
+  const now = Date.now();
+  
+  if (cached && (now - cached.timestamp) < VERIFICATION_CACHE_DURATION) {
+    return cached.isValid;
+  }
+  
   const resolvedDid = await resolveHandleWithCache(handle);
   
   if (!resolvedDid) {
-    return false;
+    const result = false;
+    verificationCache.set(cacheKey, { isValid: result, timestamp: now });
+    return result;
   }
   
   // Verify the resolved DID matches what we expect
@@ -308,6 +340,9 @@ const verifyHandleOwnership = async (handle: string, expectedDid: DefinedDidStri
   if (!matches) {
     console.warn(`Handle ${handle} resolved to ${resolvedDid} but expected ${expectedDid}`);
   }
+  
+  // Cache the verification result
+  verificationCache.set(cacheKey, { isValid: matches, timestamp: now });
   
   return matches;
 };
@@ -376,31 +411,82 @@ type BskyProfileMinimal = {
   postsCount: number;
 };
 
-// Fetch Bluesky profile data
-const fetchBlueskyProfile = async (handle: string): Promise<BskyProfileMinimal | null> => {
+// Batch size for profile fetching
+const PROFILE_BATCH_SIZE = 10;
+
+// Fetch multiple Bluesky profiles in a single batched request
+const fetchBlueskyProfiles = async (handles: string[]): Promise<Map<string, BskyProfileMinimal>> => {
+  const profileMap = new Map<string, BskyProfileMinimal>();
+  const uncachedHandles: string[] = [];
+  const now = Date.now();
+  
+  // Check cache first and collect uncached handles
+  handles.forEach(handle => {
+    const cached = profileCache.get(handle);
+    if (cached && (now - cached.timestamp) < PROFILE_CACHE_DURATION) {
+      profileMap.set(handle, cached.profile);
+    } else {
+      uncachedHandles.push(handle);
+    }
+  });
+  
+  // If all handles are cached, return early
+  if (uncachedHandles.length === 0) {
+    console.log(`All ${handles.length} profiles found in cache`);
+    return profileMap;
+  }
+  
+  console.log(`Fetching ${uncachedHandles.length} uncached profiles (${handles.length - uncachedHandles.length} from cache)`);
+  
   try {
+    // Build the query string with multiple actors
+    const actors = uncachedHandles.map(handle => encodeURIComponent(handle)).join('&actors=');
     const response = await fetch(
-      `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${handle}`
+      `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfiles?actors=${actors}`
     );
 
     if (!response.ok) {
-      throw new Error(`failed to fetch profile: ${response.status}`);
+      throw new Error(`failed to fetch profiles: ${response.status}`);
     }
     
-    const profile = await response.json();
-    //console.log('profile:', profile);
+    const data = await response.json();
+    const profiles = data.profiles || [];
 
-    return {
-      createdAt: new Date(profile.createdAt),
-      displayName: profile.displayName,
-      avatar: profile.avatar,
-      description: profile.description,
-      followersCount: profile.followersCount || 0,
-      postsCount: profile.postsCount || 0
-    };
+    // Map profiles back to handles and cache them
+    profiles.forEach((profile: {
+      handle?: string;
+      createdAt?: string;
+      displayName?: string;
+      avatar?: string;
+      description?: string;
+      followersCount?: number;
+      postsCount?: number;
+    }) => {
+      if (profile.handle) {
+        const profileData = {
+          createdAt: new Date(profile.createdAt || ''),
+          displayName: profile.displayName,
+          avatar: profile.avatar,
+          description: profile.description,
+          followersCount: profile.followersCount || 0,
+          postsCount: profile.postsCount || 0
+        };
+        
+        // Add to result map
+        profileMap.set(profile.handle, profileData);
+        
+        // Cache the result
+        profileCache.set(profile.handle, {
+          profile: profileData,
+          timestamp: now
+        });
+      }
+    });
+
+    return profileMap;
   } catch (error) {
-    console.warn(`failed to fetch profile for ${handle}:`, error);
-    return null;
+    console.warn(`failed to fetch batched profiles for handles: ${uncachedHandles.join(', ')}:`, error);
+    return profileMap; // Return what we have from cache on error
   }
 };
 
@@ -494,15 +580,28 @@ export const enrichUsersProgressively = async (
   userDids: DefinedDidString[],
   onUpdate: (users: EnrichedUser[]) => void
 ): Promise<void> => {
-  // Check if we have cached enriched data
+  // Check if we have cached enriched data first
   const cachedData = getCachedEnrichedData();
-  if (cachedData) {
+  if (cachedData && cachedData.length > 0) {
     console.log('Using cached enriched data for progressive update');
-    onUpdate(cachedData);
-    return;
+    // Filter cached data to only include requested users
+    const requestedCachedUsers = cachedData.filter(user => userDids.includes(user.did));
+    if (requestedCachedUsers.length === userDids.length) {
+      // All requested users are already cached
+      onUpdate(requestedCachedUsers);
+      return;
+    } else if (requestedCachedUsers.length > 0) {
+      // Some users are cached, start with them and enrich the rest
+      onUpdate(requestedCachedUsers);
+      const uncachedDids = userDids.filter(did => !cachedData.some(user => user.did === did));
+      if (uncachedDids.length === 0) {
+        return; // All done
+      }
+      userDids = uncachedDids; // Only process uncached users
+    }
   }
 
-  // Start with basic user objects
+  // Start with basic user objects for uncached users
   const enrichedUsers: EnrichedUser[] = userDids.map(did => ({ did }));
   
   // Process in batches and update as we go
@@ -555,29 +654,46 @@ export const enrichUsersProgressively = async (
     // Batch verify all handles for this batch
     const verificationResults = await batchVerifyHandles(handlesToVerify);
     
-    // Now fetch profiles only for verified handles
-    const finalResults = await Promise.allSettled(
-      processedResults.map(async ({ actualIndex, did, candidateHandle, pds }) => {
-        let handle: string | undefined = undefined;
-        let profileData = null;
-        
-        // Only use handle if it was verified
-        if (candidateHandle && verificationResults.get(candidateHandle) === true) {
-          handle = candidateHandle;
-          // Fetch profile data for verified handle
-          try {
-            profileData = await fetchBlueskyProfile(handle);
-          } catch (error) {
-            console.warn(`Failed to fetch profile for verified handle ${handle}:`, error);
-          }
-        } else if (candidateHandle) {
-          console.warn(`Handle ${candidateHandle} failed verification for DID ${did} - hiding profile`);
-        }
-        
-        return {
-          index: actualIndex,
-          enrichedUser: {
-            did,
+    // Collect all verified handles for batched profile fetching
+    const verifiedHandles: string[] = [];
+    processedResults.forEach(({ candidateHandle }) => {
+      if (candidateHandle && verificationResults.get(candidateHandle) === true) {
+        verifiedHandles.push(candidateHandle);
+      }
+    });
+    
+    // Fetch all profiles in batches
+    const allProfileData = new Map<string, BskyProfileMinimal>();
+    for (let j = 0; j < verifiedHandles.length; j += PROFILE_BATCH_SIZE) {
+      const handleBatch = verifiedHandles.slice(j, j + PROFILE_BATCH_SIZE);
+      try {
+        const batchProfiles = await fetchBlueskyProfiles(handleBatch);
+        // Merge into the main profile map
+        batchProfiles.forEach((profile, handle) => {
+          allProfileData.set(handle, profile);
+        });
+      } catch (error) {
+        console.warn(`Failed to fetch profile batch:`, error);
+      }
+    }
+    
+    // Now create enriched users using the batched profile data
+    const finalResults = processedResults.map(({ actualIndex, did, candidateHandle, pds }) => {
+      let handle: string | undefined = undefined;
+      let profileData: BskyProfileMinimal | null = null;
+      
+      // Only use handle if it was verified
+      if (candidateHandle && verificationResults.get(candidateHandle) === true) {
+        handle = candidateHandle;
+        profileData = allProfileData.get(handle) || null;
+      } else if (candidateHandle) {
+        console.warn(`Handle ${candidateHandle} failed verification for DID ${did} - hiding profile`);
+      }
+      
+      return {
+        index: actualIndex,
+        enrichedUser: {
+          did,
             handle,
             handleVerified: !!handle, // True only if handle exists and was verified
             pds,
@@ -589,14 +705,11 @@ export const enrichUsersProgressively = async (
             postsCount: profileData?.postsCount
           } as EnrichedUser
         };
-      })
-    );
+      });
     
     // Update the users array with enriched data from this batch
     finalResults.forEach((result) => {
-      if (result.status === 'fulfilled') {
-        enrichedUsers[result.value.index] = result.value.enrichedUser;
-      }
+      enrichedUsers[result.index] = result.enrichedUser;
     });
     
     // Trigger UI update with current progress
@@ -610,5 +723,5 @@ export const enrichUsersProgressively = async (
   
   // Cache the final enriched data
   setCachedEnrichedData(enrichedUsers);
-  console.log('Progressive enrichment completed and cached');
+  //console.log('Progressive enrichment completed and cached');
 };
