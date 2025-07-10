@@ -1,6 +1,11 @@
 import React from 'react';
 import './AtprotoUserCard.css';
 
+export enum UserCardVariant {
+  PAYMENT = 'payment',
+  PROFILE = 'profile'
+}
+
 interface AtprotoUserCardProps {
   name?: string;
   handle?: string;
@@ -8,7 +13,7 @@ interface AtprotoUserCardProps {
   avatar?: string;
   clickable?: boolean;
   onClick?: () => void;
-  variant?: 'payment' | 'profile';
+  variant?: UserCardVariant;
   showDid?: boolean;
 }
 
@@ -19,7 +24,7 @@ export const AtprotoUserCard: React.FC<AtprotoUserCardProps> = ({
   avatar,
   clickable = false,
   onClick,
-  variant = 'payment',
+  variant = UserCardVariant.PAYMENT,
   showDid = false
 }) => {
   const getDisplayInitial = () => {
@@ -34,40 +39,40 @@ export const AtprotoUserCard: React.FC<AtprotoUserCardProps> = ({
     }
   };
 
-  if (variant === 'profile') {
+  if (variant === UserCardVariant.PROFILE) {
     return (
       <div 
-        className={`atproto-user-card ${variant} ${clickable ? 'clickable' : ''}`}
+        className={`at-user-card ${variant} ${clickable ? 'clickable' : ''}`}
         onClick={handleClick}
         title={clickable && handle ? `View @${handle} on Bluesky` : undefined}
       >
-        <div className="atproto-main-row">
-          <div className="atproto-avatar-section">
+        <div className="at-main-row">
+          <div className="at-avatar-section">
             {avatar ? (
               <img 
                 src={avatar} 
                 alt={`${handle || name} avatar`}
-                className="atproto-avatar"
+                className="at-avatar"
               />
             ) : (
-              <div className="atproto-avatar-placeholder">
+              <div className="at-avatar-placeholder">
                 {getDisplayInitial()}
               </div>
             )}
           </div>
-          <div className="atproto-details">
-            {name && <div className="atproto-name">{name}</div>}
-            {handle && <div className="atproto-handle">@{handle}</div>}
+          <div className="at-details">
+            {name && <div className="at-name">{name}</div>}
+            {handle && <div className="at-handle">@{handle}</div>}
           </div>
         </div>
-        {showDid && did && <div className="atproto-did">{did}</div>}
+        {showDid && did && <div className="at-did">{did}</div>}
       </div>
     );
   }
 
   return (
     <div 
-      className={`atproto-user-card ${variant} ${clickable ? 'clickable' : ''}`}
+      className={`at-user-card ${variant} ${clickable ? 'clickable' : ''}`}
       onClick={handleClick}
       title={clickable && handle ? `View @${handle} on Bluesky` : undefined}
     >
@@ -75,17 +80,17 @@ export const AtprotoUserCard: React.FC<AtprotoUserCardProps> = ({
         <img 
           src={avatar} 
           alt={`${handle || name} avatar`}
-          className="atproto-avatar"
+          className="at-avatar"
         />
       ) : (
-        <div className="atproto-avatar-placeholder">
+        <div className="at-avatar-placeholder">
           {getDisplayInitial()}
         </div>
       )}
-      <div className="atproto-details">
-        {name && <div className="atproto-name">{name}</div>}
-        {handle && <div className="atproto-handle">@{handle}</div>}
-        {showDid && did && <div className="atproto-did">{did}</div>}
+      <div className="at-details">
+        {name && <div className="at-name">{name}</div>}
+        {handle && <div className="at-handle">@{handle}</div>}
+        {showDid && did && <div className="at-did">{did}</div>}
       </div>
     </div>
   );

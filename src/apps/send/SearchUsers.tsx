@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { fetchUsersWithAddressRecord, enrichUsersProgressively, resolveUserIdentifier } from '../../shared/fetch.ts';
 import './SearchUsers.css';
 import type { DefinedDidString, EnrichedUser } from "../../shared/common.ts";
-import { AtprotoUserCard } from '../../shared/AtprotoUserCard.tsx';
+import { AtprotoUserCard, UserCardVariant } from '../../shared/AtprotoUserCard.tsx';
 
 interface SearchUsersProps {
   onUserSelect?: (user: DefinedDidString) => void;
@@ -191,7 +191,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
         
         // Check if this user is in our list of users with address records
         if (!allUserDids.includes(resolvedDid)) {
-          setError(`User "${preSelectedUser}" was found but has no linked Ethereum addresses in our system.`);
+          setError(`${preSelectedUser} has no linked Ethereum addresses.`);
           return;
         }
         
@@ -380,7 +380,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
                 avatar={user.avatar}
                 clickable
                 onClick={() => handleUserClick(user)}
-                variant="payment"
+                variant={UserCardVariant.PAYMENT}
                 showDid
               />
             </div>

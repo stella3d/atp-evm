@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAccount } from 'wagmi';
 import { ConnectWallet } from '../../shared/WalletConnector.tsx';
-import './UserDetailCard.css'; // Reusing styles for consistency
+import './UserDetailCard.css';
 
 export const WalletConnectionCard: React.FC = () => {
   const { isConnected } = useAccount();

@@ -1420,7 +1420,7 @@
   .recipient-address-display code {
     font-size: 0.94em !important;
   }
-  .recipient-info .atproto-did {
+  .recipient-info .at-did {
     font-size: 8px;
   }
 }

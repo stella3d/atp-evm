@@ -270,20 +270,20 @@
   }
 
   /* Reduce contrast of payment cards */
-  .search-users .atproto-user-card.payment {
+  .search-users .at-user-card.payment {
     background: #232323;
     border-color: #444;
   }
 }
 
 /* Compact list card styling in SearchUsers */
-.search-users .atproto-user-card.payment {
+.search-users .at-user-card.payment {
   padding: 4px 8px;
   margin: 1px;
 }
 
-.search-users .atproto-user-card.payment .atproto-avatar,
-.search-users .atproto-user-card.payment .atproto-avatar-placeholder {
+.search-users .at-user-card.payment .at-avatar,
+.search-users .at-user-card.payment .at-avatar-placeholder {
   width: 40px;
   height: 40px;
 }
@@ -306,25 +306,25 @@
 
 /* Further shrink text under 356px */
 @media (max-width: 356px) {
-  .search-users .users-list .atproto-name {
+  .search-users .users-list .at-name {
     font-size: calc(1.26rem - 2px);
   }
-  .search-users .users-list .atproto-handle {
+  .search-users .users-list .at-handle {
     font-size: calc(1.26rem - 2px);
   }
-  .search-users .users-list .atproto-did {
+  .search-users .users-list .at-did {
     font-size: 10px
   }
 }
 
 @media (max-width: 372px) {
-  .search-users .users-list .atproto-name {
+  .search-users .users-list .at-name {
     font-size: calc(1.26rem - 1px);
   }
-  .search-users .users-list .atproto-handle {
+  .search-users .users-list .at-handle {
     font-size: calc(1.26rem - 1px);
   }
-  .search-users .users-list .atproto-did {
+  .search-users .users-list .at-did {
     font-size: 9px
   }
 }

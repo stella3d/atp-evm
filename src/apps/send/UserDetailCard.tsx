@@ -8,7 +8,7 @@ import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
 import { PaymentModal } from "./PaymentModal.tsx";
 import { AddressLink } from "../../shared/AddressLink.tsx";
-import { AtprotoUserCard } from "../../shared/AtprotoUserCard.tsx";
+import { AtprotoUserCard, UserCardVariant } from "../../shared/AtprotoUserCard.tsx";
 import { ConnectWallet } from "../../shared/WalletConnector.tsx";
 import { config } from '../../shared/WalletConnector.tsx';
 import './UserDetailCard.css';
@@ -219,32 +219,19 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         
         setAddressRecords(deduplicatedRecords);
 
-        // Validate each record
+        // stub for record validation results
         const validationMap = new Map<string, AddressControlVerificationChecks>();
         for (const record of deduplicatedRecords) {
           try {
-            // Basic validation based on available data
-            const hasValidAddress = !!(record.value?.siwe?.address && 
-              record.value.siwe.address.startsWith('0x') && 
-              record.value.siwe.address.length === 42);
-              
-            const hasValidDomain = record.value?.siwe?.domain.includes('stellz.club');
-            
-            const hasRequiredFields = !!(
-              record.value?.siwe?.statement &&
-              record.value?.siwe?.chainId &&
-              record.value?.siwe?.issuedAt
-            );
-            
             validationMap.set(record.uri, {
-              statementMatches: hasRequiredFields,
-              siweSignatureValid: hasValidAddress, // placeholder - address format check
+              statementMatches: null,
+              siweSignatureValid: null, // placeholder before actual verification
               merkleProofValid: null,
-              domainIsTrusted: hasValidDomain
+              domainIsTrusted: record.value?.siwe?.domain === 'wallet-link.stellz.club'
             });
           } catch (error) {
-            console.error('Failed to validate record:', record.uri, error);
-            // Set default failed validation
+            console.error('failed to validate record:', record.uri, error);
+            // set default failed validation
             validationMap.set(record.uri, {
               statementMatches: false,
               siweSignatureValid: false,
@@ -283,7 +270,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
             handle={selectedUser.handle}
             did={selectedUser.did}
             avatar={selectedUser.avatar}
-            variant="profile"
+            variant={UserCardVariant.PROFILE}
             clickable={!!selectedUser.handle}
             showDid
           />

@@ -1,11 +1,16 @@
 import React from 'react';
 import { ChainIndicator } from '../../shared/ChainIndicator.tsx';
 
-type ErrorType = 'user_rejected' | 'wrong_chain' | 'insufficient_funds' | 'other' | null;
+export enum ErrorType {
+  USER_REJECTED,
+  WRONG_CHAIN,
+  INSUFFICIENT_FUNDS,
+  OTHER
+}
 
 interface TransactionErrorProps {
   error: string | null;
-  errorType: ErrorType;
+  errorType: ErrorType | null;
   chainId: number;
   onRetry: () => void;
   onCancel: () => void;
@@ -68,27 +73,27 @@ export const TransactionError: React.FC<TransactionErrorProps> = ({
   return (
     <div className="step-error">
       <div className="error-icon">
-        {errorType === 'user_rejected' ? '🚫' : 
-         errorType === 'wrong_chain' ? '⛓️' : 
-         errorType === 'insufficient_funds' ? '💰' : '❌'}
+        {errorType === ErrorType.USER_REJECTED ? '🚫' : 
+         errorType === ErrorType.WRONG_CHAIN ? '⛓️' : 
+         errorType === ErrorType.INSUFFICIENT_FUNDS ? '💰' : '❌'}
       </div>
       <h4>
-        {errorType === 'user_rejected' ? 'Transaction Cancelled' :
-         errorType === 'wrong_chain' ? 'Wrong Network' :
-         errorType === 'insufficient_funds' ? 'Insufficient Funds' :
+        {errorType === ErrorType.USER_REJECTED ? 'Transaction Cancelled' :
+         errorType === ErrorType.WRONG_CHAIN ? 'Wrong Network' :
+         errorType === ErrorType.INSUFFICIENT_FUNDS ? 'Insufficient Funds' :
          'Payment Failed'}
       </h4>
-      {errorType === 'other' ? (
+      {errorType === ErrorType.OTHER ? (
         <p>{error}</p>
       ) : (
         <p>
-          {errorType === 'user_rejected' ? 'You cancelled the transaction in your wallet. No worries - you can try again when ready.' :
-           errorType === 'wrong_chain' ? renderWrongChainError(error || '') :
-           errorType === 'insufficient_funds' ? 'You don\'t have enough funds to complete this transaction. Please check your balance.' :
+          {errorType === ErrorType.USER_REJECTED ? 'You cancelled the transaction in your wallet. No worries - you can try again when ready.' :
+           errorType === ErrorType.WRONG_CHAIN ? renderWrongChainError(error || '') :
+           errorType === ErrorType.INSUFFICIENT_FUNDS ? 'You don\'t have enough funds to complete this transaction. Please check your balance.' :
            error}
         </p>
       )}
-      {errorType === 'wrong_chain' && (
+      {errorType === ErrorType.WRONG_CHAIN && (
         <div className="chain-help">
           <p>To complete this transaction, please:</p>
           <ol>
@@ -100,8 +105,8 @@ export const TransactionError: React.FC<TransactionErrorProps> = ({
       )}
       <div className="modal-actions">
         <button type="button" className="back-button" onClick={onRetry}>
-          {errorType === 'user_rejected' ? 'Try Again' : 
-           errorType === 'wrong_chain' ? 'Switch Network & Try Again' :
+          {errorType === ErrorType.USER_REJECTED ? 'Try Again' : 
+           errorType === ErrorType.WRONG_CHAIN ? 'Switch Network & Try Again' :
            'Try Again'}
         </button>
         <button type="button" className="cancel-button" onClick={onCancel}>
