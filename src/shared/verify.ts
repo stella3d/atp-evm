@@ -6,8 +6,9 @@ import { sha256 } from 'multiformats/hashes/sha2';
 import * as dagCbor from '@ipld/dag-cbor';
 import { ADDRESS_CONTROL_LEXICON_TYPE } from "./common.ts";
 import type { DefinedDidString, AddressControlRecord } from "./common.ts";
-import { verifyRecordSiweSignature } from "./recordWrite.ts";
-import { makeSiweStatement } from "./WalletConnector.tsx";
+import { chainForId, makeSiweStatement } from "./WalletConnector.tsx";
+import { createSiweMessage, verifySiweMessage, type SiweMessage } from "viem/siwe";
+import { createPublicClient, http } from "viem";
 
 
 
@@ -21,6 +22,45 @@ export type AddressControlVerificationChecks = {
   merkleProofValid: boolean | null;
   // (OPTIONAL) record's siwe.domain is a domain we trust
   domainIsTrusted: boolean | null | undefined;
+}
+
+export const verifyRecordSiweSignature = async (record: AddressControlRecord): Promise<boolean> => {
+  const reconstructedMsg: SiweMessage = {
+    domain: record.siwe.domain,
+    address: record.siwe.address,
+    statement: record.siwe.statement,
+    version: record.siwe.version,
+    chainId: record.siwe.chainId,
+    nonce: record.siwe.nonce,
+    uri: record.siwe.uri,
+    issuedAt: new Date(record.siwe.issuedAt),
+  }
+
+  const message: string = createSiweMessage(reconstructedMsg);
+
+  try {
+    const sigBase64 = record.signature["$bytes"];
+    const bytes = Uint8Array.from(atob(sigBase64), c => c.charCodeAt(0));
+    const sigHex: `0x${string}` = ('0x' + bytes.reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0'), '')) as `0x${string}`;
+
+    const ethClient = createPublicClient({
+      chain: chainForId(record.siwe.chainId),
+      transport: http()
+    });
+
+    const verifyResult: boolean = await verifySiweMessage(ethClient, {
+      message,
+      signature: sigHex,
+      domain: reconstructedMsg.domain,
+      nonce: reconstructedMsg.nonce,
+      address: reconstructedMsg.address,
+    });
+    console.log("verifyResult:", verifyResult);
+    return verifyResult;
+  } catch (e) {
+    console.error("error verifying Sign in With Ethereum signature in record:", e);
+  }
+  return false;
 }
 
 export const checkLinkValidityMinimal = async (
