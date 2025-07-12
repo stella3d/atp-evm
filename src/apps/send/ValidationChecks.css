@@ -1,0 +1,62 @@
+.safety-checklist-inline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.validation-summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  gap: 8px;
+  padding: 4px 8px;
+  border: 1px solid #e1e5e9;
+  border-radius: 4px;
+  background-color: #f7f9fa;
+  transition: all 0.2s ease;
+  max-width: 60%;
+}
+
+.validation-summary:hover {
+  background-color: #f0f2f5;
+  border-color: #d1d5db;
+}
+
+.validation-summary.expanded {
+  margin-bottom: 8px;
+}
+
+.validation-details {
+  margin-top: 4px;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .validation-summary {
+    border-color: #374151;
+    background-color: #1f2937;
+    color: #f9fafb;
+  }
+  
+  .validation-summary:hover {
+    background-color: #374151;
+    border-color: #4b5563;
+  }
+}
+
+@media (max-width: 420px) {
+  .validation-summary {
+	max-width: 70%;
+	font-size: 13px;
+  }
+}
+
+@media (max-width: 372px) {
+  .validation-summary {
+	max-width: 80%;
+	font-size: 12px;
+  }
+}
