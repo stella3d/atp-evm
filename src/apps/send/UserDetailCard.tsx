@@ -3,7 +3,7 @@ import { isAddress } from 'viem';
 import { useAccount, WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { EnrichedUser, AddressControlRecord, DefinedDidString } from "../../shared/common.ts";
-import { getChainName, getChainColor, getChainGradient } from "../../shared/common.ts";
+import { getChainName, getChainColor, getChainGradient, aggregateWallets } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
 import { PaymentModal } from "./PaymentModal.tsx";
@@ -11,6 +11,8 @@ import { AddressLink } from "../../shared/AddressLink.tsx";
 import { AtprotoUserCard, UserCardVariant } from "../../shared/AtprotoUserCard.tsx";
 import { ConnectWallet } from "../../shared/WalletConnector.tsx";
 import { config } from '../../shared/WalletConnector.tsx';
+import { ProfileDetails } from "./ProfileDetails.tsx";
+import { ValidationChecks } from "./ValidationChecks.tsx";
 import './UserDetailCard.css';
 
 interface UserDetailCardProps {
@@ -18,52 +20,6 @@ interface UserDetailCardProps {
   onClose?: () => void;
   triggerPayment?: DefinedDidString | null; // DID to trigger payment for
 }
-
-const linkifyText = (text: string): React.ReactNode[] => {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const handleRegex = /(\s@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,})/g;
-  // Combined regex to split by both URLs and handles
-  const combinedRegex = /(https?:\/\/[^\s]+|\s@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,})/g;
-
-  return text.split(combinedRegex).map((part, index) => {
-    if (part.match(urlRegex)) {
-      return (
-        <a
-          key={index}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            color: '#1d9bf0',
-            textDecoration: 'underline',
-          }}
-        >
-          {part}
-        </a>
-      );
-    } else if (part.match(handleRegex)) {
-      // Remove the space and @ symbol for the URL but keep them in the display text
-      const handleWithoutSpaceAndAt = part.trim().substring(1);
-      return (
-        <span key={index}>
-          {part.charAt(0)}
-          <a
-            href={`https://bsky.app/profile/${handleWithoutSpaceAndAt}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: '#1d9bf0',
-              textDecoration: 'underline',
-            }}
-          >
-            {part.trim()}
-          </a>
-        </span>
-      );
-    }
-    return part;
-  });
-};
 
 // Inner component that uses wagmi hooks
 const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onClose, triggerPayment }) => {
@@ -103,10 +59,10 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
   // Handle automatic payment modal trigger
   useEffect(() => {
     if (triggerPayment && triggerPayment === selectedUser.did) {
-      console.log(`Auto-triggering payment modal for user: ${selectedUser.did}`);
+      //console.log(`auto-triggering payment modal for user: ${selectedUser.did}`);
       
       if (addressRecords.length === 0) {
-        console.warn('Cannot trigger payment: user has no address records');
+        //console.warn('cannot trigger payment: user has no address records');
         return;
       }
       
@@ -121,9 +77,9 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
           recipientAddress: address as `0x${string}`,
           chainId: chainId,
         });
-        console.log(`Payment modal opened for address: ${address} on chain ${chainId}`);
+        //console.log(`payment modal opened for address: ${address} on chain ${chainId}`);
       } else {
-        console.warn('First address record is not valid for payment');
+        //console.warn('first address record is not valid for payment');
       }
     }
   }, [triggerPayment, selectedUser.did, addressRecords]);
@@ -141,82 +97,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         const records = await fetchAddressControlRecords(selectedUser.did, selectedUser.pds);
         //console.log('Raw address records:', records);
         
-        // Group records by address, collecting all chains for each address
-        const addressMap = new Map<string, {
-          address: string;
-          chains: Array<{
-            chainId: number;
-            record: AddressControlRecord;
-            issuedAt: string;
-          }>;
-          mostRecentRecord: AddressControlRecord;
-        }>();
-        
-        for (const record of records) {
-          const address = record.value?.siwe?.address?.toLowerCase();
-          if (!address) continue; // Skip records without valid addresses
-          
-          const chainId = record.value?.siwe?.chainId || 1;
-          const issuedAt = record.value?.siwe?.issuedAt || '';
-          
-          const existingEntry = addressMap.get(address);
-          if (!existingEntry) {
-            // First time seeing this address
-            addressMap.set(address, {
-              address,
-              chains: [{ chainId, record, issuedAt }],
-              mostRecentRecord: record
-            });
-          } else {
-            // Address already exists, add this chain
-            const existingChain = existingEntry.chains.find(c => c.chainId === chainId);
-            if (!existingChain) {
-              // New chain for this address
-              existingEntry.chains.push({ chainId, record, issuedAt });
-            } else {
-              // Same chain, keep the more recent one
-              const currentDate = new Date(issuedAt);
-              const existingDate = new Date(existingChain.issuedAt);
-              
-              if (currentDate > existingDate) {
-                existingChain.record = record;
-                existingChain.issuedAt = issuedAt;
-              }
-            }
-            
-            // Update the most recent record for this address
-            const currentDate = new Date(issuedAt);
-            const mostRecentDate = new Date(existingEntry.mostRecentRecord.value?.siwe?.issuedAt || '');
-            
-            if (currentDate > mostRecentDate) {
-              existingEntry.mostRecentRecord = record;
-            }
-          }
-        }
-        
-        // Convert back to array, using the most recent record for each address but keeping chain info
-        const deduplicatedRecords = Array.from(addressMap.values()).map(entry => {
-          // Attach chain information to the most recent record
-          const recordWithChains = { 
-            ...entry.mostRecentRecord,
-            chains: entry.chains.sort((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime())
-          };
-          return recordWithChains;
-        });
-        
-        // include any extra chains specified in "alsoOn"
-        deduplicatedRecords.forEach(rec => {
-          const siwe = (rec.value?.siwe || {}) as { alsoOn?: number[] };
-          if (Array.isArray(siwe.alsoOn)) {
-            siwe.alsoOn.forEach((chainId: number) => {
-              if (!rec.chains.find(c => c.chainId === chainId)) {
-                rec.chains.push({ chainId, record: rec, issuedAt: rec.value.siwe.issuedAt });
-              }
-            });
-            rec.chains.sort((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime());
-          }
-        });
-        
+        const deduplicatedRecords = aggregateWallets(records);
         setAddressRecords(deduplicatedRecords);
 
         // stub for record validation results
@@ -274,48 +155,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
             clickable={!!selectedUser.handle}
             showDid
           />
-          {(selectedUser.createdAt || selectedUser.followersCount !== undefined || selectedUser.postsCount !== undefined) && (
-            <div className="profile-stats">
-              <div className="stats-grid">
-                {selectedUser.createdAt && (
-                  <div className="stat-item">
-                    <span className="stat-label">Joined:</span>
-                    <span className="stat-value">
-                      {(() => {
-                        try {
-                          const date = selectedUser.createdAt instanceof Date 
-                            ? selectedUser.createdAt 
-                            : new Date(selectedUser.createdAt);
-                          return date.toLocaleDateString();
-                        } catch {
-                          return 'Unknown';
-                        }
-                      })()}
-                    </span>
-                  </div>
-                )}
-                {selectedUser.followersCount !== undefined && (
-                  <div className="stat-item">
-                    <span className="stat-label">Followers:</span>
-                    <span className="stat-value">{selectedUser.followersCount.toLocaleString()}</span>
-                  </div>
-                )}
-                {selectedUser.postsCount !== undefined && (
-                  <div className="stat-item">
-                    <span className="stat-label">Posts:</span>
-                    <span className="stat-value">{selectedUser.postsCount.toLocaleString()}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-          {selectedUser.description && (
-            <div className="profile-description">
-              {selectedUser.description.split('\n').map((line, index) => (
-                <p key={index}>{linkifyText(line)}</p>
-              ))}
-            </div>
-          )}
+          <ProfileDetails user={selectedUser} />
         </div>
 
         <div className="address-records">
@@ -329,28 +169,18 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
           ) : (
             <div className="records-list">
               {addressRecords.map((record, index) => {
+                const val = record.value;
                 // Extract address from the SIWE structure
-                const address = record.value?.siwe?.address || 'Unknown address';
-                const issuedAt = record.value?.siwe?.issuedAt;
-                const chainId = record.value?.siwe?.chainId;
-                
-                // Get all chains for this address (from our enhanced record)
-                const chains: Array<{
-                  chainId: number;
-                  record: AddressControlRecord;
-                  issuedAt: string;
-                }> = (record as AddressControlRecord & { 
-                  chains?: Array<{
-                    chainId: number;
-                    record: AddressControlRecord;
-                    issuedAt: string;
-                  }>;
-                }).chains || [{ chainId: chainId || 1, record, issuedAt: issuedAt || '' }];
-                
-                // Use the most recent chain for the primary action
-                const primaryChain = chains[0];
-                // Extract domain from SIWE record
-                const domain = record.value?.siwe?.domain;
+                const address = val.siwe.address;
+                const issuedAt = val.siwe.issuedAt;
+                const domain = val.siwe.domain;
+
+                // Use the chain it was signed on as the default for user
+                const primaryChain = {
+                  chainId: val.siwe.chainId,
+                  record,
+                  issuedAt,
+                };
 
                 return (
                   <div key={record.uri || index} className="address-record">
@@ -388,36 +218,18 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         </div>
                       )}
                       
-                      {showValidationChecks && (() => {
-                        const validation = validationResults.get(record.uri);
-                        if (!validation) return null;
-                        
-                        return (
-                          <div className="safety-checklist-inline">
-                            <div className={`checklist-item ${validation.siweSignatureValid ? 'verified' : 'failed'}`}>
-                              <span className="check-icon">{validation.siweSignatureValid ? '✅' : '❌'}</span>
-                              <span className="check-text">Wallet Signature {validation.siweSignatureValid ? 'Valid' : 'Invalid'}</span>
-                            </div>
-                            <div className={`checklist-item ${validation.statementMatches ? 'verified' : 'failed'}`}>
-                              <span className="check-icon">{validation.statementMatches ? '✅' : '❌'}</span>
-                              <span className="check-text">Statement {validation.statementMatches ? 'Matches' : 'Mismatch'}</span>
-                            </div>
-                            {validation.domainIsTrusted !== undefined && (
-                              <div className={`checklist-item ${validation.domainIsTrusted ? 'verified' : 'warning'}`}>
-                                <span className="check-icon">{validation.domainIsTrusted ? '✅' : '⚠️'}</span>
-                                <span className="check-text">Domain {validation.domainIsTrusted ? 'Trusted' : 'Untrusted'}</span>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })()}
+                      {showValidationChecks && validationResults.has(record.uri) && (
+                        <ValidationChecks 
+                          validation={validationResults.get(record.uri)!}
+                        />
+                      )}
                     </div>
                     
                     <div className="send-buttons-container">
                       {/* Dropdown + Send button */}
                       {(() => {
-                        const siwe = (record.value?.siwe || {}) as { chainId?: number };
-                        const on = Number(siwe.chainId) || 1;
+                        const siwe = record.value.siwe;
+                        const on = Number(siwe.chainId);
 
                         const alsoOn: number[] = Array.isArray(record.value.alsoOn)
                           ? record.value.alsoOn.filter((n) => !isNaN(n))
