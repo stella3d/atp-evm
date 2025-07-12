@@ -12,6 +12,7 @@ import { AtprotoUserCard, UserCardVariant } from "../../shared/AtprotoUserCard.t
 import { ConnectWallet } from "../../shared/WalletConnector.tsx";
 import { config } from '../../shared/WalletConnector.tsx';
 import { ProfileDetails } from "./ProfileDetails.tsx";
+import { ValidationChecks } from "./ValidationChecks.tsx";
 import './UserDetailCard.css';
 
 interface UserDetailCardProps {
@@ -243,29 +244,11 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         </div>
                       )}
                       
-                      {showValidationChecks && (() => {
-                        const validation = validationResults.get(record.uri);
-                        if (!validation) return null;
-                        
-                        return (
-                          <div className="safety-checklist-inline">
-                            <div className={`checklist-item ${validation.siweSignatureValid ? 'verified' : 'failed'}`}>
-                              <span className="check-icon">{validation.siweSignatureValid ? '✅' : '❌'}</span>
-                              <span className="check-text">Wallet Signature {validation.siweSignatureValid ? 'Valid' : 'Invalid'}</span>
-                            </div>
-                            <div className={`checklist-item ${validation.statementMatches ? 'verified' : 'failed'}`}>
-                              <span className="check-icon">{validation.statementMatches ? '✅' : '❌'}</span>
-                              <span className="check-text">Statement {validation.statementMatches ? 'Matches' : 'Mismatch'}</span>
-                            </div>
-                            {validation.domainIsTrusted !== undefined && (
-                              <div className={`checklist-item ${validation.domainIsTrusted ? 'verified' : 'warning'}`}>
-                                <span className="check-icon">{validation.domainIsTrusted ? '✅' : '⚠️'}</span>
-                                <span className="check-text">Domain {validation.domainIsTrusted ? 'Trusted' : 'Untrusted'}</span>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })()}
+                      {showValidationChecks && validationResults.has(record.uri) && (
+                        <ValidationChecks 
+                          validation={validationResults.get(record.uri)!}
+                        />
+                      )}
                     </div>
                     
                     <div className="send-buttons-container">
