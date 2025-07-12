@@ -1,20 +1,5 @@
 import type { SiweMessage } from "viem/siwe";
-import type { DefinedDidString, EvmAddressString } from "./common.ts";
-
-export type SiweStatementString = `Prove control of 0x${string} to link it to ${DefinedDidString}`;
-
-// TODO - make types stricter than just string, where applicable
-export type SiweLexiconObject = {
-  domain: string;   				// needs better type
-  address: `0x${string}`,
-  statement: SiweStatementString;
-  version: "1",
-  chainId: number;
-  nonce: string;
-  uri: string;
-  issuedAt: string;  				// needs better type		
-}
-
+import type { EvmAddressString, SiweStatementString, SiweLexiconObject } from "./common.ts";
 
 export const lexiconFormatSiweMessage = (message: SiweMessage): SiweLexiconObject => {
   // this validation code is pretty sloppy, but it should be enough for now

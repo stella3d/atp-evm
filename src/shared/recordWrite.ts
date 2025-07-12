@@ -1,28 +1,14 @@
 import { Agent, ComAtprotoRepoCreateRecord } from '@atproto/api'
 import { type OAuthSession } from "@atproto/oauth-client-browser";
 
-import { hexToBase64, type EvmAddressString } from "./common.ts";
-import { lexiconFormatSiweMessage, type SiweLexiconObject } from './siwe.ts';
+import { hexToBase64, type EvmAddressString, type AddressControlRecord, type AtprotoBytesField, ADDRESS_CONTROL_LEXICON_TYPE } from "./common.ts";
+import { lexiconFormatSiweMessage } from './siwe.ts';
 import { createSiweMessage, verifySiweMessage, type SiweMessage } from 'viem/siwe';
 import { createPublicClient, http } from "viem";
 import { chainForId } from "./WalletConnector.tsx";
 
 
 type SignatureString = `0x${string}`;
-
-export type AddressControlRecord = {
-  '$type': 'club.stellz.evm.addressControl',
-  address: AtprotoBytesField;
-  alsoOn?: bigint[]; // List of other chain IDs this address is active on
-  signature: AtprotoBytesField;
-  siwe: SiweLexiconObject;
-};
-
-export type AddressControlVerificationResults = {
-  statementMatches: boolean | null;
-  signatureValid: boolean | null;
-  merkleProofChecked: boolean | null;
-}
 
 export const verifyRecordSiweSignature = async (record: AddressControlRecord): Promise<boolean> => {
   const reconstructedMsg: SiweMessage = {
@@ -62,11 +48,6 @@ export const verifyRecordSiweSignature = async (record: AddressControlRecord): P
   }
   return false;
 }
-
-
-export const ADDRESS_CONTROL_LEXICON_TYPE = 'club.stellz.evm.addressControl';
-
-export type AtprotoBytesField = { "$bytes": string };
 
 const hexToAtpBytes = (hex: string): AtprotoBytesField => ({ "$bytes": hexToBase64(hex) });
 

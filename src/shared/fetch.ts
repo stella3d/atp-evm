@@ -1,4 +1,4 @@
-import type { DefinedDidString, EnrichedUser, EnrichedUserCacheEntry, AddressControlRecord } from "./common.ts";
+import type { DefinedDidString, EnrichedUser, EnrichedUserCacheEntry, AddressControlRecordWithMeta } from "./common.ts";
 import { isDidString } from "./common.ts";
 
 // Cache configuration
@@ -497,7 +497,7 @@ const ADDRESS_RECORDS_CACHE_DURATION = 6 * 60 * 1000; // 6 minutes
 export const fetchAddressControlRecords = async (
   did: DefinedDidString, 
   pds: string
-): Promise<AddressControlRecord[]> => {
+): Promise<AddressControlRecordWithMeta[]> => {
   const cacheKey = `listRecords_${did}`;
   
   // Check cache first

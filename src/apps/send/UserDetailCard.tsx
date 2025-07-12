@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { isAddress } from 'viem';
 import { useAccount, WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { EnrichedUser, AddressControlRecord, DefinedDidString } from "../../shared/common.ts";
+import type { EnrichedUser, AddressControlRecordWithMeta, DefinedDidString } from "../../shared/common.ts";
 import { getChainName, getChainColor, getChainGradient, aggregateWallets } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
-import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
+import { checkLinkValidityMinimal, type AddressControlVerificationChecks } from "../../shared/verify.ts";
 import { PaymentModal } from "./PaymentModal.tsx";
 import { AddressLink } from "../../shared/AddressLink.tsx";
 import { AtprotoUserCard, UserCardVariant } from "../../shared/AtprotoUserCard.tsx";
@@ -24,7 +24,7 @@ interface UserDetailCardProps {
 // Inner component that uses wagmi hooks
 const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onClose, triggerPayment }) => {
   const { isConnected } = useAccount();
-  const [addressRecords, setAddressRecords] = useState<AddressControlRecord[]>([]);
+  const [addressRecords, setAddressRecords] = useState<AddressControlRecordWithMeta[]>([]);
   const [loadingRecords, setLoadingRecords] = useState(false);
   const [recordsError, setRecordsError] = useState<string | null>(null);
   const [validationResults, setValidationResults] = useState<Map<string, AddressControlVerificationChecks>>(new Map());
@@ -104,12 +104,9 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         const validationMap = new Map<string, AddressControlVerificationChecks>();
         for (const record of deduplicatedRecords) {
           try {
-            validationMap.set(record.uri, {
-              statementMatches: null,
-              siweSignatureValid: null, // placeholder before actual verification
-              merkleProofValid: null,
-              domainIsTrusted: record.value?.siwe?.domain === 'wallet-link.stellz.club'
-            });
+            const validationResults = await checkLinkValidityMinimal(selectedUser.did, record.value);
+            console.log('validation for record', record.uri, validationResults);
+            validationMap.set(record.uri, validationResults);
           } catch (error) {
             console.error('failed to validate record:', record.uri, error);
             // set default failed validation

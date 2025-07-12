@@ -3,20 +3,36 @@ export type EvmAddressString = `0x${string}`;
 export type DidString = `did:plc:${string}` | `did:web:${string}` | undefined;
 export type DefinedDidString = Exclude<DidString, undefined>;
 
-// Address control record from the user's PDS
-export interface AddressControlRecord {
+export type SiweStatementString = `Prove control of 0x${string} to link it to ${DefinedDidString}`;
+
+// TODO - make types stricter than just string, where applicable
+export type SiweLexiconObject = {
+  domain: string;   				// needs better type
+  address: `0x${string}`,
+  statement: SiweStatementString;
+  version: "1",
+  chainId: number;
+  nonce: string;
   uri: string;
-  value: {
-    siwe: {
-      address: string;
-      issuedAt: string;
-      chainId: number;
-      domain: string;
-      [key: string]: unknown;
-    };
-    alsoOn?: Set<number>; // List of other chain IDs this address is active on
-    [key: string]: unknown;
-  };
+  issuedAt: string;  				// needs better type		
+}
+
+export type AtprotoBytesField = { "$bytes": string };
+
+export const ADDRESS_CONTROL_LEXICON_TYPE = 'club.stellz.evm.addressControl';
+
+export type AddressControlRecord = {
+  '$type': 'club.stellz.evm.addressControl',
+  address: AtprotoBytesField;
+  alsoOn?: Set<number>; // List of other chain IDs this address is active on
+  signature: AtprotoBytesField;
+  siwe: SiweLexiconObject;
+};
+
+// Address control record from the user's PDS
+export interface AddressControlRecordWithMeta {
+  uri: string;
+  value: AddressControlRecord;
 }
 
 // Enriched user data with handle and profile information
@@ -28,7 +44,7 @@ export interface EnrichedUser {
   avatar?: string;
   description?: string;
   pds?: string;
-  addressControlRecords?: AddressControlRecord[];
+  addressControlRecords?: AddressControlRecordWithMeta[];
   createdAt?: Date;
   followersCount?: number;
   postsCount?: number;
@@ -165,8 +181,8 @@ export function isHandle(input: string): boolean {
 }
 
 // Group records by address, collecting all chains for each address
-export const aggregateWallets = (records: AddressControlRecord[]): AddressControlRecord[] => {
-  const addressMap = new Map<string, AddressControlRecord>();
+export const aggregateWallets = (records: AddressControlRecordWithMeta[]): AddressControlRecordWithMeta[] => {
+  const addressMap = new Map<string, AddressControlRecordWithMeta>();
   
   for (const record of records) {
     const val = record.value;

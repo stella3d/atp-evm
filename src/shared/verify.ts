@@ -4,8 +4,9 @@ import { CID } from 'multiformats/cid';
 import * as Block from 'multiformats/block';
 import { sha256 } from 'multiformats/hashes/sha2';
 import * as dagCbor from '@ipld/dag-cbor';
-import { DefinedDidString } from "./common.ts";
-import { ADDRESS_CONTROL_LEXICON_TYPE, AddressControlRecord, verifyRecordSiweSignature } from "./recordWrite.ts";
+import { ADDRESS_CONTROL_LEXICON_TYPE } from "./common.ts";
+import type { DefinedDidString, AddressControlRecord } from "./common.ts";
+import { verifyRecordSiweSignature } from "./recordWrite.ts";
 import { makeSiweStatement } from "./WalletConnector.tsx";
 
 
@@ -20,6 +21,25 @@ export type AddressControlVerificationChecks = {
   merkleProofValid: boolean | null;
   // (OPTIONAL) record's siwe.domain is a domain we trust
   domainIsTrusted: boolean | null | undefined;
+}
+
+export const checkLinkValidityMinimal = async (
+  did: DefinedDidString, 
+  record: AddressControlRecord,
+): Promise<AddressControlVerificationChecks> => {
+	// check 1: statement matches
+	const expectedStatement = makeSiweStatement(record.siwe.address, did);
+	// check 2: wallet signature & SIWE message are valid
+	const siweSignatureValid = await verifyRecordSiweSignature(record);
+  // check 4: for demo purposes, we are only trusting records made via "stellz.club"
+  const domainIsTrusted = record.siwe.domain === "wallet-link.stellz.club";
+
+	return {
+		statementMatches: record.siwe.statement === expectedStatement,
+		siweSignatureValid,
+		merkleProofValid: null,
+		domainIsTrusted
+	};
 }
 
 export const checkLinkValidity = async (
