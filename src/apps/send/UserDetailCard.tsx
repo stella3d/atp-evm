@@ -11,6 +11,7 @@ import { AddressLink } from "../../shared/AddressLink.tsx";
 import { AtprotoUserCard, UserCardVariant } from "../../shared/AtprotoUserCard.tsx";
 import { ConnectWallet } from "../../shared/WalletConnector.tsx";
 import { config } from '../../shared/WalletConnector.tsx';
+import { ProfileDetails } from "./ProfileDetails.tsx";
 import './UserDetailCard.css';
 
 interface UserDetailCardProps {
@@ -18,52 +19,6 @@ interface UserDetailCardProps {
   onClose?: () => void;
   triggerPayment?: DefinedDidString | null; // DID to trigger payment for
 }
-
-const linkifyText = (text: string): React.ReactNode[] => {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const handleRegex = /(\s@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,})/g;
-  // Combined regex to split by both URLs and handles
-  const combinedRegex = /(https?:\/\/[^\s]+|\s@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,})/g;
-
-  return text.split(combinedRegex).map((part, index) => {
-    if (part.match(urlRegex)) {
-      return (
-        <a
-          key={index}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            color: '#1d9bf0',
-            textDecoration: 'underline',
-          }}
-        >
-          {part}
-        </a>
-      );
-    } else if (part.match(handleRegex)) {
-      // Remove the space and @ symbol for the URL but keep them in the display text
-      const handleWithoutSpaceAndAt = part.trim().substring(1);
-      return (
-        <span key={index}>
-          {part.charAt(0)}
-          <a
-            href={`https://bsky.app/profile/${handleWithoutSpaceAndAt}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: '#1d9bf0',
-              textDecoration: 'underline',
-            }}
-          >
-            {part.trim()}
-          </a>
-        </span>
-      );
-    }
-    return part;
-  });
-};
 
 // Group records by address, collecting all chains for each address
 const aggregateWallets = (records: AddressControlRecord[]): AddressControlRecord[] => {
@@ -225,48 +180,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
             clickable={!!selectedUser.handle}
             showDid
           />
-          {(selectedUser.createdAt || selectedUser.followersCount !== undefined || selectedUser.postsCount !== undefined) && (
-            <div className="profile-stats">
-              <div className="stats-grid">
-                {selectedUser.createdAt && (
-                  <div className="stat-item">
-                    <span className="stat-label">Joined:</span>
-                    <span className="stat-value">
-                      {(() => {
-                        try {
-                          const date = selectedUser.createdAt instanceof Date 
-                            ? selectedUser.createdAt 
-                            : new Date(selectedUser.createdAt);
-                          return date.toLocaleDateString();
-                        } catch {
-                          return 'Unknown';
-                        }
-                      })()}
-                    </span>
-                  </div>
-                )}
-                {selectedUser.followersCount !== undefined && (
-                  <div className="stat-item">
-                    <span className="stat-label">Followers:</span>
-                    <span className="stat-value">{selectedUser.followersCount.toLocaleString()}</span>
-                  </div>
-                )}
-                {selectedUser.postsCount !== undefined && (
-                  <div className="stat-item">
-                    <span className="stat-label">Posts:</span>
-                    <span className="stat-value">{selectedUser.postsCount.toLocaleString()}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-          {selectedUser.description && (
-            <div className="profile-description">
-              {selectedUser.description.split('\n').map((line, index) => (
-                <p key={index}>{linkifyText(line)}</p>
-              ))}
-            </div>
-          )}
+          <ProfileDetails user={selectedUser} />
         </div>
 
         <div className="address-records">
