@@ -6,6 +6,46 @@ interface ValidationChecksProps {
   validation: AddressControlVerificationChecks;
 }
 
+export enum RecordValidationStatus {
+  FULLY_VALID = 'FULLY_VALID',
+  CRITICAL_FAILURE = 'CRITICAL_FAILURE',
+  MERKLE_UNCHECKED = 'MERKLE_UNCHECKED'
+}
+
+export const getRecordValidationStatus = (validation: AddressControlVerificationChecks): RecordValidationStatus => {
+  const checks = [
+    validation.siweSignatureValid,
+    validation.statementMatches,
+    validation.merkleProofValid !== undefined ? validation.merkleProofValid : false
+  ];
+  
+  const passed = checks.filter(c => c === true).length;
+  const total = checks.length;
+  
+  // If critical checks (signature or statement) failed, this is a critical failure
+  if (validation.siweSignatureValid === false || validation.statementMatches === false) {
+    return RecordValidationStatus.CRITICAL_FAILURE;
+  }
+  
+  // If only merkle proof is unchecked/null but other checks passed
+  if (validation.siweSignatureValid === true && validation.statementMatches === true && validation.merkleProofValid === null) {
+    return RecordValidationStatus.MERKLE_UNCHECKED;
+  }
+  
+  // If all checks passed and merkle proof was actually checked
+  if (passed === total && validation.merkleProofValid !== null) {
+    return RecordValidationStatus.FULLY_VALID;
+  }
+  
+  // Default to critical failure for any other case
+  return RecordValidationStatus.CRITICAL_FAILURE;
+};
+
+export const isCriticalValidationFailure = (validation: AddressControlVerificationChecks): boolean => {
+  const status = getRecordValidationStatus(validation);
+  return status === RecordValidationStatus.CRITICAL_FAILURE;
+};
+
 export const ValidationChecks: React.FC<ValidationChecksProps> = ({ validation }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -22,29 +62,25 @@ export const ValidationChecks: React.FC<ValidationChecksProps> = ({ validation }
     return { passed, total };
   };
 
-  const getStatusIcon = () => {
-    const { passed, total } = getPassedChecks();
-    
-    // If all checks passed, show checkmark
-    if (passed === total && validation.merkleProofValid !== null) {
-      return '✅';
+  const getValidationStatus = (): RecordValidationStatus => {
+    return getRecordValidationStatus(validation);
+  };
+
+  const getStatusIcon = (status: RecordValidationStatus): string => {
+    switch (status) {
+      case RecordValidationStatus.FULLY_VALID:
+        return '✅';
+      case RecordValidationStatus.CRITICAL_FAILURE:
+        return '🚨';
+      case RecordValidationStatus.MERKLE_UNCHECKED:
+        return '⚠️';
+      default:
+        return '❓';
     }
-    
-    // If critical checks (signature or statement) failed, show alert
-    if (validation.siweSignatureValid === false || validation.statementMatches === false) {
-      return '🚨';
-    }
-    
-    // If only merkle proof is unchecked/null but other checks passed, show warning
-    if (validation.siweSignatureValid === true && validation.statementMatches === true && validation.merkleProofValid === null) {
-      return '⚠️';
-    }
-    
-    // Default case for other scenarios
-    return passed > 0 ? '⚠️' : '🚨';
   };
 
   const { passed, total } = getPassedChecks();
+  const validationStatus = getValidationStatus();
 
   return (
     <div className="safety-checklist-inline">
@@ -59,7 +95,7 @@ export const ValidationChecks: React.FC<ValidationChecksProps> = ({ validation }
           Security Checks: {passed}/{total} passed
         </span>
         <span>
-          {getStatusIcon()}
+          {getStatusIcon(validationStatus)}
         </span>
       </div>
       

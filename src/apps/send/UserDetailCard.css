@@ -589,6 +589,64 @@
   }
 }
 
+/* Send button disabled state */
+.send-payment-button.disabled {
+  animation: none !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+}
+
+.send-payment-button.disabled:hover {
+  filter: none !important;
+}
+
+.chain-select.disabled {
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+}
+
+.chain-select.disabled:hover {
+  opacity: 0.6 !important;
+}
+
+/* Warning styles (reused from PaymentModal pattern) */
+.warning {
+  font-size: 0.85rem;
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.warning.gentle {
+  color: #856404;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+}
+
+.warning.strong {
+  color: #721c24;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+
+/* Dark mode styles for warnings */
+@media (prefers-color-scheme: dark) {
+  .warning.gentle {
+    color: #ffeb9c;
+    background: #332701;
+    border: 1px solid #664d03;
+  }
+
+  .warning.strong {
+    color: #f1aeb5;
+    background: #2c0b0e;
+    border: 1px solid #842029;
+  }
+}
+
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .user-detail-card {

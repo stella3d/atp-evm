@@ -12,7 +12,7 @@ import { AtprotoUserCard, UserCardVariant } from "../../shared/AtprotoUserCard.t
 import { ConnectWallet } from "../../shared/WalletConnector.tsx";
 import { config } from '../../shared/WalletConnector.tsx';
 import { ProfileDetails } from "./ProfileDetails.tsx";
-import { ValidationChecks } from "./ValidationChecks.tsx";
+import { ValidationChecks, isCriticalValidationFailure } from "./ValidationChecks.tsx";
 import './UserDetailCard.css';
 
 interface UserDetailCardProps {
@@ -220,8 +220,11 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                     </div>
                     
                     <div className="send-buttons-container">
-                      {/* Dropdown + Send button */}
+                      {/* Check if validation failed for critical checks */}
                       {(() => {
+                        const validation = validationResults.get(record.uri);
+                        const isCriticalFailure = validation && isCriticalValidationFailure(validation);
+                        
                         const siwe = record.value.siwe;
                         const on = Number(siwe.chainId);
 
@@ -231,17 +234,27 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         const chainIds = Array.from(new Set([on, ...alsoOn]));
 
                         const selected = selectedChains[record.uri] ?? chainIds[0];
+                        
                         return (
                           <div className="send-controls">
+                            {isCriticalFailure && (
+                              <div className="warning strong" style={{ marginBottom: '8px' }}>
+                                🚨 This record could not be validated and may be malicious
+                              </div>
+                            )}
                             <button
                               type="button"
-                              className="send-payment-button"
+                              className={`send-payment-button ${isCriticalFailure ? 'disabled' : ''}`}
                               style={{
-                                background: getChainGradient(selected),
+                                background: isCriticalFailure ? '#6c757d' : getChainGradient(selected),
                                 color: 'white',
-                                filter: 'blur(0.25px)'
+                                filter: isCriticalFailure ? 'none' : 'blur(0.25px)',
+                                cursor: isCriticalFailure ? 'not-allowed' : 'pointer',
+                                opacity: isCriticalFailure ? 0.6 : 1
                               }}
+                              disabled={isCriticalFailure}
                               onClick={() => {
+                                if (isCriticalFailure) return;
                                 if (!isConnected) {
                                   alert('Please connect your wallet first to send payments');
                                   return;
@@ -259,11 +272,14 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                             <select
                               value={selected}
                               onChange={e => setSelectedChains(prev => ({ ...prev, [record.uri]: Number(e.target.value) }))}
-                              className="chain-select"
+                              className={`chain-select ${isCriticalFailure ? 'disabled' : ''}`}
                               style={{
-                                backgroundColor: getChainColor(selected),
-                                color: 'white'
+                                backgroundColor: isCriticalFailure ? '#6c757d' : getChainColor(selected),
+                                color: 'white',
+                                cursor: isCriticalFailure ? 'not-allowed' : 'pointer',
+                                opacity: isCriticalFailure ? 0.6 : 1
                               }}
+                              disabled={isCriticalFailure}
                             >
                               {chainIds.map(id => (
                                 <option key={id} value={id}>
