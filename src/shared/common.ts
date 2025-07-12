@@ -94,9 +94,7 @@ export const CHAIN_NAMES: Record<number, string> = {
   8453: 'Base',
   10: 'Optimism',
   100: 'Gnosis',
-  42161: 'Arbitrum',
-  137: 'Polygon',
-  56: 'BNB Chain'
+  42161: 'Arbitrum'
 };
 
 export function getChainName(chainId: number): string {
@@ -109,9 +107,7 @@ export const CHAIN_COLORS: Record<number, string> = {
   8453: 'rgb(0, 82, 255)',  // Base - blue
   10: '#ff0420',    // Optimism - red
   100: 'rgb(62, 105, 87)', // Gnosis Chain - dark green
-  42161: '#213147', // Arbitrum - dark blue/gray
-  137: '#8247e5',   // Polygon - purple
-  56: '#f3ba2f'     // BNB Chain - yellow
+  42161: '#213147'  // Arbitrum - dark blue/gray
 };
 
 export function getChainColor(chainId: number): string {
@@ -139,8 +135,6 @@ export function getChainClass(chainId: number): string {
     10: 'optimism',
     100: 'gnosis',
     42161: 'arbitrum',
-    137: 'polygon',
-    56: 'bnb-chain'
   };
   return chainClassMap[chainId] || 'ethereum'; // default to ethereum styling
 }
