@@ -3,7 +3,7 @@ import { isAddress } from 'viem';
 import { useAccount, WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { EnrichedUser, AddressControlRecord, DefinedDidString } from "../../shared/common.ts";
-import { getChainName, getChainColor, getChainGradient } from "../../shared/common.ts";
+import { getChainName, getChainColor, getChainGradient, aggregateWallets } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
 import { PaymentModal } from "./PaymentModal.tsx";
@@ -19,32 +19,6 @@ interface UserDetailCardProps {
   selectedUser: EnrichedUser;
   onClose?: () => void;
   triggerPayment?: DefinedDidString | null; // DID to trigger payment for
-}
-
-// Group records by address, collecting all chains for each address
-const aggregateWallets = (records: AddressControlRecord[]): AddressControlRecord[] => {
-  const addressMap = new Map<string, AddressControlRecord>();
-  
-  for (const record of records) {
-    const val = record.value;
-    const address = val?.siwe?.address?.toLowerCase();
-    if (!address) continue; // Skip records without valid addresses
-
-    const existing = addressMap.get(address);
-    if (!existing) {
-      // first time seeing this address
-      addressMap.set(address, record);
-    } else {
-      // add chains if not already present
-      const thisChains = Array.from([val.siwe.chainId, ...(val?.alsoOn || [])]);
-      if (!existing.value.alsoOn) 
-        existing.value.alsoOn = new Set<number>(thisChains);
-      else
-        thisChains.forEach(chain => existing.value.alsoOn?.add(chain));
-    }
-  }
-
-  return Array.from(addressMap.values());
 }
 
 // Inner component that uses wagmi hooks
@@ -85,10 +59,10 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
   // Handle automatic payment modal trigger
   useEffect(() => {
     if (triggerPayment && triggerPayment === selectedUser.did) {
-      console.log(`Auto-triggering payment modal for user: ${selectedUser.did}`);
+      //console.log(`auto-triggering payment modal for user: ${selectedUser.did}`);
       
       if (addressRecords.length === 0) {
-        console.warn('Cannot trigger payment: user has no address records');
+        //console.warn('cannot trigger payment: user has no address records');
         return;
       }
       
@@ -103,9 +77,9 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
           recipientAddress: address as `0x${string}`,
           chainId: chainId,
         });
-        console.log(`Payment modal opened for address: ${address} on chain ${chainId}`);
+        //console.log(`payment modal opened for address: ${address} on chain ${chainId}`);
       } else {
-        console.warn('First address record is not valid for payment');
+        //console.warn('first address record is not valid for payment');
       }
     }
   }, [triggerPayment, selectedUser.did, addressRecords]);
@@ -254,8 +228,8 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                     <div className="send-buttons-container">
                       {/* Dropdown + Send button */}
                       {(() => {
-                        const siwe = (record.value?.siwe || {}) as { chainId?: number };
-                        const on = Number(siwe.chainId) || 1;
+                        const siwe = record.value.siwe;
+                        const on = Number(siwe.chainId);
 
                         const alsoOn: number[] = Array.isArray(record.value.alsoOn)
                           ? record.value.alsoOn.filter((n) => !isNaN(n))
