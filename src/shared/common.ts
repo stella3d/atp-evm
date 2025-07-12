@@ -14,7 +14,7 @@ export interface AddressControlRecord {
       domain: string;
       [key: string]: unknown;
     };
-    alsoOn?: number[]; // List of other chain IDs this address is active on
+    alsoOn?: Set<number>; // List of other chain IDs this address is active on
     [key: string]: unknown;
   };
 }

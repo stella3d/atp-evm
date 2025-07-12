@@ -65,6 +65,32 @@ const linkifyText = (text: string): React.ReactNode[] => {
   });
 };
 
+// Group records by address, collecting all chains for each address
+const aggregateWallets = (records: AddressControlRecord[]): AddressControlRecord[] => {
+  const addressMap = new Map<string, AddressControlRecord>();
+  
+  for (const record of records) {
+    const val = record.value;
+    const address = val?.siwe?.address?.toLowerCase();
+    if (!address) continue; // Skip records without valid addresses
+
+    const existing = addressMap.get(address);
+    if (!existing) {
+      // first time seeing this address
+      addressMap.set(address, record);
+    } else {
+      // add chains if not already present
+      const thisChains = Array.from([val.siwe.chainId, ...(val?.alsoOn || [])]);
+      if (!existing.value.alsoOn) 
+        existing.value.alsoOn = new Set<number>(thisChains);
+      else
+        thisChains.forEach(chain => existing.value.alsoOn?.add(chain));
+    }
+  }
+
+  return Array.from(addressMap.values());
+}
+
 // Inner component that uses wagmi hooks
 const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onClose, triggerPayment }) => {
   const { isConnected } = useAccount();
@@ -141,82 +167,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         const records = await fetchAddressControlRecords(selectedUser.did, selectedUser.pds);
         //console.log('Raw address records:', records);
         
-        // Group records by address, collecting all chains for each address
-        const addressMap = new Map<string, {
-          address: string;
-          chains: Array<{
-            chainId: number;
-            record: AddressControlRecord;
-            issuedAt: string;
-          }>;
-          mostRecentRecord: AddressControlRecord;
-        }>();
-        
-        for (const record of records) {
-          const address = record.value?.siwe?.address?.toLowerCase();
-          if (!address) continue; // Skip records without valid addresses
-          
-          const chainId = record.value?.siwe?.chainId || 1;
-          const issuedAt = record.value?.siwe?.issuedAt || '';
-          
-          const existingEntry = addressMap.get(address);
-          if (!existingEntry) {
-            // First time seeing this address
-            addressMap.set(address, {
-              address,
-              chains: [{ chainId, record, issuedAt }],
-              mostRecentRecord: record
-            });
-          } else {
-            // Address already exists, add this chain
-            const existingChain = existingEntry.chains.find(c => c.chainId === chainId);
-            if (!existingChain) {
-              // New chain for this address
-              existingEntry.chains.push({ chainId, record, issuedAt });
-            } else {
-              // Same chain, keep the more recent one
-              const currentDate = new Date(issuedAt);
-              const existingDate = new Date(existingChain.issuedAt);
-              
-              if (currentDate > existingDate) {
-                existingChain.record = record;
-                existingChain.issuedAt = issuedAt;
-              }
-            }
-            
-            // Update the most recent record for this address
-            const currentDate = new Date(issuedAt);
-            const mostRecentDate = new Date(existingEntry.mostRecentRecord.value?.siwe?.issuedAt || '');
-            
-            if (currentDate > mostRecentDate) {
-              existingEntry.mostRecentRecord = record;
-            }
-          }
-        }
-        
-        // Convert back to array, using the most recent record for each address but keeping chain info
-        const deduplicatedRecords = Array.from(addressMap.values()).map(entry => {
-          // Attach chain information to the most recent record
-          const recordWithChains = { 
-            ...entry.mostRecentRecord,
-            chains: entry.chains.sort((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime())
-          };
-          return recordWithChains;
-        });
-        
-        // include any extra chains specified in "alsoOn"
-        deduplicatedRecords.forEach(rec => {
-          const siwe = (rec.value?.siwe || {}) as { alsoOn?: number[] };
-          if (Array.isArray(siwe.alsoOn)) {
-            siwe.alsoOn.forEach((chainId: number) => {
-              if (!rec.chains.find(c => c.chainId === chainId)) {
-                rec.chains.push({ chainId, record: rec, issuedAt: rec.value.siwe.issuedAt });
-              }
-            });
-            rec.chains.sort((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime());
-          }
-        });
-        
+        const deduplicatedRecords = aggregateWallets(records);
         setAddressRecords(deduplicatedRecords);
 
         // stub for record validation results
