@@ -163,3 +163,29 @@ export function isHandle(input: string): boolean {
   // They should contain at least one dot and not start with did:
   return !input.startsWith('did:') && input.includes('.') && input.length > 3;
 }
+
+// Group records by address, collecting all chains for each address
+export const aggregateWallets = (records: AddressControlRecord[]): AddressControlRecord[] => {
+  const addressMap = new Map<string, AddressControlRecord>();
+  
+  for (const record of records) {
+    const val = record.value;
+    const address = val.siwe.address.toLowerCase();
+    if (!address) continue; // Skip records without valid addresses
+
+    const existing = addressMap.get(address);
+    if (!existing) {
+      // first time seeing this address
+      addressMap.set(address, record);
+    } else {
+      // add chains if not already present
+      const thisChains = Array.from([val.siwe.chainId, ...(val?.alsoOn || [])]);
+      if (!existing.value.alsoOn) 
+        existing.value.alsoOn = new Set<number>(thisChains);
+      else
+        thisChains.forEach(chain => existing.value.alsoOn?.add(chain));
+    }
+  }
+
+  return Array.from(addressMap.values());
+}
