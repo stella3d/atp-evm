@@ -188,9 +188,21 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         )}
                       </div>
                       {showValidationChecks && validationResults.has(record.uri) && (
-                        <ValidationChecks 
-                          validation={validationResults.get(record.uri)!}
-                        />
+                        <>
+                          {(() => {
+                            const validation = validationResults.get(record.uri);
+                            const isCriticalFailure = validation && isCriticalValidationFailure(validation);
+                            
+                            return isCriticalFailure ? (
+                              <div className="warning strong" style={{ marginBottom: '8px' }}>
+                                🚨 This record could not be validated and may be malicious
+                              </div>
+                            ) : null;
+                          })()}
+                          <ValidationChecks 
+                            validation={validationResults.get(record.uri)!}
+                          />
+                        </>
                       )}
                       {issuedAt && (
                         <div>
@@ -237,11 +249,6 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         
                         return (
                           <div className="send-controls">
-                            {isCriticalFailure && (
-                              <div className="warning strong" style={{ marginBottom: '8px' }}>
-                                🚨 This record could not be validated and may be malicious
-                              </div>
-                            )}
                             <button
                               type="button"
                               className={`send-payment-button ${isCriticalFailure ? 'disabled' : ''}`}
