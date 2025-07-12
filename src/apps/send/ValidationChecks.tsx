@@ -31,12 +31,6 @@ export const ValidationChecks: React.FC<ValidationChecksProps> = ({ validation }
 		  }</span>
 		</div>
       )}
-      {validation.domainIsTrusted !== undefined && (
-        <div className={`checklist-item ${validation.domainIsTrusted ? 'verified' : 'warning'}`}>
-          <span className="check-icon">{validation.domainIsTrusted ? '✅ ' : '⚠️ '}</span>
-          <span className="check-text">Domain {validation.domainIsTrusted ? 'Trusted' : 'Untrusted'}</span>
-        </div>
-      )}
     </div>
   );
 };

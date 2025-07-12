@@ -112,8 +112,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
             validationMap.set(record.uri, {
               statementMatches: false,
               siweSignatureValid: false,
-              merkleProofValid: null,
-              domainIsTrusted: false
+              merkleProofValid: null
             });
           }
         }
