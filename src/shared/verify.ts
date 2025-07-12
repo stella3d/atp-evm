@@ -4,13 +4,11 @@ import { CID } from 'multiformats/cid';
 import * as Block from 'multiformats/block';
 import { sha256 } from 'multiformats/hashes/sha2';
 import * as dagCbor from '@ipld/dag-cbor';
-import { ADDRESS_CONTROL_LEXICON_TYPE } from "./common.ts";
+import { ADDRESS_CONTROL_LEXICON_TYPE, atpBytesToHex } from "./common.ts";
 import type { DefinedDidString, AddressControlRecord } from "./common.ts";
 import { chainForId, makeSiweStatement } from "./WalletConnector.tsx";
 import { createSiweMessage, verifySiweMessage, type SiweMessage } from "viem/siwe";
 import { createPublicClient, http } from "viem";
-
-
 
 
 export type AddressControlVerificationChecks = {
@@ -20,8 +18,6 @@ export type AddressControlVerificationChecks = {
   siweSignatureValid: boolean | null;
   // ATProto-side merkle inclusion proof from getRecord is valid
   merkleProofValid: boolean | null;
-  // (OPTIONAL) record's siwe.domain is a domain we trust
-  domainIsTrusted: boolean | null | undefined;
 }
 
 export const verifyRecordSiweSignature = async (record: AddressControlRecord): Promise<boolean> => {
@@ -39,15 +35,12 @@ export const verifyRecordSiweSignature = async (record: AddressControlRecord): P
   const message: string = createSiweMessage(reconstructedMsg);
 
   try {
-    const sigBase64 = record.signature["$bytes"];
-    const bytes = Uint8Array.from(atob(sigBase64), c => c.charCodeAt(0));
-    const sigHex: `0x${string}` = ('0x' + bytes.reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0'), '')) as `0x${string}`;
-
     const ethClient = createPublicClient({
       chain: chainForId(record.siwe.chainId),
       transport: http()
     });
 
+    const sigHex = atpBytesToHex(record.signature);
     const verifyResult: boolean = await verifySiweMessage(ethClient, {
       message,
       signature: sigHex,
@@ -55,7 +48,6 @@ export const verifyRecordSiweSignature = async (record: AddressControlRecord): P
       nonce: reconstructedMsg.nonce,
       address: reconstructedMsg.address,
     });
-    console.log("verifyResult:", verifyResult);
     return verifyResult;
   } catch (e) {
     console.error("error verifying Sign in With Ethereum signature in record:", e);
@@ -71,14 +63,11 @@ export const checkLinkValidityMinimal = async (
 	const expectedStatement = makeSiweStatement(record.siwe.address, did);
 	// check 2: wallet signature & SIWE message are valid
 	const siweSignatureValid = await verifyRecordSiweSignature(record);
-  // check 4: for demo purposes, we are only trusting records made via "stellz.club"
-  const domainIsTrusted = record.siwe.domain === "wallet-link.stellz.club";
 
 	return {
 		statementMatches: record.siwe.statement === expectedStatement,
 		siweSignatureValid,
-		merkleProofValid: null,
-		domainIsTrusted
+		merkleProofValid: null
 	};
 }
 
@@ -92,7 +81,6 @@ export const checkLinkValidity = async (
 		statementMatches: null,
 		siweSignatureValid: null,
 		merkleProofValid: null,
-		domainIsTrusted: undefined
 	};
 
 	// check 1: statement matches
@@ -107,10 +95,7 @@ export const checkLinkValidity = async (
 		results.merkleProofValid = await verifyMerkleProof(recordCid, blocks);
 	}
 
-  // check 4: for purposes of our demo, we are only trusting records made via "stellz.club"
-  results.domainIsTrusted = record.siwe.domain.includes("stellz.club");
   console.log(results);
-
 	return results;
 }
 

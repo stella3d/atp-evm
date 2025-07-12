@@ -39,9 +39,8 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
   });
   // Track selected chain per address record
   const [selectedChains, setSelectedChains] = useState<Record<string, number>>({});
-
   // Flag to show/hide validation checks
-  const showValidationChecks = false;
+  const showValidationChecks = true;
 
   // Initialize default selected chain when addressRecords change
   useEffect(() => {
@@ -189,6 +188,11 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                           <div className="address-value">{address}</div>
                         )}
                       </div>
+                      {showValidationChecks && validationResults.has(record.uri) && (
+                        <ValidationChecks 
+                          validation={validationResults.get(record.uri)!}
+                        />
+                      )}
                       {issuedAt && (
                         <div>
                         <div style={{ color: 'gray', fontWeight: 720 }}>signed on</div>
@@ -213,12 +217,6 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                           </div>
                         </div>
                         </div>
-                      )}
-                      
-                      {showValidationChecks && validationResults.has(record.uri) && (
-                        <ValidationChecks 
-                          validation={validationResults.get(record.uri)!}
-                        />
                       )}
                     </div>
                     

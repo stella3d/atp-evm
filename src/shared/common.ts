@@ -1,4 +1,6 @@
-export type EvmAddressString = `0x${string}`;
+
+export type HexString = `0x${string}`;
+export type EvmAddressString = HexString;
 
 export type DidString = `did:plc:${string}` | `did:web:${string}` | undefined;
 export type DefinedDidString = Exclude<DidString, undefined>;
@@ -204,4 +206,10 @@ export const aggregateWallets = (records: AddressControlRecordWithMeta[]): Addre
   }
 
   return Array.from(addressMap.values());
+}
+
+export const atpBytesToHex = (recordField: AtprotoBytesField): HexString => {
+  const bytes = Uint8Array.from(atob(recordField["$bytes"]), c => c.charCodeAt(0));
+  const sigHex: HexString = ('0x' + bytes.reduce((acc, b) => acc + b.toString(16).padStart(2, '0'), '')) as HexString;
+  return sigHex;
 }
