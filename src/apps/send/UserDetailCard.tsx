@@ -280,28 +280,18 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
           ) : (
             <div className="records-list">
               {addressRecords.map((record, index) => {
+                const val = record.value;
                 // Extract address from the SIWE structure
-                const address = record.value?.siwe?.address || 'Unknown address';
-                const issuedAt = record.value?.siwe?.issuedAt;
-                const chainId = record.value?.siwe?.chainId;
-                
-                // Get all chains for this address (from our enhanced record)
-                const chains: Array<{
-                  chainId: number;
-                  record: AddressControlRecord;
-                  issuedAt: string;
-                }> = (record as AddressControlRecord & { 
-                  chains?: Array<{
-                    chainId: number;
-                    record: AddressControlRecord;
-                    issuedAt: string;
-                  }>;
-                }).chains || [{ chainId: chainId || 1, record, issuedAt: issuedAt || '' }];
-                
-                // Use the most recent chain for the primary action
-                const primaryChain = chains[0];
-                // Extract domain from SIWE record
-                const domain = record.value?.siwe?.domain;
+                const address = val.siwe.address;
+                const issuedAt = val.siwe.issuedAt;
+                const domain = val.siwe.domain;
+
+                // Use the chain it was signed on as the default for user
+                const primaryChain = {
+                  chainId: val.siwe.chainId,
+                  record,
+                  issuedAt,
+                };
 
                 return (
                   <div key={record.uri || index} className="address-record">
