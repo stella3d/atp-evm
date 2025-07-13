@@ -68,7 +68,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 6px 8px 6px 8px;
+  padding: 10px 8px 6px 8px;
   border-bottom: 1px solid #eee;
   position: relative;
   flex-direction: column;
@@ -148,7 +148,7 @@
   font-size: 0.8rem;
   color: #666;
   order: 2;
-  margin-top: 3px;
+  margin-top: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1028,6 +1028,10 @@
   font-size: 1.9rem;
   font-weight: 720;
   padding: 8px 24px;
+}
+
+.done-button {
+  margin-top: 16px;
 }
 
 .confirm-button:hover, .send-button:hover, .done-button:hover {
