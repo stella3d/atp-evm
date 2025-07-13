@@ -7,7 +7,8 @@ export default defineConfig({
   base: '/', // Custom domain serves from root
   server: { 
     host: '0.0.0.0',
-    port: 5173 
+    port: 5173,
+    allowedHosts: ['wallet-link.stellz.club', '127.0.0.1', '0.0.0.0', 'b254f3f3fffe.ngrok-free.app'] 
   },
   build: {
     rollupOptions: {
