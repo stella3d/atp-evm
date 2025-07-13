@@ -199,7 +199,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                             
                             return isCriticalFailure ? (
                               <div className="warning strong" style={{ marginBottom: '8px' }}>
-                                🚨 This record could not be validated and may be malicious
+                                🚨 This link failed validation and may be malicious 🚨
                               </div>
                             ) : null;
                           })()}

@@ -636,6 +636,7 @@
   color: #721c24;
   background: #f8d7da;
   border: 1px solid #f5c6cb;
+  font-weight: 720;
 }
 
 /* Dark mode styles for warnings */
@@ -736,7 +737,7 @@
   }
 
   .address-record.critical-failure {
-    background: radial-gradient(ellipse at center, #2d2d2d 50%, #2c0b0e 100%);
+    background: radial-gradient(ellipse at center, #2d2d2d 60%, #2c0b0e 100%);
     border: 1px solid #842029;
     box-shadow: 0 2px 4px rgba(44, 11, 14, 0.4);
   }
