@@ -1,5 +1,7 @@
 import React from 'react';
+import { useAccount } from 'wagmi';
 import { getDoraTransactionUrl } from "../../shared/common.ts";
+import { clearTokenBalanceCache } from "../../shared/useTokenBalances.ts";
 import { TransactionHash } from './TransactionHash.tsx';
 
 interface TransactionSuccessProps {
@@ -29,6 +31,17 @@ export const TransactionSuccess: React.FC<TransactionSuccessProps> = ({
   chainId,
   onDone
 }) => {
+  const { address } = useAccount();
+
+  // clear token balance cache when transaction is successful,
+  // so the updated balance is fetched in and shown to the user
+  React.useEffect(() => {
+    if (address && txHash && chainId) {
+      clearTokenBalanceCache(address, chainId);
+      console.log('cleared token balance cache after successful transaction');
+    }
+  }, [address, chainId]);
+
   return (
     <div className="step-success">
       <div className="success-icon">✅</div>

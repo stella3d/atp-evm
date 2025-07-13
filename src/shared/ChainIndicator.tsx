@@ -5,9 +5,9 @@ import './ChainIndicator.css';
 // Enum for supported chains
 export enum SupportedChain {
   ETHEREUM = 1,
-  BASE = 8453,
   OPTIMISM = 10,
   GNOSIS = 100,
+  BASE = 8453,
   ARBITRUM = 42161,
 }
 

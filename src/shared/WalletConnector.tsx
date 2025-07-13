@@ -22,7 +22,7 @@ import { useState } from 'react';
 import type { SiweStatementString } from './common.ts';
 import AtUriLink from './AtUriLink.tsx'; // added import for the new component
 import { createSiweMessage, verifySiweMessage, type SiweMessage } from 'viem/siwe';
-import { createPublicClient, http } from 'viem';
+import { getEthClient } from "./useTokenBalances.ts";
 
 
 export const config = getDefaultConfig({
@@ -75,11 +75,7 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
         if(!chain)
           return console.error(`SIWE message is for chain ID ${siweMsg.chainId}, which isn't one of our supported chains.`);
 
-        const client = createPublicClient({
-          chain,
-          transport: http()
-        });
-
+        const client = getEthClient(siweMsg.chainId);
         const verifyResult = await verifySiweMessage(client, {
           message,
           signature: sig,
