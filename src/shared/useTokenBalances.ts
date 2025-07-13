@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi';
 import { createPublicClient, http, formatUnits, erc20Abi, type RpcSchema, type Account, type Chain, type HttpTransport, type PublicClient, type Client } from 'viem';
 import { chainForId } from './WalletConnector.tsx';
 import { SupportedChain } from "./ChainIndicator.tsx";
+import { LocalstorageTtlCache } from './LocalstorageTtlCache.ts';
 
 export interface TokenBalance {
   address: `0x${string}` | 'native';
@@ -129,6 +130,20 @@ const ETH_CLIENT_OPTS = {
 
 const ETH_CLIENTS = new Map<SupportedChain, Client<HttpTransport, Chain, Account | undefined, RpcSchema>>();
 
+// Token balance cache with 20 minute TTL
+const tokenBalanceCache = new LocalstorageTtlCache<TokenBalance[]>(20 * 60 * 1000); // 20 minutes
+
+// Function to generate cache key for token balances
+const getTokenBalanceCacheKey = (address: `0x${string}`, chainId: number): string => {
+  return `atp_tb_${chainId}_${address}`;
+};
+
+// Function to clear token balance cache for a specific address/chain
+export const clearTokenBalanceCache = (address: `0x${string}`, chainId: number): void => {
+  const cacheKey = getTokenBalanceCacheKey(address, chainId);
+  localStorage.removeItem(cacheKey);
+};
+
 export const getEthClient = (chainId: SupportedChain): PublicClient<HttpTransport, Chain, Account | undefined, RpcSchema> => {
   // first try to get existing client
   const existingClient = ETH_CLIENTS.get(chainId);
@@ -151,11 +166,18 @@ export const getEthClient = (chainId: SupportedChain): PublicClient<HttpTranspor
   return newClient as PublicClient<HttpTransport, Chain, Account | undefined, RpcSchema>;
 };
 
-// Exported function to fetch token balances for any chain/address combination
 export const fetchTokenBalancesForChain = async (
   address: `0x${string}`,
   chainId: SupportedChain
 ): Promise<TokenBalance[]> => {
+  // check cache first
+  const cacheKey = getTokenBalanceCacheKey(address, chainId);
+  const cachedBalances = tokenBalanceCache.get(cacheKey);
+  if (cachedBalances) {
+    //console.log('returning cached token balances for', address, 'on chain', chainId);
+    return cachedBalances;
+  }
+
   const chain = chainForId(chainId);
   const client = getEthClient(chainId);
   if (!chain) {
@@ -163,13 +185,13 @@ export const fetchTokenBalancesForChain = async (
   }
 
   const balances: TokenBalance[] = [];
-  // Fetch ERC20 token balances in batches
+  // fetch ERC20 token balances in batches
   const tokens = COMMON_TOKENS[chainId] || [];
   const batchSize = chainId === SupportedChain.BASE ? 2 : 4; // base public rate limit is low
 
   for (let i = 0; i < tokens.length; i += batchSize) {
     const promises: Promise<TokenBalance | null>[] = [];
-    // If it's the first batch, add native token balance promise
+    // if it's the first batch, add native token balance promise
     if (i === 0) {
       promises.push(fetchNativeBalance(client, address, chain, chainId));
     }
@@ -213,6 +235,10 @@ export const fetchTokenBalancesForChain = async (
     const nativeBalance = await fetchNativeBalance(client, address, chain, chainId);
     balances.push(nativeBalance);
   }
+
+  // Cache the results
+  tokenBalanceCache.set(cacheKey, balances);
+  console.log('cached token balances for', address, 'on chain', chainId);
 
   return balances;
 };
