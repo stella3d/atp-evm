@@ -126,8 +126,18 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
       setLoading(true);
       setError(null);
       try {
-        // First, load basic user list quickly
-        const basicUsers = await fetchUsersWithAddressRecord();
+        // First, load basic user list quickly (may return stale data for immediate UI)
+        const basicUsers = await fetchUsersWithAddressRecord((freshUsers) => {
+          // This callback is called when fresh data arrives from background revalidation
+          console.log('Received fresh user data from background revalidation');
+          setAllUserDids(freshUsers);
+          const freshEnrichedUsers: EnrichedUser[] = freshUsers.map((did: DefinedDidString) => ({ did }));
+          setUsers(freshEnrichedUsers);
+          if (onUsersUpdate) {
+            onUsersUpdate(freshEnrichedUsers);
+          }
+        });
+        
         setAllUserDids(basicUsers);
         const basicEnrichedUsers: EnrichedUser[] = basicUsers.map((did: DefinedDidString) => ({ did }));
         setUsers(basicEnrichedUsers);

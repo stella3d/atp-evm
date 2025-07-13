@@ -1,117 +1,69 @@
-import type { DefinedDidString, EnrichedUser, EnrichedUserCacheEntry, AddressControlRecordWithMeta } from "./common.ts";
+import type { DefinedDidString, EnrichedUser, AddressControlRecordWithMeta } from "./common.ts";
 import { isDidString } from "./common.ts";
+import { LocalstorageTtlCache } from './LocalstorageTtlCache.ts';
+import { LocalStaleWhileRevalidateCache } from './LocalStaleWhileRevalidateCache.ts';
 
 // Cache configuration
-const CACHE_DURATION = import.meta.env.DEV 
-  ? 30 * 60 * 1000 // 30 minutes in development
+const USER_CACHE_DURATION = import.meta.env.DEV 
+  ? 60 * 60 * 1000 // 1 hour in development
+  : 20 * 60 * 1000;  // 20 minutes in production
+
+const USER_REVALIDATE_DURATION = import.meta.env.DEV
+  ? 10 * 60 * 1000 // 10 minutes in development
   : 5 * 60 * 1000;  // 5 minutes in production
 
-const CACHE_KEY = 'users_with_address_record';
+const ADDRESS_RECORDS_CACHE_DURATION = Math.floor(USER_CACHE_DURATION / 2);
+
+const HANDLE_CACHE_DURATION = import.meta.env.DEV
+  ? 45 * 60 * 1000 // 45 minutes in development
+  : 15 * 60 * 1000; // 15 minutes in production
+
+// Create cache instances
+const usersSwrCache = new LocalStaleWhileRevalidateCache<DefinedDidString[]>(
+  USER_CACHE_DURATION,
+  USER_REVALIDATE_DURATION
+);
+const enrichedUsersCache = new LocalstorageTtlCache<EnrichedUser[]>(USER_CACHE_DURATION);
+const addressRecordsCache = new LocalstorageTtlCache<AddressControlRecordWithMeta[]>(ADDRESS_RECORDS_CACHE_DURATION);
+const handleResolutionCache = new LocalstorageTtlCache<string>(HANDLE_CACHE_DURATION);
+const profileCache = new LocalstorageTtlCache<BskyProfileMinimal>(USER_CACHE_DURATION); 
+const verificationCache = new LocalstorageTtlCache<boolean>(HANDLE_CACHE_DURATION); 
+
 const ENRICHED_CACHE_KEY = 'enriched_users_data_v2';
 
-// Batch size for bulk operations
 const BATCH_SIZE = 20;
 
-interface CacheEntry {
-  data: DefinedDidString[];
-  timestamp: number;
-}
+export const fetchUsersWithAddressRecord = async (onUpdate?: (users: DefinedDidString[]) => void): Promise<DefinedDidString[]> => {
+  const fetcher = async (): Promise<DefinedDidString[]> => {
+    type ResponseShape = { repos: { did: DefinedDidString }[] };
+    const res = await fetch('https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=club.stellz.evm.addressControl');
+    const data: ResponseShape = await res.json();
+    return data.repos.map(r => r.did);
+  };
 
-const getCachedData = (): DefinedDidString[] | null => {
-  try {
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (!cached) return null;
-
-    const entry: CacheEntry = JSON.parse(cached);
-    const now = Date.now();
-    
-    // Check if cache is still valid
-    if ((now - entry.timestamp) < CACHE_DURATION) {
-      //console.log('using cached users data from localStorage');
-      return entry.data;
-    } else {
-      // Cache expired, remove it
-      localStorage.removeItem(CACHE_KEY);
-      return null;
-    }
-  } catch (error) {
-    console.error('error reading from cache:', error);
-    localStorage.removeItem(CACHE_KEY);
-    return null;
-  }
+  return await usersSwrCache.get('users_with_address_record', fetcher, onUpdate) || [];
 };
 
-const setCachedData = (data: DefinedDidString[]): void => {
-  try {
-    const entry: CacheEntry = {
-      data,
-      timestamp: Date.now()
-    };
-    localStorage.setItem(CACHE_KEY, JSON.stringify(entry));
-  } catch (error) {
-    console.error('error writing to cache:', error);
-  }
+// Helper function to clear user cache
+export const clearUserCache = (): void => {
+  usersSwrCache.clear('users_with_address_record');
 };
-
-export const fetchUsersWithAddressRecord = async (): Promise<DefinedDidString[]> => {
-  // Check cache first
-  const cachedData = getCachedData();
-  if (cachedData) {
-    return cachedData;
-  }
-
-  // Cache miss or expired, fetch new data
-  type ResponseShape = { repos: { did: DefinedDidString }[] };
-  // using regular fetch skips needing OAuth permissions
-  const res = await fetch('https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=club.stellz.evm.addressControl');
-  const data: ResponseShape = await res.json();
-  const users = data.repos.map(r => r.did);
-
-  // Cache the new data
-  setCachedData(users);
-  
-  return users;
-}
 
 // Cache functions for enriched user data
 const getCachedEnrichedData = (): EnrichedUser[] | null => {
-  try {
-    const cached = localStorage.getItem(ENRICHED_CACHE_KEY);
-    if (!cached) return null;
-
-    const entry: EnrichedUserCacheEntry = JSON.parse(cached);
-    const now = Date.now();
-    
-    // Check if cache is still valid
-    if ((now - entry.timestamp) < CACHE_DURATION) {
-      //console.log('using cached enriched users data from localStorage');
-      const enrichedData = entry.data.map(user => ({
-        ...user,
-        createdAt: user.createdAt ? new Date(user.createdAt) : undefined
-      }));
-      return enrichedData;
-    } else {
-      // Cache expired, remove it
-      localStorage.removeItem(ENRICHED_CACHE_KEY);
-      return null;
-    }
-  } catch (error) {
-    console.error('error reading enriched data from cache:', error);
-    localStorage.removeItem(ENRICHED_CACHE_KEY);
-    return null;
+  const cachedData = enrichedUsersCache.get(ENRICHED_CACHE_KEY);
+  if (cachedData) {
+    // Ensure Date objects are properly reconstructed
+    return cachedData.map(user => ({
+      ...user,
+      createdAt: user.createdAt ? new Date(user.createdAt) : undefined
+    }));
   }
+  return null;
 };
 
 const setCachedEnrichedData = (data: EnrichedUser[]): void => {
-  try {
-    const entry: EnrichedUserCacheEntry = {
-      data,
-      timestamp: Date.now()
-    };
-    localStorage.setItem(ENRICHED_CACHE_KEY, JSON.stringify(entry));
-  } catch (error) {
-    console.error('error writing enriched data to cache:', error);
-  }
+  enrichedUsersCache.set(ENRICHED_CACHE_KEY, data);
 };
 
 // Batch process DIDs to resolve handles and profile info
@@ -254,25 +206,13 @@ const extractHandleFromDidDoc = (didDoc: DidDocument): string | undefined => {
   return undefined;
 };
 
-// Cache for handle resolution results to avoid duplicate API calls
-const handleResolutionCache = new Map<string, { did: string; timestamp: number }>();
-const HANDLE_CACHE_DURATION = 30 * 60 * 1000; // 30 minutes (longer cache)
-
-// Cache for profile data to avoid duplicate API calls
-const profileCache = new Map<string, { profile: BskyProfileMinimal; timestamp: number }>();
-const PROFILE_CACHE_DURATION = 15 * 60 * 1000; // 15 minutes
-
-// Cache for handle verification results
-const verificationCache = new Map<string, { isValid: boolean; timestamp: number }>();
-const VERIFICATION_CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
-
 // Resolve a handle to DID with caching
 const resolveHandleWithCache = async (handle: string): Promise<string | null> => {
   // Check cache first
   const cached = handleResolutionCache.get(handle);
-  if (cached && (Date.now() - cached.timestamp) < HANDLE_CACHE_DURATION) {
+  if (cached) {
     console.log(`Handle ${handle} resolved from cache`);
-    return cached.did;
+    return cached;
   }
   
   try {
@@ -289,7 +229,7 @@ const resolveHandleWithCache = async (handle: string): Promise<string | null> =>
     const resolvedDid = data.did;
     
     // Cache the result
-    handleResolutionCache.set(handle, { did: resolvedDid, timestamp: Date.now() });
+    handleResolutionCache.set(handle, resolvedDid);
     
     return resolvedDid;
   } catch (error) {
@@ -321,17 +261,16 @@ const verifyHandleOwnership = async (handle: string, expectedDid: DefinedDidStri
   // Check verification cache first
   const cacheKey = `${handle}:${expectedDid}`;
   const cached = verificationCache.get(cacheKey);
-  const now = Date.now();
   
-  if (cached && (now - cached.timestamp) < VERIFICATION_CACHE_DURATION) {
-    return cached.isValid;
+  if (cached !== null) {
+    return cached;
   }
   
   const resolvedDid = await resolveHandleWithCache(handle);
   
   if (!resolvedDid) {
     const result = false;
-    verificationCache.set(cacheKey, { isValid: result, timestamp: now });
+    verificationCache.set(cacheKey, result);
     return result;
   }
   
@@ -342,7 +281,7 @@ const verifyHandleOwnership = async (handle: string, expectedDid: DefinedDidStri
   }
   
   // Cache the verification result
-  verificationCache.set(cacheKey, { isValid: matches, timestamp: now });
+  verificationCache.set(cacheKey, matches);
   
   return matches;
 };
@@ -418,13 +357,12 @@ const PROFILE_BATCH_SIZE = 10;
 const fetchBlueskyProfiles = async (handles: string[]): Promise<Map<string, BskyProfileMinimal>> => {
   const profileMap = new Map<string, BskyProfileMinimal>();
   const uncachedHandles: string[] = [];
-  const now = Date.now();
   
   // Check cache first and collect uncached handles
   handles.forEach(handle => {
     const cached = profileCache.get(handle);
-    if (cached && (now - cached.timestamp) < PROFILE_CACHE_DURATION) {
-      profileMap.set(handle, cached.profile);
+    if (cached) {
+      profileMap.set(handle, cached);
     } else {
       uncachedHandles.push(handle);
     }
@@ -432,11 +370,11 @@ const fetchBlueskyProfiles = async (handles: string[]): Promise<Map<string, Bsky
   
   // If all handles are cached, return early
   if (uncachedHandles.length === 0) {
-    console.log(`All ${handles.length} profiles found in cache`);
+    console.log(`all ${handles.length} profiles found in cache`);
     return profileMap;
   }
   
-  console.log(`Fetching ${uncachedHandles.length} uncached profiles (${handles.length - uncachedHandles.length} from cache)`);
+  console.log(`fetching ${uncachedHandles.length} uncached profiles (${handles.length - uncachedHandles.length} from cache)`);
   
   try {
     // Build the query string with multiple actors
@@ -472,14 +410,9 @@ const fetchBlueskyProfiles = async (handles: string[]): Promise<Map<string, Bsky
           postsCount: profile.postsCount || 0
         };
         
-        // Add to result map
         profileMap.set(profile.handle, profileData);
-        
-        // Cache the result
-        profileCache.set(profile.handle, {
-          profile: profileData,
-          timestamp: now
-        });
+        console.log(`caching profile: ${profile.handle}`, profileData);
+        profileCache.set(profile.handle, profileData);
       }
     });
 
@@ -490,9 +423,6 @@ const fetchBlueskyProfiles = async (handles: string[]): Promise<Map<string, Bsky
   }
 };
 
-// Cache duration for address control records
-const ADDRESS_RECORDS_CACHE_DURATION = 6 * 60 * 1000; // 6 minutes
-
 // Fetch address control records from user's PDS
 export const fetchAddressControlRecords = async (
   did: DefinedDidString, 
@@ -501,21 +431,10 @@ export const fetchAddressControlRecords = async (
   const cacheKey = `listRecords_${did}`;
   
   // Check cache first
-  try {
-    const cached = localStorage.getItem(cacheKey);
-    if (cached) {
-      //console.log(`found cached value for ${cacheKey}`);
-      const { data, timestamp } = JSON.parse(cached);
-      if (Date.now() - timestamp < ADDRESS_RECORDS_CACHE_DURATION) {
-        return data;
-      }
-    }
-  } catch (error) {
-    console.error('error reading from address records cache:', error);
-    localStorage.removeItem(cacheKey);
+  const cachedData = addressRecordsCache.get(cacheKey);
+  if (cachedData) {
+    return cachedData;
   }
-
-  //console.log(`no cached value for ${cacheKey}`);
 
   try {
     // Extract hostname from PDS URL
@@ -537,14 +456,7 @@ export const fetchAddressControlRecords = async (
     const records = data.records || [];
     
     // Cache the response
-    try {
-      localStorage.setItem(cacheKey, JSON.stringify({
-        data: records,
-        timestamp: Date.now()
-      }));
-    } catch (error) {
-      console.error('Error writing to address records cache:', error);
-    }
+    addressRecordsCache.set(cacheKey, records);
     
     return records;
   } catch (error) {
