@@ -15,7 +15,7 @@ export class LocalstorageTtlCache<T> {
 	  }
 	  return item.value as T;
 	} catch (e) {
-	  console.error('Failed to parse cache item', e);
+	  console.error('failed to parse cache item', e);
 	  localStorage.removeItem(key);
 	  return null;
 	}
