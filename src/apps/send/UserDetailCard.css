@@ -277,6 +277,12 @@
   padding: 12px;
 }
 
+.address-record.critical-failure {
+  background: radial-gradient(ellipse at center, #f7f9fa 40%, #f8d7da 100%);
+  border: 1px solid #f5c6cb;
+  box-shadow: 0 2px 4px rgba(248, 215, 218, 0.3);
+}
+
 .address-info {
   width: 100%;
   min-width: 0;
@@ -727,6 +733,12 @@
   .address-record {
     background: #2d2d2d;
     border-color: #404040;
+  }
+
+  .address-record.critical-failure {
+    background: radial-gradient(ellipse at center, #2d2d2d 50%, #2c0b0e 100%);
+    border: 1px solid #842029;
+    box-shadow: 0 2px 4px rgba(44, 11, 14, 0.4);
   }
 
   .wallet-connection-section {
