@@ -6,9 +6,9 @@ import { sha256 } from 'multiformats/hashes/sha2';
 import * as dagCbor from '@ipld/dag-cbor';
 import { ADDRESS_CONTROL_LEXICON_TYPE, atpBytesToHex } from "./common.ts";
 import type { DefinedDidString, AddressControlRecord } from "./common.ts";
-import { chainForId, makeSiweStatement } from "./WalletConnector.tsx";
+import { makeSiweStatement } from "./WalletConnector.tsx";
 import { createSiweMessage, verifySiweMessage, type SiweMessage } from "viem/siwe";
-import { createPublicClient, http } from "viem";
+import { getEthClient } from "./useTokenBalances.ts";
 
 
 export type AddressControlVerificationChecks = {
@@ -35,11 +35,7 @@ export const verifyRecordSiweSignature = async (record: AddressControlRecord): P
   const message: string = createSiweMessage(reconstructedMsg);
 
   try {
-    const ethClient = createPublicClient({
-      chain: chainForId(record.siwe.chainId),
-      transport: http()
-    });
-
+    const ethClient = getEthClient(record.siwe.chainId);
     const sigHex = atpBytesToHex(record.signature);
     const verifyResult: boolean = await verifySiweMessage(ethClient, {
       message,

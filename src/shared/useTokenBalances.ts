@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
-import { createPublicClient, http, formatUnits, erc20Abi } from 'viem';
+import { createPublicClient, http, formatUnits, erc20Abi, Chain, RpcSchema, type Account, type HttpTransport, PublicClient } from 'viem';
 import { chainForId } from './WalletConnector.tsx';
+import { SupportedChain } from "./ChainIndicator.tsx";
 
 export interface TokenBalance {
   address: `0x${string}` | 'native';
@@ -116,25 +117,61 @@ const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: strin
   ],
 };
 
-// Exported function to fetch token balances for any chain/address combination
-export const fetchTokenBalancesForChain = async (
-  address: `0x${string}`,
-  chainId: number
-): Promise<TokenBalance[]> => {
+const ETH_CLIENT_OPTS = {
+  batch: {
+    batchSize: 5,
+    wait: 10
+  },
+  retryDelay: 750,
+  retryCount: 4,
+  timeout: 20000,
+}
+
+const ETH_CLIENTS = new Map([
+  [
+    SupportedChain.ETHEREUM, 
+    createPublicClient({ chain: chainForId(1), transport: http(undefined, ETH_CLIENT_OPTS) })
+  ], 
+  // let the rest get created on demand
+]);
+
+export const getEthClient = (chainId: SupportedChain): PublicClient<HttpTransport, Chain, Account | undefined, RpcSchema> => {
+  // first try to get existing client
+  const existingClient = ETH_CLIENTS.get(chainId);
+  if (existingClient) {
+    return existingClient as PublicClient<HttpTransport, Chain, Account | undefined, RpcSchema>;
+  }
+
+  // if not found, create a new client, cache it, & return it
   const chain = chainForId(chainId);
   if (!chain) {
     throw new Error(`unsupported chain ID: ${chainId}`);
   }
 
-  const client = createPublicClient({
-    chain,
-    transport: http()
+  const newClient = createPublicClient({ 
+    chain, 
+    transport: http(undefined, ETH_CLIENT_OPTS) 
   });
+  
+  ETH_CLIENTS.set(chainId as SupportedChain, newClient);
+  return newClient as PublicClient<HttpTransport, Chain, Account | undefined, RpcSchema>;
+};
+
+// Exported function to fetch token balances for any chain/address combination
+export const fetchTokenBalancesForChain = async (
+  address: `0x${string}`,
+  chainId: SupportedChain
+): Promise<TokenBalance[]> => {
+  const chain = chainForId(chainId);
+  const client = getEthClient(chainId);
+  if (!chain) {
+    throw new Error(`unsupported chain ID: ${chainId}`);
+  }
 
   const balances: TokenBalance[] = [];
   // Fetch ERC20 token balances in batches
   const tokens = COMMON_TOKENS[chainId] || [];
-  const batchSize = chainId === 8543 ? 1 : 2; // base public rate limit is low
+  const batchSize = chainId === SupportedChain.BASE ? 2 : 4; // base public rate limit is low
 
   for (let i = 0; i < tokens.length; i += batchSize) {
     const promises: Promise<TokenBalance | null>[] = [];
@@ -190,8 +227,9 @@ export const fetchTokenBalancesForChain = async (
 const getNativeTokenLogo = (chainId: number): string => {
   const logoMap: Record<number, string> = {
     1: ETH_LOGO_URL, // Ethereum
-    8453: ETH_LOGO_URL, // Base (uses ETH)
     10: ETH_LOGO_URL, // Optimism (uses ETH)
+    // TODO: add Gnosis native token logo
+    8453: ETH_LOGO_URL, // Base (uses ETH)
     42161: ETH_LOGO_URL, // Arbitrum (uses ETH)
   };
   return logoMap[chainId] || ETH_LOGO_URL;
