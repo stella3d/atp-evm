@@ -1,32 +1,39 @@
 import React from 'react';
 import type { EnrichedUser } from "../../shared/common.ts";
 
-interface ProfileDetailsProps {
-  user: EnrichedUser;
+interface IndexedLinkProps {
+  href: string;
+  text: string;
+}
+
+const IndexedLink: React.FC<IndexedLinkProps> = ({ href, text }) => {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={LINK_STYLE}
+    >
+      {text}
+    </a>
+  );
+};
+
+const LINK_STYLE = {
+  color: '#1d9bf0',
+  textDecoration: 'underline',
 }
 
 const linkifyText = (text: string): React.ReactNode[] => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const handleRegex = /(\s@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,})/g;
-  // Combined regex to split by both URLs and handles
-  const combinedRegex = /(https?:\/\/[^\s]+|\s@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,})/g;
+  const hashtagRegex = /(#[a-zA-Z0-9_]+)/g;
+  // Combined regex to split by URLs, handles, and hashtags
+  const combinedRegex = /(https?:\/\/[^\s]+|\s@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,}|#[a-zA-Z0-9_]+)/g;
 
   return text.split(combinedRegex).map((part, index) => {
     if (part.match(urlRegex)) {
-      return (
-        <a
-          key={index}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            color: '#1d9bf0',
-            textDecoration: 'underline',
-          }}
-        >
-          {part}
-        </a>
-      );
+      return <IndexedLink key={index} href={part} text={part} />;
     } else if (part.match(handleRegex)) {
       // Remove the space and @ symbol for the URL but keep them in the display text
       const handleWithoutSpaceAndAt = part.trim().substring(1);
@@ -37,19 +44,24 @@ const linkifyText = (text: string): React.ReactNode[] => {
             href={`https://bsky.app/profile/${handleWithoutSpaceAndAt}`}
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              color: '#1d9bf0',
-              textDecoration: 'underline',
-            }}
+            style={LINK_STYLE}
           >
             {part.trim()}
           </a>
         </span>
       );
+    } else if (part.match(hashtagRegex)) {
+      // Remove the # symbol for the URL but keep it in the display text
+      const tag = part.substring(1);
+      return <IndexedLink key={index} href={`https://bsky.app/hashtag/${tag}`} text={part} />;
     }
     return part;
   });
 };
+
+interface ProfileDetailsProps {
+  user: EnrichedUser;
+}
 
 export const ProfileDetails: React.FC<ProfileDetailsProps> = ({ user }) => {
   return (
