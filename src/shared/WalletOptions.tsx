@@ -3,7 +3,7 @@ import { type Connector, type CreateConnectorFn, useConnect } from 'wagmi'
 
 export default function WalletOptions() {
   const { connectors, connect } = useConnect()
-  console.log('All connectors:', connectors);
+  //console.log('All connectors:', connectors);
 
   // wagmi shows a bunch of duplicates for some reason, so we filter them out.
   const allowedConnectors: Connector<CreateConnectorFn>[] = [];
@@ -27,15 +27,11 @@ export default function WalletOptions() {
       } 
       return;
     } 
-    //if (connector.id === 'coinbaseWalletSDK') {
-      // we can add this back if people ask, but for now, we're not promoting Coinbase.
-    //} else {
-    // allow other connectors by default
+
     allowedConnectors.push(connector);
-    //}
   });
 
-  console.log('Allowed Connectors:', allowedConnectors);
+  //console.log('Allowed Connectors:', allowedConnectors);
 
   return (
     <div>
