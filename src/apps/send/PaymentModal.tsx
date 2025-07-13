@@ -332,7 +332,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   React.useEffect(() => {
     if (isSuccess && step === Step.SENDING) {
-      setStep(Step.SUCCESS);
+      // Add delay to allow block explorer to index the transaction
+      setTimeout(() => {
+        setStep(Step.SUCCESS);
+      }, 1000);
     }
   }, [isSuccess, step]);
 
@@ -503,7 +506,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 </button>
               )}
             </div>
-            <h3>Send</h3>
+            <h3>
+{
+                step === Step.SUCCESS 
+                  ? 'Send Successful' 
+                  : step === Step.SENDING ? 'Sending...' : 'Send'
+              }
+            </h3>
             <div className="header-right">
               <button type="button" className="close-button" onClick={onClose}>×</button>
             </div>

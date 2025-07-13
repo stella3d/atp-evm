@@ -1,4 +1,6 @@
 import React from 'react';
+import { getDoraTransactionUrl } from "../../shared/common.ts";
+import { TransactionHash } from './TransactionHash.tsx';
 
 interface TransactionSuccessProps {
   txHash: `0x${string}`;
@@ -6,18 +8,20 @@ interface TransactionSuccessProps {
   onDone: () => void;
 }
 
-// Helper function to get transaction URL
-const getDoraTransactionUrl = (txHash: string, chainId: number): string => {
-  const baseUrls: Record<number, string> = {
-    1: 'https://etherscan.io/tx/',
-    8453: 'https://basescan.org/tx/',
-    42161: 'https://arbiscan.io/tx/',
-    10: 'https://optimistic.etherscan.io/tx/',
-    100: 'https://gnosisscan.io/tx/',
-  };
-  
-  const baseUrl = baseUrls[chainId] || 'https://etherscan.io/tx/';
-  return `${baseUrl}${txHash}`;
+const getTransactionUrl = (txHash: string, chainId: number): string => {
+  switch (chainId) {
+    // Dora currently supports these 3 chains out of the 5
+    case 1: // Ethereum Mainnet
+    case 8453: // Base
+    case 42161: // Arbitrum
+      return getDoraTransactionUrl(txHash, chainId);
+    case 10: // Optimism
+      return `https://optimistic.etherscan.io/tx/${txHash}`;
+    case 100: // Gnosis
+      return `https://gnosisscan.io/tx/${txHash}`;
+    default:
+      return "";
+  }
 };
 
 export const TransactionSuccess: React.FC<TransactionSuccessProps> = ({
@@ -32,14 +36,12 @@ export const TransactionSuccess: React.FC<TransactionSuccessProps> = ({
       <p>Your payment has been confirmed on the blockchain.</p>
       <div className="tx-hash">
         <div>View Transaction: </div>
-        <a 
-          href={getDoraTransactionUrl(txHash, chainId)}
-          target="_blank"
-          rel="noopener noreferrer"
+        <TransactionHash
+          txHash={txHash}
+          isClickable
+          href={getTransactionUrl(txHash, chainId)}
           className="tx-hash-link"
-        >
-          <code>{txHash}</code>
-        </a>
+        />
       </div>
       <button type="button" className="done-button" onClick={onDone}>
         Done

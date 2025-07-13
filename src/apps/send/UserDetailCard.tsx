@@ -94,17 +94,14 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
       setRecordsError(null);
       try {
         const records = await fetchAddressControlRecords(selectedUser.did, selectedUser.pds);
-        //console.log('Raw address records:', records);
-        
         const deduplicatedRecords = aggregateWallets(records);
         setAddressRecords(deduplicatedRecords);
 
-        // stub for record validation results
         const validationMap = new Map<string, AddressControlVerificationChecks>();
         for (const record of deduplicatedRecords) {
           try {
             const validationResults = await checkLinkValidityMinimal(selectedUser.did, record.value);
-            console.log('validation for record', record.uri, validationResults);
+            //console.log('validation for record', record.uri, validationResults);
             validationMap.set(record.uri, validationResults);
           } catch (error) {
             console.error('failed to validate record:', record.uri, error);

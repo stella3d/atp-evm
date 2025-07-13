@@ -1,4 +1,5 @@
 import React from 'react';
+import { TransactionHash } from './TransactionHash.tsx';
 
 interface TransactionPendingProps {
   txHash: `0x${string}` | null;
@@ -15,7 +16,7 @@ export const TransactionPending: React.FC<TransactionPendingProps> = ({
       {txHash && (
         <div className="tx-hash">
           <div>Transaction Hash:</div>
-          <code>{txHash}</code>
+          <TransactionHash txHash={txHash} />
         </div>
       )}
     </div>
