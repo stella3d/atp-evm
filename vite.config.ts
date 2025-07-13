@@ -14,6 +14,7 @@ export default defineConfig({
       input: {
         main: './index.html',
         send: './send.html',
+        atpay: './atpay.html',
       }
     }
   }
