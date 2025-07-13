@@ -1256,10 +1256,10 @@
   .done-button,
   .back-button, 
   .cancel-button {
-    max-width: 160px;
+    max-width: 200px;
     min-width: 100px;
-    padding: 10px 12px;
-    font-size: 0.92rem;
+    padding: 8px 20px;
+    font-size: 28px;
   }
 }
 
