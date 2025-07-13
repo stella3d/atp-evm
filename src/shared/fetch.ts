@@ -38,60 +38,23 @@ interface CacheEntry {
   timestamp: number;
 }
 
-const getCachedData = (): DidString[] | null => {
-  try {
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (!cached) return null;
-
-    const entry: CacheEntry = JSON.parse(cached);
-    const now = Date.now();
-    
-    // Check if cache is still valid
-    if ((now - entry.timestamp) < CACHE_DURATION) {
-      //console.log('using cached users data from localStorage');
-      return entry.data;
-    } else {
-      // Cache expired, remove it
-      localStorage.removeItem(CACHE_KEY);
-      return null;
-    }
-  } catch (error) {
-    console.error('error reading from cache:', error);
-    localStorage.removeItem(CACHE_KEY);
-    return null;
-  }
-};
-
-const setCachedData = (data: DidString[]): void => {
-  try {
-    const entry: CacheEntry = {
-      data,
-      timestamp: Date.now()
-    };
-    localStorage.setItem(CACHE_KEY, JSON.stringify(entry));
-  } catch (error) {
-    console.error('error writing to cache:', error);
-  }
-};
-
 export const fetchUsersWithAddressRecord = async (): Promise<DidString[]> => {
-  // Check cache first
-  const cachedData = getCachedData();
-  if (cachedData) {
-    return cachedData;
+  const KEY = 'address_control_users';
+  // check cache first
+  const data = await usersSwrCache.get(KEY, async () => {
+    // cache miss or expired, fetch new data
+    type ResponseShape = { repos: { did: DidString }[] };
+    // using regular fetch skips needing OAuth permissions
+    const res = await fetch('https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=club.stellz.evm.addressControl');
+    const data: ResponseShape = await res.json();
+    return data.repos.map(r => r.did);
+  });
+
+  if (data !== null) {
+    usersSwrCache.set(KEY, data);
+    return data;
   }
-
-  // Cache miss or expired, fetch new data
-  type ResponseShape = { repos: { did: DidString }[] };
-  // using regular fetch skips needing OAuth permissions
-  const res = await fetch('https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=club.stellz.evm.addressControl');
-  const data: ResponseShape = await res.json();
-  const users = data.repos.map(r => r.did);
-
-  // Cache the new data
-  setCachedData(users);
-  
-  return users;
+  return []; // fallback empty array on error
 }
 
 // Cache functions for enriched user data
