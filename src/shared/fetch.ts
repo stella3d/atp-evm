@@ -1,4 +1,4 @@
-import type { DefinedDidString, EnrichedUser, AddressControlRecordWithMeta } from "./common.ts";
+import type { DidString, EnrichedUser, EnrichedUserCacheEntry, AddressControlRecordWithMeta } from "./common.ts";
 import { isDidString } from "./common.ts";
 import { LocalstorageTtlCache } from './LocalstorageTtlCache.ts';
 import { LocalStaleWhileRevalidateCache } from './LocalStaleWhileRevalidateCache.ts';
@@ -19,7 +19,7 @@ const HANDLE_CACHE_DURATION = import.meta.env.DEV
   : 15 * 60 * 1000; // 15 minutes in production
 
 // Create cache instances
-const usersSwrCache = new LocalStaleWhileRevalidateCache<DefinedDidString[]>(
+const usersSwrCache = new LocalStaleWhileRevalidateCache<DidString[]>(
   USER_CACHE_DURATION,
   USER_REVALIDATE_DURATION
 );
@@ -33,21 +33,66 @@ const ENRICHED_CACHE_KEY = 'enriched_users_data_v2';
 
 const BATCH_SIZE = 20;
 
-export const fetchUsersWithAddressRecord = async (onUpdate?: (users: DefinedDidString[]) => void): Promise<DefinedDidString[]> => {
-  const fetcher = async (): Promise<DefinedDidString[]> => {
-    type ResponseShape = { repos: { did: DefinedDidString }[] };
-    const res = await fetch('https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=club.stellz.evm.addressControl');
-    const data: ResponseShape = await res.json();
-    return data.repos.map(r => r.did);
-  };
+interface CacheEntry {
+  data: DidString[];
+  timestamp: number;
+}
 
-  return await usersSwrCache.get('users_with_address_record', fetcher, onUpdate) || [];
+const getCachedData = (): DidString[] | null => {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (!cached) return null;
+
+    const entry: CacheEntry = JSON.parse(cached);
+    const now = Date.now();
+    
+    // Check if cache is still valid
+    if ((now - entry.timestamp) < CACHE_DURATION) {
+      //console.log('using cached users data from localStorage');
+      return entry.data;
+    } else {
+      // Cache expired, remove it
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+  } catch (error) {
+    console.error('error reading from cache:', error);
+    localStorage.removeItem(CACHE_KEY);
+    return null;
+  }
 };
 
-// Helper function to clear user cache
-export const clearUserCache = (): void => {
-  usersSwrCache.clear('users_with_address_record');
+const setCachedData = (data: DidString[]): void => {
+  try {
+    const entry: CacheEntry = {
+      data,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(entry));
+  } catch (error) {
+    console.error('error writing to cache:', error);
+  }
 };
+
+export const fetchUsersWithAddressRecord = async (): Promise<DidString[]> => {
+  // Check cache first
+  const cachedData = getCachedData();
+  if (cachedData) {
+    return cachedData;
+  }
+
+  // Cache miss or expired, fetch new data
+  type ResponseShape = { repos: { did: DidString }[] };
+  // using regular fetch skips needing OAuth permissions
+  const res = await fetch('https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=club.stellz.evm.addressControl');
+  const data: ResponseShape = await res.json();
+  const users = data.repos.map(r => r.did);
+
+  // Cache the new data
+  setCachedData(users);
+  
+  return users;
+}
 
 // Cache functions for enriched user data
 const getCachedEnrichedData = (): EnrichedUser[] | null => {
@@ -67,13 +112,13 @@ const setCachedEnrichedData = (data: EnrichedUser[]): void => {
 };
 
 // Batch process DIDs to resolve handles and profile info
-const batchProcessDids = async (dids: DefinedDidString[]): Promise<EnrichedUser[]> => {
+const batchProcessDids = async (dids: DidString[]): Promise<EnrichedUser[]> => {
   const enrichedUsers: EnrichedUser[] = [];
   
   // Process in batches of BATCH_SIZE
   for (let i = 0; i < dids.length; i += BATCH_SIZE) {
     const batch = dids.slice(i, i + BATCH_SIZE);
-    console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(dids.length / BATCH_SIZE)}`);
+    //console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(dids.length / BATCH_SIZE)}`);
     
     // First, resolve DID documents and extract candidate handles
     const didProcessingResults = await Promise.allSettled(
@@ -97,7 +142,7 @@ const batchProcessDids = async (dids: DefinedDidString[]): Promise<EnrichedUser[
     );
     
     // Collect handles that need verification
-    const handlesToVerify: Array<{ handle: string; did: DefinedDidString }> = [];
+    const handlesToVerify: Array<{ handle: string; did: DidString }> = [];
     const processedResults = didProcessingResults.map((result) => {
       if (result.status === 'fulfilled' && result.value.candidateHandle) {
         handlesToVerify.push({
@@ -183,7 +228,7 @@ interface DidDocument {
   [key: string]: unknown;
 }
 
-const resolveDid = async (did: DefinedDidString): Promise<DidDocument> => {
+const resolveDid = async (did: DidString): Promise<DidDocument> => {
   const response = await fetch(`https://plc.directory/${did}`);
   if (!response.ok) {
     throw new Error(`Failed to resolve DID: ${response.status}`);
@@ -220,10 +265,9 @@ const resolveHandleWithCache = async (handle: string): Promise<string | null> =>
       `https://public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(handle)}`
     );
     
-    if (!response.ok) {
-      console.warn(`Failed to resolve handle ${handle}: ${response.status}`);
+    if (!response.ok) // if their handle doesn't resolve, don't show the profile
       return null;
-    }
+    
     
     const data = await response.json();
     const resolvedDid = data.did;
@@ -239,25 +283,25 @@ const resolveHandleWithCache = async (handle: string): Promise<string | null> =>
 };
 
 // Public function to resolve user identifier (handle or DID) to a DID
-export const resolveUserIdentifier = async (identifier: string): Promise<DefinedDidString | null> => {
+export const resolveUserIdentifier = async (identifier: string): Promise<DidString | null> => {
   const trimmed = identifier.trim();
   
   // If it's already a DID, return it
   if (isDidString(trimmed)) {
-    return trimmed as DefinedDidString;
+    return trimmed as DidString;
   }
   
   // If it looks like a handle, resolve it to a DID using cached function
   if (trimmed.includes('.') && !trimmed.startsWith('did:') && trimmed.length > 3) {
     const resolvedDid = await resolveHandleWithCache(trimmed);
-    return resolvedDid && isDidString(resolvedDid) ? resolvedDid as DefinedDidString : null;
+    return resolvedDid && isDidString(resolvedDid) ? resolvedDid as DidString : null;
   }
   
   return null;
 };
 
 // Verify that a handle actually resolves to the expected DID using ATProto
-const verifyHandleOwnership = async (handle: string, expectedDid: DefinedDidString): Promise<boolean> => {
+const verifyHandleOwnership = async (handle: string, expectedDid: DidString): Promise<boolean> => {
   // Check verification cache first
   const cacheKey = `${handle}:${expectedDid}`;
   const cached = verificationCache.get(cacheKey);
@@ -290,7 +334,7 @@ const verifyHandleOwnership = async (handle: string, expectedDid: DefinedDidStri
 const HANDLE_VERIFICATION_BATCH_SIZE = 6;
 
 const batchVerifyHandles = async (
-  handleDidPairs: Array<{ handle: string; did: DefinedDidString }>
+  handleDidPairs: Array<{ handle: string; did: DidString }>
 ): Promise<Map<string, boolean>> => {
   const results = new Map<string, boolean>();
   
@@ -425,7 +469,7 @@ const fetchBlueskyProfiles = async (handles: string[]): Promise<Map<string, Bsky
 
 // Fetch address control records from user's PDS
 export const fetchAddressControlRecords = async (
-  did: DefinedDidString, 
+  did: DidString, 
   pds: string
 ): Promise<AddressControlRecordWithMeta[]> => {
   const cacheKey = `listRecords_${did}`;
@@ -489,13 +533,13 @@ export const fetchEnrichedUsers = async (): Promise<EnrichedUser[]> => {
 
 // Progressive enrichment function that updates users as data becomes available
 export const enrichUsersProgressively = async (
-  userDids: DefinedDidString[],
+  userDids: DidString[],
   onUpdate: (users: EnrichedUser[]) => void
 ): Promise<void> => {
   // Check if we have cached enriched data first
   const cachedData = getCachedEnrichedData();
   if (cachedData && cachedData.length > 0) {
-    console.log('Using cached enriched data for progressive update');
+    //console.log('using cached enriched data for progressive update');
     // Filter cached data to only include requested users
     const requestedCachedUsers = cachedData.filter(user => userDids.includes(user.did));
     if (requestedCachedUsers.length === userDids.length) {
@@ -519,7 +563,7 @@ export const enrichUsersProgressively = async (
   // Process in batches and update as we go
   for (let i = 0; i < userDids.length; i += BATCH_SIZE) {
     const batch = userDids.slice(i, i + BATCH_SIZE);
-    console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(userDids.length / BATCH_SIZE)} for progressive enrichment`);
+    //console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(userDids.length / BATCH_SIZE)} for progressive enrichment`);
     
     // First, resolve DID documents and extract candidate handles
     const didProcessingResults = await Promise.allSettled(
@@ -549,7 +593,7 @@ export const enrichUsersProgressively = async (
     );
     
     // Collect handles that need verification
-    const handlesToVerify: Array<{ handle: string; did: DefinedDidString }> = [];
+    const handlesToVerify: Array<{ handle: string; did: DidString }> = [];
     const processedResults = didProcessingResults.map((result) => {
       if (result.status === 'fulfilled') {
         if (result.value.candidateHandle) {
@@ -589,18 +633,16 @@ export const enrichUsersProgressively = async (
       }
     }
     
-    // Now create enriched users using the batched profile data
+    // now create enriched users using the batched profile data
     const finalResults = processedResults.map(({ actualIndex, did, candidateHandle, pds }) => {
       let handle: string | undefined = undefined;
       let profileData: BskyProfileMinimal | null = null;
       
-      // Only use handle if it was verified
+      // only use handle if it was verified
       if (candidateHandle && verificationResults.get(candidateHandle) === true) {
         handle = candidateHandle;
         profileData = allProfileData.get(handle) || null;
-      } else if (candidateHandle) {
-        console.warn(`Handle ${candidateHandle} failed verification for DID ${did} - hiding profile`);
-      }
+      } 
       
       return {
         index: actualIndex,

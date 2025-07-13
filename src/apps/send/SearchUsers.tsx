@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { fetchUsersWithAddressRecord, enrichUsersProgressively, resolveUserIdentifier } from '../../shared/fetch.ts';
 import './SearchUsers.css';
-import type { DefinedDidString, EnrichedUser } from "../../shared/common.ts";
+import type { DidString, EnrichedUser } from "../../shared/common.ts";
 import { AtprotoUserCard, UserCardVariant } from '../../shared/AtprotoUserCard.tsx';
 
 interface SearchUsersProps {
-  onUserSelect?: (user: DefinedDidString) => void;
+  onUserSelect?: (user: DidString) => void;
   onUsersUpdate?: (users: EnrichedUser[]) => void;
   preSelectedUser?: string; // Handle or DID to pre-select
   shouldOpenPayment?: boolean; // Whether to open payment modal for first wallet
-  onTriggerPayment?: (userDid: DefinedDidString) => void; // Callback to trigger payment modal
+  onTriggerPayment?: (userDid: DidString) => void; // Callback to trigger payment modal
 }
 
 export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersUpdate, preSelectedUser, shouldOpenPayment, onTriggerPayment }) => {
@@ -18,17 +18,17 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
   const [loading, setLoading] = useState(false);
   const [enriching, setEnriching] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [allUserDids, setAllUserDids] = useState<DefinedDidString[]>([]);
-  const [enrichedUserDids, setEnrichedUserDids] = useState<Set<DefinedDidString>>(new Set());
+  const [allUserDids, setAllUserDids] = useState<DidString[]>([]);
+  const [enrichedUserDids, setEnrichedUserDids] = useState<Set<DidString>>(new Set());
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const pendingEnrichmentRef = useRef<Set<DefinedDidString>>(new Set());
+  const pendingEnrichmentRef = useRef<Set<DidString>>(new Set());
   const enrichmentTimeoutRef = useRef<number | null>(null);
   
   const INITIAL_LOAD_COUNT = 6;
   const BATCH_DELAY_MS = 160; // Wait 160ms to collect more users before batching
 
   // Batched enrichment function for lazy loading
-  const enqueueBatchEnrichment = useCallback((userDid: DefinedDidString) => {
+  const enqueueBatchEnrichment = useCallback((userDid: DidString) => {
     if (enrichedUserDids.has(userDid)) return;
     
     pendingEnrichmentRef.current.add(userDid);
@@ -81,7 +81,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
   }, [enrichedUserDids, onUsersUpdate]);
 
   // Intersection Observer for lazy loading
-  const observeUserCard = useCallback((node: HTMLElement | null, userDid: DefinedDidString) => {
+  const observeUserCard = useCallback((node: HTMLElement | null, userDid: DidString) => {
     if (!node) return;
     
     if (observerRef.current) {
@@ -92,9 +92,9 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               const didAttr = entry.target.getAttribute('data-user-did');
-              if (didAttr && !enrichedUserDids.has(didAttr as DefinedDidString)) {
+              if (didAttr && !enrichedUserDids.has(didAttr as DidString)) {
                 // Add to batch instead of enriching immediately
-                enqueueBatchEnrichment(didAttr as DefinedDidString);
+                enqueueBatchEnrichment(didAttr as DidString);
               }
             }
           });
@@ -139,7 +139,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
         });
         
         setAllUserDids(basicUsers);
-        const basicEnrichedUsers: EnrichedUser[] = basicUsers.map((did: DefinedDidString) => ({ did }));
+        const basicEnrichedUsers: EnrichedUser[] = basicUsers.map((did: DidString) => ({ did }));
         setUsers(basicEnrichedUsers);
         if (onUsersUpdate) {
           onUsersUpdate(basicEnrichedUsers);

@@ -5,7 +5,7 @@ import * as Block from 'multiformats/block';
 import { sha256 } from 'multiformats/hashes/sha2';
 import * as dagCbor from '@ipld/dag-cbor';
 import { ADDRESS_CONTROL_LEXICON_TYPE, atpBytesToHex } from "./common.ts";
-import type { DefinedDidString, AddressControlRecord } from "./common.ts";
+import type { DidString, AddressControlRecord } from "./common.ts";
 import { makeSiweStatement } from "./WalletConnector.tsx";
 import { createSiweMessage, verifySiweMessage, type SiweMessage } from "viem/siwe";
 import { getEthClient } from "./useTokenBalances.ts";
@@ -52,7 +52,7 @@ export const verifyRecordSiweSignature = async (record: AddressControlRecord): P
 }
 
 export const checkLinkValidityMinimal = async (
-  did: DefinedDidString, 
+  did: DidString, 
   record: AddressControlRecord,
 ): Promise<AddressControlVerificationChecks> => {
 	// check 1: statement matches
@@ -68,7 +68,7 @@ export const checkLinkValidityMinimal = async (
 }
 
 export const checkLinkValidity = async (
-  did: DefinedDidString, 
+  did: DidString, 
   record: AddressControlRecord,
   recordCid?: CID,
   blocks?: Map<string, Uint8Array>
@@ -96,7 +96,7 @@ export const checkLinkValidity = async (
 }
 
 
-export const fetchLinkRecord = async (agent: Agent, did: DefinedDidString, rkey: string): Promise<ComAtprotoSyncGetRecord.Response> => {
+export const fetchLinkRecord = async (agent: Agent, did: DidString, rkey: string): Promise<ComAtprotoSyncGetRecord.Response> => {
 	try {
 		const response = await agent.com.atproto.sync.getRecord({
 			did,
@@ -113,7 +113,7 @@ export const fetchLinkRecord = async (agent: Agent, did: DefinedDidString, rkey:
 
 export const fetchAndDecodeRecord = async (
   agent: Agent, 
-  did: DefinedDidString, 
+  did: DidString, 
   rkey: string
 ): Promise<{ response: ComAtprotoSyncGetRecord.Response; decoded: DecodedRecord }> => {
   try {
@@ -359,7 +359,7 @@ const extractRepoCommitRoot = (commitData: RepoCommit): string | null => {
 
 export const fetchAndValidateRecord = async (
   agent: Agent,
-  did: DefinedDidString,
+  did: DidString,
   rkey: string
 ): Promise<{ 
   response: ComAtprotoSyncGetRecord.Response; 
