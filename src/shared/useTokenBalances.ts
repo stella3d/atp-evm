@@ -136,7 +136,7 @@ export const fetchTokenBalancesForChain = async (
   const balances: TokenBalance[] = [];
   // Fetch ERC20 token balances in batches
   const tokens = COMMON_TOKENS[chainId] || [];
-  const batchSize = 4;
+  const batchSize = chainId === 8543 ? 1 : 2; // base public rate limit is low
 
   for (let i = 0; i < tokens.length; i += batchSize) {
     const promises: Promise<TokenBalance | null>[] = [];
