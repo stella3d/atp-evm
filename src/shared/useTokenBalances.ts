@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
-import { createPublicClient, http, formatUnits, erc20Abi, Chain, RpcSchema, type Account, type HttpTransport, PublicClient } from 'viem';
+import { createPublicClient, http, formatUnits, erc20Abi, type RpcSchema, type Account, type Chain, type HttpTransport, type PublicClient, type Client } from 'viem';
 import { chainForId } from './WalletConnector.tsx';
 import { SupportedChain } from "./ChainIndicator.tsx";
 
@@ -127,13 +127,7 @@ const ETH_CLIENT_OPTS = {
   timeout: 20000,
 }
 
-const ETH_CLIENTS = new Map([
-  [
-    SupportedChain.ETHEREUM, 
-    createPublicClient({ chain: chainForId(1), transport: http(undefined, ETH_CLIENT_OPTS) })
-  ], 
-  // let the rest get created on demand
-]);
+const ETH_CLIENTS = new Map<SupportedChain, Client<HttpTransport, Chain, Account | undefined, RpcSchema>>();
 
 export const getEthClient = (chainId: SupportedChain): PublicClient<HttpTransport, Chain, Account | undefined, RpcSchema> => {
   // first try to get existing client
