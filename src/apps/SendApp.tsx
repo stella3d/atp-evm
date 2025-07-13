@@ -78,7 +78,7 @@ function SendApp() {
         <TokenBalancesProvider>
           <div id="app-header">
             <h1 style={{ fontFamily: 'sans-serif' }}>@Pay</h1>
-            <p>This demo lets you send value to a recipient based on their ATProto identity & linked Ethereum wallet.</p>
+            <p>Send value to people based on their ATProto identity & linked Ethereum wallet.</p>
             <p style={{ color: 'red', fontWeight: 'bold', fontSize: '18px' }}>THIS IS PRE-RELEASE SOFTWARE.</p>
             <p style={{ color: 'lightgray' }}>While it should be secure now, please keep this in mind.</p>
           </div>
