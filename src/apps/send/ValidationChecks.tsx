@@ -101,16 +101,16 @@ export const ValidationChecks: React.FC<ValidationChecksProps> = ({ validation }
       
       {isExpanded && (
         <div className="validation-details">
-          <div className={`checklist-item ${validation.siweSignatureValid ? 'verified' : 'failed'}`}>
+          <div className={`${validation.siweSignatureValid ? 'verified' : 'failed'}`}>
             <span className="check-icon">{validation.siweSignatureValid ? '✅ ' : '❌ '}</span>
             <span className="check-text">Wallet Signature {validation.siweSignatureValid ? 'Valid' : 'Invalid'}</span>
           </div>
-          <div className={`checklist-item ${validation.statementMatches ? 'verified' : 'failed'}`}>
+          <div className={`${validation.statementMatches ? 'verified' : 'failed'}`}>
             <span className="check-icon">{validation.statementMatches ? '✅ ' : '❌ '}</span>
             <span className="check-text">Statement {validation.statementMatches ? 'Matches' : 'Mismatch'}</span>
           </div>
           {validation.merkleProofValid !== undefined && (
-            <div className={`checklist-item ${
+            <div className={`${
               validation.merkleProofValid === null ? 'warning' : 
               validation.merkleProofValid ? 'verified' : 'failed'
             }`}>	
