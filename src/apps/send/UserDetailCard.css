@@ -130,6 +130,16 @@
 
 .profile-description p {
   margin: 2px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.profile-description a {
+  word-break: break-all;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  white-space: normal;
 }
 
 .profile-stats {
