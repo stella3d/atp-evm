@@ -121,7 +121,7 @@ const batchProcessDids = async (dids: DidString[]): Promise<EnrichedUser[]> => {
   // Process in batches of BATCH_SIZE
   for (let i = 0; i < dids.length; i += BATCH_SIZE) {
     const batch = dids.slice(i, i + BATCH_SIZE);
-    console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(dids.length / BATCH_SIZE)}`);
+    //console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(dids.length / BATCH_SIZE)}`);
     
     // First, resolve DID documents and extract candidate handles
     const didProcessingResults = await Promise.allSettled(
@@ -607,7 +607,7 @@ export const enrichUsersProgressively = async (
   // Process in batches and update as we go
   for (let i = 0; i < userDids.length; i += BATCH_SIZE) {
     const batch = userDids.slice(i, i + BATCH_SIZE);
-    console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(userDids.length / BATCH_SIZE)} for progressive enrichment`);
+    //console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(userDids.length / BATCH_SIZE)} for progressive enrichment`);
     
     // First, resolve DID documents and extract candidate handles
     const didProcessingResults = await Promise.allSettled(
