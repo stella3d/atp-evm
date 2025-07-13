@@ -2,10 +2,10 @@
 export type HexString = `0x${string}`;
 export type EvmAddressString = HexString;
 
-export type DidString = `did:plc:${string}` | `did:web:${string}` | undefined;
-export type DefinedDidString = Exclude<DidString, undefined>;
+export type MaybeDidString = `did:plc:${string}` | `did:web:${string}` | undefined;
+export type DidString = Exclude<MaybeDidString, undefined>;
 
-export type SiweStatementString = `Prove control of 0x${string} to link it to ${DefinedDidString}`;
+export type SiweStatementString = `Prove control of 0x${string} to link it to ${DidString}`;
 
 // TODO - make types stricter than just string, where applicable
 export type SiweLexiconObject = {
@@ -39,7 +39,7 @@ export interface AddressControlRecordWithMeta {
 
 // Enriched user data with handle and profile information
 export interface EnrichedUser {
-  did: DefinedDidString;
+  did: DidString;
   handle?: string;
   handleVerified?: boolean; // Whether the handle has been verified to belong to this DID
   displayName?: string;
@@ -172,7 +172,7 @@ export function getDoraTransactionUrl(txHash: string, chainId: number): string {
 }
 
 // Utility functions for user identity resolution
-export function isDidString(input: string): input is DefinedDidString {
+export function isDidString(input: string): input is DidString {
   return input.startsWith('did:plc:') || input.startsWith('did:web:');
 }
 

@@ -1,4 +1,4 @@
-import type { DefinedDidString, EnrichedUser, EnrichedUserCacheEntry, AddressControlRecordWithMeta } from "./common.ts";
+import type { DidString, EnrichedUser, EnrichedUserCacheEntry, AddressControlRecordWithMeta } from "./common.ts";
 import { isDidString } from "./common.ts";
 
 // Cache configuration
@@ -13,11 +13,11 @@ const ENRICHED_CACHE_KEY = 'enriched_users_data_v2';
 const BATCH_SIZE = 20;
 
 interface CacheEntry {
-  data: DefinedDidString[];
+  data: DidString[];
   timestamp: number;
 }
 
-const getCachedData = (): DefinedDidString[] | null => {
+const getCachedData = (): DidString[] | null => {
   try {
     const cached = localStorage.getItem(CACHE_KEY);
     if (!cached) return null;
@@ -41,7 +41,7 @@ const getCachedData = (): DefinedDidString[] | null => {
   }
 };
 
-const setCachedData = (data: DefinedDidString[]): void => {
+const setCachedData = (data: DidString[]): void => {
   try {
     const entry: CacheEntry = {
       data,
@@ -53,7 +53,7 @@ const setCachedData = (data: DefinedDidString[]): void => {
   }
 };
 
-export const fetchUsersWithAddressRecord = async (): Promise<DefinedDidString[]> => {
+export const fetchUsersWithAddressRecord = async (): Promise<DidString[]> => {
   // Check cache first
   const cachedData = getCachedData();
   if (cachedData) {
@@ -61,7 +61,7 @@ export const fetchUsersWithAddressRecord = async (): Promise<DefinedDidString[]>
   }
 
   // Cache miss or expired, fetch new data
-  type ResponseShape = { repos: { did: DefinedDidString }[] };
+  type ResponseShape = { repos: { did: DidString }[] };
   // using regular fetch skips needing OAuth permissions
   const res = await fetch('https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=club.stellz.evm.addressControl');
   const data: ResponseShape = await res.json();
@@ -115,7 +115,7 @@ const setCachedEnrichedData = (data: EnrichedUser[]): void => {
 };
 
 // Batch process DIDs to resolve handles and profile info
-const batchProcessDids = async (dids: DefinedDidString[]): Promise<EnrichedUser[]> => {
+const batchProcessDids = async (dids: DidString[]): Promise<EnrichedUser[]> => {
   const enrichedUsers: EnrichedUser[] = [];
   
   // Process in batches of BATCH_SIZE
@@ -145,7 +145,7 @@ const batchProcessDids = async (dids: DefinedDidString[]): Promise<EnrichedUser[
     );
     
     // Collect handles that need verification
-    const handlesToVerify: Array<{ handle: string; did: DefinedDidString }> = [];
+    const handlesToVerify: Array<{ handle: string; did: DidString }> = [];
     const processedResults = didProcessingResults.map((result) => {
       if (result.status === 'fulfilled' && result.value.candidateHandle) {
         handlesToVerify.push({
@@ -231,7 +231,7 @@ interface DidDocument {
   [key: string]: unknown;
 }
 
-const resolveDid = async (did: DefinedDidString): Promise<DidDocument> => {
+const resolveDid = async (did: DidString): Promise<DidDocument> => {
   const response = await fetch(`https://plc.directory/${did}`);
   if (!response.ok) {
     throw new Error(`Failed to resolve DID: ${response.status}`);
@@ -299,25 +299,25 @@ const resolveHandleWithCache = async (handle: string): Promise<string | null> =>
 };
 
 // Public function to resolve user identifier (handle or DID) to a DID
-export const resolveUserIdentifier = async (identifier: string): Promise<DefinedDidString | null> => {
+export const resolveUserIdentifier = async (identifier: string): Promise<DidString | null> => {
   const trimmed = identifier.trim();
   
   // If it's already a DID, return it
   if (isDidString(trimmed)) {
-    return trimmed as DefinedDidString;
+    return trimmed as DidString;
   }
   
   // If it looks like a handle, resolve it to a DID using cached function
   if (trimmed.includes('.') && !trimmed.startsWith('did:') && trimmed.length > 3) {
     const resolvedDid = await resolveHandleWithCache(trimmed);
-    return resolvedDid && isDidString(resolvedDid) ? resolvedDid as DefinedDidString : null;
+    return resolvedDid && isDidString(resolvedDid) ? resolvedDid as DidString : null;
   }
   
   return null;
 };
 
 // Verify that a handle actually resolves to the expected DID using ATProto
-const verifyHandleOwnership = async (handle: string, expectedDid: DefinedDidString): Promise<boolean> => {
+const verifyHandleOwnership = async (handle: string, expectedDid: DidString): Promise<boolean> => {
   // Check verification cache first
   const cacheKey = `${handle}:${expectedDid}`;
   const cached = verificationCache.get(cacheKey);
@@ -351,7 +351,7 @@ const verifyHandleOwnership = async (handle: string, expectedDid: DefinedDidStri
 const HANDLE_VERIFICATION_BATCH_SIZE = 6;
 
 const batchVerifyHandles = async (
-  handleDidPairs: Array<{ handle: string; did: DefinedDidString }>
+  handleDidPairs: Array<{ handle: string; did: DidString }>
 ): Promise<Map<string, boolean>> => {
   const results = new Map<string, boolean>();
   
@@ -495,7 +495,7 @@ const ADDRESS_RECORDS_CACHE_DURATION = 6 * 60 * 1000; // 6 minutes
 
 // Fetch address control records from user's PDS
 export const fetchAddressControlRecords = async (
-  did: DefinedDidString, 
+  did: DidString, 
   pds: string
 ): Promise<AddressControlRecordWithMeta[]> => {
   const cacheKey = `listRecords_${did}`;
@@ -577,13 +577,13 @@ export const fetchEnrichedUsers = async (): Promise<EnrichedUser[]> => {
 
 // Progressive enrichment function that updates users as data becomes available
 export const enrichUsersProgressively = async (
-  userDids: DefinedDidString[],
+  userDids: DidString[],
   onUpdate: (users: EnrichedUser[]) => void
 ): Promise<void> => {
   // Check if we have cached enriched data first
   const cachedData = getCachedEnrichedData();
   if (cachedData && cachedData.length > 0) {
-    console.log('Using cached enriched data for progressive update');
+    //console.log('using cached enriched data for progressive update');
     // Filter cached data to only include requested users
     const requestedCachedUsers = cachedData.filter(user => userDids.includes(user.did));
     if (requestedCachedUsers.length === userDids.length) {
@@ -637,7 +637,7 @@ export const enrichUsersProgressively = async (
     );
     
     // Collect handles that need verification
-    const handlesToVerify: Array<{ handle: string; did: DefinedDidString }> = [];
+    const handlesToVerify: Array<{ handle: string; did: DidString }> = [];
     const processedResults = didProcessingResults.map((result) => {
       if (result.status === 'fulfilled') {
         if (result.value.candidateHandle) {

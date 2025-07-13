@@ -238,7 +238,7 @@ export const fetchTokenBalancesForChain = async (
 
   // Cache the results
   tokenBalanceCache.set(cacheKey, balances);
-  console.log('cached token balances for', address, 'on chain', chainId);
+  //console.log('cached token balances for', address, 'on chain', chainId);
 
   return balances;
 };

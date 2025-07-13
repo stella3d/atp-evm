@@ -14,7 +14,7 @@ import {
   QueryClientProvider,
   QueryClient,
 } from "@tanstack/react-query";
-import { uid, type DefinedDidString, type DidString } from './common.ts';
+import { uid, type DidString, type MaybeDidString } from './common.ts';
 import WalletOptions from './WalletOptions.tsx';
 import { serializeSiweAddressControlRecord, writeAddressControlRecord } from './recordWrite.ts';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
@@ -34,10 +34,10 @@ export const config = getDefaultConfig({
 
 // Generates a SIWE statement for linking an Ethereum address to a DID.
 // the message MUST be in this format in order to be verified by a client.
-export const makeSiweStatement = (address: `0x${string}`, did: DefinedDidString): SiweStatementString =>
+export const makeSiweStatement = (address: `0x${string}`, did: DidString): SiweStatementString =>
   `Prove control of ${address} to link it to ${did}`;
 
-export const makeSiweMessage = (did: DefinedDidString, address: `0x${string}`, chainId: number = 1): SiweMessage => {
+export const makeSiweMessage = (did: DidString, address: `0x${string}`, chainId: number = 1): SiweMessage => {
   return {
     domain: window.location.host,
     address,
@@ -64,8 +64,7 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 		mutation: {
 			onSuccess: async (sig, { message }) => {
         if (!account?.address) 
-          return console.warn(NO_ACCOUNT_ERROR);
-
+          return console.error(NO_ACCOUNT_ERROR);
         if (!siweMsg) 
           return console.error('SIWE message is not initialized before signing!');
         if (typeof message !== 'string')
@@ -167,7 +166,7 @@ export function ConnectWallet() {
   return <WalletOptions />
 }
 
-export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticated: boolean, did: DidString | undefined, oauth: OAuthSession }) => {
+export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticated: boolean, did: MaybeDidString | undefined, oauth: OAuthSession }) => {
   const queryClient = new QueryClient();
 
   return (

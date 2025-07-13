@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { isAddress } from 'viem';
 import { useAccount, WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { EnrichedUser, AddressControlRecordWithMeta, DefinedDidString } from "../../shared/common.ts";
+import type { EnrichedUser, AddressControlRecordWithMeta, DidString } from "../../shared/common.ts";
 import { getChainName, getChainColor, getChainGradient, aggregateWallets } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import { checkLinkValidityMinimal, type AddressControlVerificationChecks } from "../../shared/verify.ts";
@@ -18,7 +18,7 @@ import './UserDetailCard.css';
 interface UserDetailCardProps {
   selectedUser: EnrichedUser;
   onClose?: () => void;
-  triggerPayment?: DefinedDidString | null; // DID to trigger payment for
+  triggerPayment?: DidString | null; // DID to trigger payment for
 }
 
 // Inner component that uses wagmi hooks

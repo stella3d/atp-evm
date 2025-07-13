@@ -9,7 +9,7 @@ import { OAuthSession } from "@atproto/oauth-client-browser";
 import { SearchUsers } from "./send/SearchUsers.tsx";
 import { UserDetailCard } from "./send/UserDetailCard.tsx";
 import { WalletConnectionCard } from './send/WalletConnectionCard.tsx';
-import type { DefinedDidString, EnrichedUser } from "../shared/common.ts";
+import type { DidString, EnrichedUser } from "../shared/common.ts";
 import { config } from '../shared/WalletConnector.tsx';
 import { TokenBalancesProvider, TokenBalanceLoader } from '../shared/TokenBalanceProvider.tsx';
 
@@ -21,7 +21,7 @@ function SendApp() {
   const [enrichedUsers, setEnrichedUsers] = useState<EnrichedUser[]>([]);
   const [preSelectedUser, setPreSelectedUser] = useState<string | undefined>(undefined);
   const [shouldOpenPayment, setShouldOpenPayment] = useState<boolean>(false);
-  const [triggerPayment, setTriggerPayment] = useState<DefinedDidString | null>(null);
+  const [triggerPayment, setTriggerPayment] = useState<DidString | null>(null);
 
   // Extract URL parameters on component mount
   useEffect(() => {
@@ -46,7 +46,7 @@ function SendApp() {
     fetchSession();
   }, []);
 
-  const handleUserSelect = (userDid: DefinedDidString) => {
+  const handleUserSelect = (userDid: DidString) => {
     const enrichedUser = enrichedUsers.find(user => user.did === userDid);
     setSelectedUser(enrichedUser || { did: userDid });
   };
@@ -66,7 +66,7 @@ function SendApp() {
     setSelectedUser(null);
   };
 
-  const handleTriggerPayment = (userDid: DefinedDidString) => {
+  const handleTriggerPayment = (userDid: DidString) => {
     setTriggerPayment(userDid);
     // Reset after a short delay to prevent modal from reopening
     setTimeout(() => setTriggerPayment(null), 1000);
