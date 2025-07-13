@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { isAddress } from 'viem';
 import { useAccount, WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { EnrichedUser, AddressControlRecord, DefinedDidString } from "../../shared/common.ts";
+import type { EnrichedUser, AddressControlRecordWithMeta, DefinedDidString } from "../../shared/common.ts";
 import { getChainName, getChainColor, getChainGradient, aggregateWallets } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
-import type { AddressControlVerificationChecks } from "../../shared/verify.ts";
+import { checkLinkValidityMinimal, type AddressControlVerificationChecks } from "../../shared/verify.ts";
 import { PaymentModal } from "./PaymentModal.tsx";
 import { AddressLink } from "../../shared/AddressLink.tsx";
 import { AtprotoUserCard, UserCardVariant } from "../../shared/AtprotoUserCard.tsx";
 import { ConnectWallet } from "../../shared/WalletConnector.tsx";
 import { config } from '../../shared/WalletConnector.tsx';
 import { ProfileDetails } from "./ProfileDetails.tsx";
-import { ValidationChecks } from "./ValidationChecks.tsx";
+import { ValidationChecks, isCriticalValidationFailure } from "./ValidationChecks.tsx";
 import './UserDetailCard.css';
 
 interface UserDetailCardProps {
@@ -24,7 +24,7 @@ interface UserDetailCardProps {
 // Inner component that uses wagmi hooks
 const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onClose, triggerPayment }) => {
   const { isConnected } = useAccount();
-  const [addressRecords, setAddressRecords] = useState<AddressControlRecord[]>([]);
+  const [addressRecords, setAddressRecords] = useState<AddressControlRecordWithMeta[]>([]);
   const [loadingRecords, setLoadingRecords] = useState(false);
   const [recordsError, setRecordsError] = useState<string | null>(null);
   const [validationResults, setValidationResults] = useState<Map<string, AddressControlVerificationChecks>>(new Map());
@@ -39,9 +39,8 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
   });
   // Track selected chain per address record
   const [selectedChains, setSelectedChains] = useState<Record<string, number>>({});
-
   // Flag to show/hide validation checks
-  const showValidationChecks = false;
+  const showValidationChecks = true;
 
   // Initialize default selected chain when addressRecords change
   useEffect(() => {
@@ -104,20 +103,16 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         const validationMap = new Map<string, AddressControlVerificationChecks>();
         for (const record of deduplicatedRecords) {
           try {
-            validationMap.set(record.uri, {
-              statementMatches: null,
-              siweSignatureValid: null, // placeholder before actual verification
-              merkleProofValid: null,
-              domainIsTrusted: record.value?.siwe?.domain === 'wallet-link.stellz.club'
-            });
+            const validationResults = await checkLinkValidityMinimal(selectedUser.did, record.value);
+            console.log('validation for record', record.uri, validationResults);
+            validationMap.set(record.uri, validationResults);
           } catch (error) {
             console.error('failed to validate record:', record.uri, error);
             // set default failed validation
             validationMap.set(record.uri, {
               statementMatches: false,
               siweSignatureValid: false,
-              merkleProofValid: null,
-              domainIsTrusted: false
+              merkleProofValid: null
             });
           }
         }
@@ -183,7 +178,11 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                 };
 
                 return (
-                  <div key={record.uri || index} className="address-record">
+                  <div key={record.uri || index} className={`address-record ${(() => {
+                    const validation = validationResults.get(record.uri);
+                    const isCriticalFailure = validation && isCriticalValidationFailure(validation);
+                    return isCriticalFailure ? 'critical-failure' : '';
+                  })()}`}>
                     <div className="address-info">
                       <div className="address-header">
                         {isAddress(address) ? (
@@ -192,6 +191,23 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                           <div className="address-value">{address}</div>
                         )}
                       </div>
+                      {showValidationChecks && validationResults.has(record.uri) && (
+                        <>
+                          {(() => {
+                            const validation = validationResults.get(record.uri);
+                            const isCriticalFailure = validation && isCriticalValidationFailure(validation);
+                            
+                            return isCriticalFailure ? (
+                              <div className="warning strong" style={{ marginBottom: '8px' }}>
+                                🚨 This link failed validation and may be malicious 🚨
+                              </div>
+                            ) : null;
+                          })()}
+                          <ValidationChecks 
+                            validation={validationResults.get(record.uri)!}
+                          />
+                        </>
+                      )}
                       {issuedAt && (
                         <div>
                         <div style={{ color: 'gray', fontWeight: 720 }}>signed on</div>
@@ -217,17 +233,14 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         </div>
                         </div>
                       )}
-                      
-                      {showValidationChecks && validationResults.has(record.uri) && (
-                        <ValidationChecks 
-                          validation={validationResults.get(record.uri)!}
-                        />
-                      )}
                     </div>
                     
                     <div className="send-buttons-container">
-                      {/* Dropdown + Send button */}
+                      {/* Check if validation failed for critical checks */}
                       {(() => {
+                        const validation = validationResults.get(record.uri);
+                        const isCriticalFailure = validation && isCriticalValidationFailure(validation);
+                        
                         const siwe = record.value.siwe;
                         const on = Number(siwe.chainId);
 
@@ -237,17 +250,22 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                         const chainIds = Array.from(new Set([on, ...alsoOn]));
 
                         const selected = selectedChains[record.uri] ?? chainIds[0];
+                        
                         return (
                           <div className="send-controls">
                             <button
                               type="button"
-                              className="send-payment-button"
+                              className={`send-payment-button ${isCriticalFailure ? 'disabled' : ''}`}
                               style={{
-                                background: getChainGradient(selected),
+                                background: isCriticalFailure ? '#6c757d' : getChainGradient(selected),
                                 color: 'white',
-                                filter: 'blur(0.25px)'
+                                filter: isCriticalFailure ? 'none' : 'blur(0.25px)',
+                                cursor: isCriticalFailure ? 'not-allowed' : 'pointer',
+                                opacity: isCriticalFailure ? 0.6 : 1
                               }}
+                              disabled={isCriticalFailure}
                               onClick={() => {
+                                if (isCriticalFailure) return;
                                 if (!isConnected) {
                                   alert('Please connect your wallet first to send payments');
                                   return;
@@ -265,11 +283,14 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                             <select
                               value={selected}
                               onChange={e => setSelectedChains(prev => ({ ...prev, [record.uri]: Number(e.target.value) }))}
-                              className="chain-select"
+                              className={`chain-select ${isCriticalFailure ? 'disabled' : ''}`}
                               style={{
-                                backgroundColor: getChainColor(selected),
-                                color: 'white'
+                                backgroundColor: isCriticalFailure ? '#6c757d' : getChainColor(selected),
+                                color: 'white',
+                                cursor: isCriticalFailure ? 'not-allowed' : 'pointer',
+                                opacity: isCriticalFailure ? 0.6 : 1
                               }}
+                              disabled={isCriticalFailure}
                             >
                               {chainIds.map(id => (
                                 <option key={id} value={id}>

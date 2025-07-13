@@ -19,7 +19,7 @@ import WalletOptions from './WalletOptions.tsx';
 import { serializeSiweAddressControlRecord, writeAddressControlRecord } from './recordWrite.ts';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
 import { useState } from 'react';
-import type { SiweStatementString } from './siwe.ts';
+import type { SiweStatementString } from './common.ts';
 import AtUriLink from './AtUriLink.tsx'; // added import for the new component
 import { createSiweMessage, verifySiweMessage, type SiweMessage } from 'viem/siwe';
 import { createPublicClient, http } from 'viem';
