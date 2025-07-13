@@ -280,10 +280,9 @@ const resolveHandleWithCache = async (handle: string): Promise<string | null> =>
       `https://public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(handle)}`
     );
     
-    if (!response.ok) {
-      console.warn(`Failed to resolve handle ${handle}: ${response.status}`);
+    if (!response.ok) // if their handle doesn't resolve, don't show the profile
       return null;
-    }
+    
     
     const data = await response.json();
     const resolvedDid = data.did;
@@ -677,18 +676,16 @@ export const enrichUsersProgressively = async (
       }
     }
     
-    // Now create enriched users using the batched profile data
+    // now create enriched users using the batched profile data
     const finalResults = processedResults.map(({ actualIndex, did, candidateHandle, pds }) => {
       let handle: string | undefined = undefined;
       let profileData: BskyProfileMinimal | null = null;
       
-      // Only use handle if it was verified
+      // only use handle if it was verified
       if (candidateHandle && verificationResults.get(candidateHandle) === true) {
         handle = candidateHandle;
         profileData = allProfileData.get(handle) || null;
-      } else if (candidateHandle) {
-        console.warn(`Handle ${candidateHandle} failed verification for DID ${did} - hiding profile`);
-      }
+      } 
       
       return {
         index: actualIndex,
