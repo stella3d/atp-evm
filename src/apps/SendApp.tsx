@@ -1,4 +1,5 @@
 import '../App.css'
+import './SendApp.css'
 import { useEffect, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -75,27 +76,30 @@ function SendApp() {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <TokenBalancesProvider>
-          <h1>ATPay</h1>
-          <p>This demo lets you send value to a recipient based on their ATProto identity & linked Ethereum wallet.</p>
-          <p style={{ color: 'coral', fontWeight: 'bold' }}>IF YOU ARE USING THIS FROM A PUBLIC URL, IT IS PRE-RELEASE SOFTWARE</p>
-          <div className="app-container">
-            <SearchUsers 
-              onUserSelect={handleUserSelect} 
-              onUsersUpdate={handleUsersUpdate}
-              preSelectedUser={preSelectedUser}
-              shouldOpenPayment={shouldOpenPayment}
-              onTriggerPayment={handleTriggerPayment}
-            />
-            <WalletConnectionCard />
-            {selectedUser && (
-              <UserDetailCard 
-                selectedUser={selectedUser} 
-                onClose={handleCloseCard}
-                triggerPayment={triggerPayment}
-              />
-            )}
-            <TokenBalanceLoader />
+          <div id="app-header">
+            <h1 style={{ fontFamily: 'sans-serif' }}>AT Pay</h1>
+            <p>This demo lets you send value to a recipient based on their ATProto identity & linked Ethereum wallet.</p>
+            <p style={{ color: 'red', fontWeight: 'bold', fontSize: '18px' }}>THIS IS PRE-RELEASE SOFTWARE.</p>
+            <p style={{ color: 'lightgray' }}>While it should be secure now, please keep this in mind.</p>
           </div>
+          <div className="app-container">
+              <SearchUsers 
+                onUserSelect={handleUserSelect} 
+                onUsersUpdate={handleUsersUpdate}
+                preSelectedUser={preSelectedUser}
+                shouldOpenPayment={shouldOpenPayment}
+                onTriggerPayment={handleTriggerPayment}
+              />
+              <WalletConnectionCard />
+              {selectedUser && (
+                <UserDetailCard 
+                  selectedUser={selectedUser} 
+                  onClose={handleCloseCard}
+                  triggerPayment={triggerPayment}
+                />
+              )}
+              <TokenBalanceLoader />
+            </div>
         </TokenBalancesProvider>
       </QueryClientProvider>
     </WagmiProvider>

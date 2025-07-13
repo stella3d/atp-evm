@@ -75,12 +75,10 @@ const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: strin
       address: '0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42',
       ...EURC_SHARED_INFO
     },
-    /*
     {
-      address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+      address: '0x50c5725949a6f0c72e6c4a641f24049a917db0cb',
       ...DAI_SHARED_INFO
     }
-    */  
   ],
   10: [ // Optimism
     { 

@@ -81,6 +81,11 @@ export const ValidationChecks: React.FC<ValidationChecksProps> = ({ validation }
 
   const { passed, total } = getPassedChecks();
   const validationStatus = getValidationStatus();
+  const isCriticalFailure = validationStatus === RecordValidationStatus.CRITICAL_FAILURE;
+  // only show the dropdown if there's a critical failure
+  if (!isCriticalFailure) {
+    return null;
+  }
 
   return (
     <div className="safety-checklist-inline">
