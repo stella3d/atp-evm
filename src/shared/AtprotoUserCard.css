@@ -150,6 +150,9 @@
   line-height: 1.1;
   text-align: left;
   margin: 0;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .at-user-card.profile .at-handle {
@@ -159,6 +162,9 @@
   color: #536471;
   text-align: left;
   margin-bottom: 0;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 /* Handle verification warning */
@@ -271,5 +277,20 @@
 
   .recipient-info .at-did {
     font-size: 9px;
+  }
+}
+
+/* Mobile-specific word breaking for handles */
+@media (max-width: 768px) {
+  .at-handle {
+    word-wrap: break-word;
+    hyphens: auto;
+    white-space: normal;
+  }
+
+  .at-user-card.profile .at-handle {
+    word-wrap: break-word;
+    hyphens: auto;
+    white-space: normal;
   }
 }
