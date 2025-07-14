@@ -12,10 +12,10 @@ export const TransactionPending: React.FC<TransactionPendingProps> = ({
     <div className="step-sending">
       <div className="loading-spinner">⏳</div>
       <h4>Transaction Sent</h4>
-      <p>Waiting for confirmation...</p>
+      <p>Your payment is being processed on the blockchain. This usually takes a few seconds.</p>
       {txHash && (
         <div className="tx-hash">
-          <div>Transaction Hash:</div>
+          <div style={{ marginBottom: '8px', fontWeight: '500' }}>Transaction Hash:</div>
           <TransactionHash txHash={txHash} />
         </div>
       )}

@@ -89,7 +89,7 @@ export const TransactionError: React.FC<TransactionErrorProps> = ({
         <p>
           {errorType === ErrorType.USER_REJECTED ? 'You cancelled the transaction in your wallet. No worries - you can try again when ready.' :
            errorType === ErrorType.WRONG_CHAIN ? renderWrongChainError(error || '') :
-           errorType === ErrorType.INSUFFICIENT_FUNDS ? 'You don\'t have enough funds to complete this transaction. Please check your balance.' :
+           errorType === ErrorType.INSUFFICIENT_FUNDS ? 'You don\'t have enough funds to complete this transaction. Please check your balance and try again.' :
            error}
         </p>
       )}

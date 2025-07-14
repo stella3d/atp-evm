@@ -1092,6 +1092,7 @@
   cursor: not-allowed;
   animation: none;
   opacity: 1;
+  box-shadow: none;
 }
 
 .back-button, .cancel-button {
@@ -1120,6 +1121,7 @@
 
   .confirm-button:disabled, .send-button:disabled {
     background: #495057;
+    box-shadow: none;
   }
 
   .back-button, .cancel-button {
@@ -1164,17 +1166,74 @@
 
 .step-sending, .step-success, .step-error {
   text-align: center;
-  padding: 20px 0;
+  padding: 32px 24px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.step-sending h4, .step-success h4, .step-error h4 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.step-sending p, .step-success p, .step-error p {
+  margin: 0;
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.5;
+  max-width: 300px;
 }
 
 .loading-spinner {
-  font-size: 2rem;
-  margin-bottom: 16px;
+  font-size: 3rem;
+  margin: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
 }
 
 .success-icon, .error-icon {
-  font-size: 3rem;
-  margin-bottom: 16px;
+  font-size: 4rem;
+  margin: 0;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.tx-hash {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 8px 0;
+  font-size: 0.9rem;
+  color: #475569;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tx-hash-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.tx-hash-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
 }
 
 .chain-help {
@@ -1213,17 +1272,26 @@
     background: #2a2a2a;
   }
 
+  .step-sending h4, .step-success h4, .step-error h4 {
+    color: #ffffff;
+  }
+
+  .step-sending p, .step-success p, .step-error p {
+    color: #cbd5e1;
+  }
+
   .tx-hash {
-    background: #2a2a2a;
-    color: #fff;
+    background: #1e293b;
+    border: 1px solid #475569;
+    color: #e2e8f0;
   }
 
   .tx-hash-link {
-    color: #66b3ff;
+    color: #60a5fa;
   }
 
   .tx-hash-link:hover {
-    color: #99ccff;
+    color: #93c5fd;
   }
 
   /* Success and error state improvements */
