@@ -1414,30 +1414,9 @@
   }
 }
 
-@media (max-width: 332px) {
-  .recipient-address-display code {
-    font-size: 0.96em !important;
-  }
-}
-
 @media (max-width: 319px) {
-  .recipient-address-display code {
-    font-size: 0.94em !important;
-  }
   .recipient-info .at-did {
     font-size: 8px;
-  }
-}
-
-@media (max-width: 311px) {
-  .recipient-address-display code {
-    font-size: 0.92em !important;
-  }
-}
-
-@media (max-width: 306px) {
-  .recipient-address-display code {
-    font-size: 0.9em !important;
   }
 }
 
@@ -1480,6 +1459,18 @@
 @media (max-width: 344px) {
   .recipient-address-display code {
     font-size: 11px;
+  }
+}
+
+@media (max-width: 332px) {
+  .recipient-address-display code {
+    font-size: 10.5px;
+  }
+}
+
+@media (max-width: 320px) {
+  .recipient-address-display code {
+    font-size: 10px;
   }
 }
 
