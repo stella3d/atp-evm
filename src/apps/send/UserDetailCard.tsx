@@ -6,6 +6,7 @@ import type { EnrichedUser, AddressControlRecordWithMeta, DidString } from "../.
 import { getChainName, getChainColor, getChainGradient, aggregateWallets } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import { checkLinkValidityMinimal, type AddressControlVerificationChecks } from "../../shared/verify.ts";
+import { LocalstorageTtlCache } from "../../shared/LocalstorageTtlCache.ts";
 import { PaymentModal } from "./PaymentModal.tsx";
 import { AddressLink } from "../../shared/AddressLink.tsx";
 import { AtprotoUserCard, UserCardVariant } from "../../shared/AtprotoUserCard.tsx";
@@ -20,6 +21,15 @@ interface UserDetailCardProps {
   onClose?: () => void;
   triggerPayment?: DidString | null; // DID to trigger payment for
 }
+
+// Cache for validation results with 1 month TTL
+const validationCache = new LocalstorageTtlCache<AddressControlVerificationChecks>(21 * 24 * 60 * 60 * 1000); // 3 weeks in ms
+
+type AtUriString = `at://${string}`;
+// Generate cache key for validation results
+const getValidationCacheKey = (recordUri: AtUriString): `validation:${AtUriString}` => {
+  return `validation:${recordUri}`;
+};
 
 // Inner component that uses wagmi hooks
 const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onClose, triggerPayment }) => {
@@ -100,7 +110,19 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         const validationMap = new Map<string, AddressControlVerificationChecks>();
         for (const record of deduplicatedRecords) {
           try {
-            const validationResults = await checkLinkValidityMinimal(selectedUser.did, record.value);
+            // Check cache first
+            const cacheKey = getValidationCacheKey(record.uri);
+            let validationResults = validationCache.get(cacheKey);
+            
+            if (validationResults) {
+              //console.log('using cached validation for record', record.uri);
+            } else {
+              // Not in cache, perform validation and cache the result
+              //console.log('performing new validation for record', record.uri);
+              validationResults = await checkLinkValidityMinimal(selectedUser.did, record.value);
+              validationCache.set(cacheKey, validationResults);
+            }
+            
             //console.log('validation for record', record.uri, validationResults);
             validationMap.set(record.uri, validationResults);
           } catch (error) {

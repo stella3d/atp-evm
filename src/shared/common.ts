@@ -33,7 +33,7 @@ export type AddressControlRecord = {
 
 // Address control record from the user's PDS
 export interface AddressControlRecordWithMeta {
-  uri: string;
+  uri: `at://${string}`;
   value: AddressControlRecord;
 }
 
