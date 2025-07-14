@@ -280,6 +280,63 @@
   }
 }
 
+@media (max-width: 378px) {
+  .at-user-card.profile .at-name {
+    font-size: 19px;
+  }
+  .search-users .users-list .at-name {
+    font-size: 19px;
+  }
+  .search-users .users-list .at-handle {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 334px) {
+  .at-avatar,
+  .at-avatar-placeholder {
+    width: 64px;
+    height: 64px;
+  }
+
+  .at-avatar-placeholder {
+    font-size: 18px;
+  }
+
+  .at-user-card.profile .at-handle {
+    font-size: 16px;
+  }
+
+  .at-user-card.profile .at-name {
+    font-size: 18px;
+  }
+
+  .at-user-card.profile .at-did {
+    font-size: 11px;
+  }
+
+  .recipient-info .at-did {
+    font-size: 8.5px;
+  }
+
+  .search-users .users-list .at-handle {
+    font-size: 17px;
+  }
+  .search-users .users-list .at-name {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 320px) {
+  .at-user-card.profile .at-handle {
+    font-size: 15px;
+  }
+
+  .at-user-card.profile .at-name {
+    font-size: 17px;
+  }
+}
+
 /* Mobile-specific word breaking for handles */
 @media (max-width: 768px) {
   .at-handle {
