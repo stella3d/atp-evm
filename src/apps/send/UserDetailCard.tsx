@@ -160,7 +160,22 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
             <div className="no-records">No Ethereum addresses found</div>
           ) : (
             <div className="records-list">
-              {addressRecords.map((record, index) => {
+              {addressRecords
+                .sort((a, b) => {
+                  // Sort records so that valid ones come first and critical failures come last
+                  const validationA = validationResults.get(a.uri);
+                  const validationB = validationResults.get(b.uri);
+                  const isCriticalFailureA = validationA && isCriticalValidationFailure(validationA);
+                  const isCriticalFailureB = validationB && isCriticalValidationFailure(validationB);
+                  
+                  // If A is critical failure but B is not, B should come first
+                  if (isCriticalFailureA && !isCriticalFailureB) return 1;
+                  // If B is critical failure but A is not, A should come first
+                  if (!isCriticalFailureA && isCriticalFailureB) return -1;
+                  // If both are same validation status, maintain original order
+                  return 0;
+                })
+                .map((record, index) => {
                 const val = record.value;
                 // Extract address from the SIWE structure
                 const address = val.siwe.address;
