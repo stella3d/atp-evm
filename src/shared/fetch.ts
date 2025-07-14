@@ -1,5 +1,6 @@
 import type { DidString, EnrichedUser, EnrichedUserCacheEntry, AddressControlRecordWithMeta } from "./common.ts";
 import { isDidString } from "./common.ts";
+import { LocalstorageTtlCache } from "./LocalstorageTtlCache.ts";
 
 // Cache configuration
 const CACHE_DURATION = import.meta.env.DEV 
@@ -27,7 +28,7 @@ const getCachedData = (): DidString[] | null => {
     
     // Check if cache is still valid
     if ((now - entry.timestamp) < CACHE_DURATION) {
-      //console.log('using cached users data from localStorage');
+      console.log('using cached users data from localStorage');
       return entry.data;
     } else {
       // Cache expired, remove it
@@ -231,12 +232,30 @@ interface DidDocument {
   [key: string]: unknown;
 }
 
+// DID document cache with 30 minute TTL
+const didDocumentCache = new LocalstorageTtlCache<DidDocument>(30 * 60 * 1000);
+
 const resolveDid = async (did: DidString): Promise<DidDocument> => {
+  // Check cache first
+  const cacheKey = `${did}_doc`;
+  const cachedDidDoc = didDocumentCache.get(cacheKey);
+  if (cachedDidDoc) {
+    //console.log(`using cached DID document for ${did}`);
+    return cachedDidDoc;
+  }
+  
+  // Cache miss - fetch from network
   const response = await fetch(`https://plc.directory/${did}`);
   if (!response.ok) {
     throw new Error(`Failed to resolve DID: ${response.status}`);
   }
-  return response.json();
+  
+  const didDoc = await response.json();
+  
+  // Cache the result
+  didDocumentCache.set(cacheKey, didDoc);
+  
+  return didDoc;
 };
 
 // Extract handle from DID document (UNSAFE - needs verification)
