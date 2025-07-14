@@ -79,15 +79,11 @@
   gap: 0px;
 }
 
-.users-list .atpro
-
 @media (max-width: 372px) {
   .users-list {
     max-height: 250px;
   }
 }
-
-
 
 /* Webkit-based browsers (Chrome, Safari) */
 .users-list::-webkit-scrollbar {
