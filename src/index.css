@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 @media (max-width: 720px) {
   #root {
     padding: 0.8rem 0.7rem 0.8rem 0.7rem !important;
@@ -5,9 +7,39 @@
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* Modern font stack */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  
+  /* Typography scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  
+  /* Font weights */
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  
+  /* Letter spacing for futuristic feel */
+  --letter-tight: -0.025em;
+  --letter-normal: 0em;
+  --letter-wide: 0.025em;
+  --letter-wider: 0.05em;
+  --letter-widest: 0.1em;
+
+  font-family: var(--font-primary);
   line-height: 1.5;
-  font-weight: 400;
+  font-weight: var(--font-normal);
+  letter-spacing: var(--letter-tight);
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -20,9 +52,10 @@
 }
 
 a {
-  font-weight: 500;
+  font-weight: var(--font-medium);
   color: #646cff;
   text-decoration: inherit;
+  letter-spacing: var(--letter-tight);
 }
 a:hover {
   color: #535bf2;
@@ -34,20 +67,42 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  font-family: var(--font-primary);
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: var(--text-4xl);
   line-height: 1.1;
+  font-weight: var(--font-bold);
+  letter-spacing: var(--letter-tight);
+}
+
+h2 {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--letter-tight);
+}
+
+h3 {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--letter-tight);
+}
+
+h4 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--letter-tight);
 }
 
 button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  font-family: var(--font-primary);
+  letter-spacing: var(--letter-wide);
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;

@@ -74,8 +74,10 @@
 .card-header h3 {
   margin: 0;
   color: rgba(139, 156, 168, 0.8) !important;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  font-family: var(--font-primary);
+  letter-spacing: var(--letter-tight);
   text-align: center;
 }
 
@@ -117,9 +119,12 @@
 }
 
 .profile-description {
-  font-size: 14px;
+  font-size: var(--text-sm);
+  font-family: var(--font-primary);
+  font-weight: var(--font-normal);
   color: #0f1419;
-  line-height: 1.4;
+  line-height: 1.5;
+  letter-spacing: var(--letter-normal);
   margin: 4px 0 0 0;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -169,17 +174,22 @@
 }
 
 .stat-label {
-  font-size: 11px;
+  font-size: var(--text-xs);
+  font-family: var(--font-primary);
+  font-weight: var(--font-medium);
   color: #536471;
-  font-weight: 500;
+  letter-spacing: var(--letter-wider);
+  text-transform: uppercase;
   margin-bottom: 2px;
   line-height: 1;
 }
 
 .stat-value {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--text-sm);
+  font-family: var(--font-primary);
+  font-weight: var(--font-semibold);
   color: #0f1419;
+  letter-spacing: var(--letter-tight);
   line-height: 1.2;
 }
 
@@ -212,22 +222,26 @@
 }
 
 .user-did {
-  font-family: monospace;
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-normal);
   color: #536471;
+  letter-spacing: var(--letter-normal);
   word-break: break-all;
   margin-bottom: 4px;
   text-align: center !important;
 }
 
 .user-did-display {
-  font-family: monospace;
-  font-size: 14px;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-normal);
   color: #0f1419;
   background: #f7f9fa;
   padding: 12px;
   border-radius: 6px;
   border: 1px solid #e1e5e9;
+  letter-spacing: var(--letter-normal);
   word-break: break-all;
 }
 
@@ -237,16 +251,21 @@
 
 .address-records label {
   display: block;
-  font-size: 20px;
-  font-weight: 720;
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  font-family: var(--font-primary);
   color: #536471;
+  letter-spacing: var(--letter-tight);
   margin-bottom: 8px;
 }
 
 .loading-records, .records-error, .no-records {
   padding: 12px;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: var(--text-sm);
+  font-family: var(--font-primary);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--letter-normal);
   text-align: center;
 }
 
@@ -308,10 +327,11 @@
 }
 
 .address-value {
-  font-family: monospace;
-  font-size: 14px;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
   color: #0f1419;
+  letter-spacing: var(--letter-normal);
   word-break: break-all;
   flex-shrink: 0;
 }
@@ -320,8 +340,9 @@
 .address-value.address-link {
   color: inherit;
   text-decoration: none;
-  font-family: monospace;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--letter-normal);
   display: block;
   padding: 2px 4px;
   border-radius: 4px;
@@ -362,23 +383,31 @@
 }
 
 .metadata-label {
-  font-size: 14px;
+  font-size: var(--text-sm);
+  font-family: var(--font-primary);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--letter-normal);
   line-height: 1;
   margin-bottom: 2px;
 }
 
 .chain-info {
   color: #1d9bf0;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--text-xs);
+  font-family: var(--font-primary);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--letter-wide);
   text-align: center;
   word-wrap: break-word;
   line-height: 1.2;
 }
 
 .address-meta-value {
-  font-size: 12px;
+  font-size: var(--text-xs);
+  font-family: var(--font-primary);
+  font-weight: var(--font-normal);
   color: gray;
+  letter-spacing: var(--letter-normal);
   text-align: center;
   word-wrap: break-word;
   line-height: 1.2;
@@ -390,8 +419,10 @@
   border: none;
   border-radius: 8px;
   padding: 7px 11px;
-  font-size: 28px;
-  font-weight: 720;
+  font-size: 1.75rem;
+  font-weight: var(--font-bold);
+  font-family: var(--font-primary);
+  letter-spacing: var(--letter-wide);
   cursor: pointer;
   transition: background-color 0.2s;
   white-space: nowrap;
@@ -902,9 +933,11 @@
 }
 
 .chain-label {
-  font-size: 16px;
+  font-size: var(--text-base);
+  font-family: var(--font-primary);
+  font-weight: var(--font-semibold);
   color: darkgray;
-  font-weight: 600;
+  letter-spacing: var(--letter-wide);
   white-space: nowrap;
 }
 

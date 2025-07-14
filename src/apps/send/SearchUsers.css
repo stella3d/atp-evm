@@ -33,8 +33,10 @@
   padding: 16px 20px;
   border: 2px solid #e1e5e9;
   border-radius: 12px;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  font-family: var(--font-primary);
+  letter-spacing: var(--letter-tight);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: white;
   color: #0f1419;
@@ -52,18 +54,26 @@
 
 .search-input::placeholder {
   color: #8b98a5;
-  font-weight: 400;
+  font-weight: var(--font-normal);
+  font-family: var(--font-primary);
+  letter-spacing: var(--letter-normal);
 }
 
 .users-count {
   color: #536471;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  font-family: var(--font-primary);
+  letter-spacing: var(--letter-wide);
 }
 
 .enriching-indicator {
   color: #1d9bf0;
-  font-size: 12px;
+  font-size: var(--text-xs);
+  font-family: var(--font-primary);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--letter-wider);
+  text-transform: uppercase;
   animation: pulse 2s infinite;
 }
 
@@ -167,8 +177,10 @@
   align-items: center;
   justify-content: center;
   color: white;
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: var(--font-semibold);
+  font-family: var(--font-primary);
+  font-size: var(--text-lg);
+  letter-spacing: var(--letter-wide);
 }
 
 .user-info {
@@ -177,22 +189,29 @@
 }
 
 .user-handle {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  font-family: var(--font-primary);
   color: #0f1419;
+  letter-spacing: var(--letter-tight);
   margin-bottom: 2px;
 }
 
 .user-display-name {
-  font-size: 14px;
+  font-size: var(--text-sm);
+  font-family: var(--font-primary);
+  font-weight: var(--font-normal);
   color: #536471;
+  letter-spacing: var(--letter-normal);
   margin-bottom: 4px;
 }
 
 .user-did {
-  font-family: monospace;
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-normal);
   color: #8b98a5;
+  letter-spacing: var(--letter-normal);
   word-break: break-all;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -203,6 +222,10 @@
   padding: 32px;
   text-align: center;
   color: #536471;
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--letter-normal);
 }
 
 .error {
