@@ -4,22 +4,47 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
 }
 
 .payment-modal {
   background: white;
-  border-radius: 16px;
+  border-radius: 20px;
   max-width: 448px;
   min-width: 268px;
   width: 90vw;
   max-height: 96vh;
   overflow-y: auto;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
 }
 
 .payment-modal input {
@@ -598,19 +623,26 @@
 }
 
 .token-list {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid #e8ecf0;
+  border-radius: 12px;
   overflow: hidden;
+  background: #fafbfc;
 }
 
 .token-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: 12px 16px;
   cursor: pointer;
-  transition: background-color 0.2s;
-  border-bottom: 1px solid #eee;
+  transition: all 0.2s ease;
+  border-bottom: none;
+  border-radius: 8px;
+  margin: 4px 8px;
+  position: relative;
+  background: white;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0);
+  border: 2px solid transparent;
 }
 
 .token-item:last-child {
@@ -618,17 +650,14 @@
 }
 
 .token-item:hover {
-  background: #f8f9fa;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .token-item.selected {
-  background: #e3f2fd;
-  border-color: #2196f3;
-}
-
-/* Enhanced token item selected state */
-.token-item.selected {
-  box-shadow: 0 0 0 1px #3b82f6;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border: 2px solid #3b82f6;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
 }
 
 .token-info {
@@ -723,20 +752,26 @@
   }
 
   .token-list {
-    border: 1px solid #555;
-  }
-
-  .token-item {
-    border-bottom: 1px solid #333;
-  }
-
-  .token-item:hover {
+    border: 1px solid #404040;
     background: #2a2a2a;
   }
 
+  .token-item {
+    background: #1a1a1a;
+    border: 1px solid #333;
+  }
+
+  .token-item:hover {
+    background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+  }
+
   .token-item.selected {
-    background: #1e3a8a;
-    border-color: #3b82f6;
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+    border: 2px solid #3b82f6;
+  }
+
+  .token-symbol {
+    color: #fff;
   }
 
   .token-name {
@@ -1015,13 +1050,25 @@
 }
 
 .confirm-button, .send-button, .done-button {
-  background: #28a745;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 1.2rem;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+  transition: all 0.2s ease;
+  animation: breathe 3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.92;
+  }
 }
 
 .confirm-button {
@@ -1035,12 +1082,16 @@
 }
 
 .confirm-button:hover, .send-button:hover, .done-button:hover {
-  background: #218838;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  transform: translateY(-1px);
 }
 
 .confirm-button:disabled, .send-button:disabled {
   background: #6c757d;
   cursor: not-allowed;
+  animation: none;
+  opacity: 1;
 }
 
 .back-button, .cancel-button {

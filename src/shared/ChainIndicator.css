@@ -3,11 +3,18 @@
   display: inline-flex;
   align-items: center;
   font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
   font-size: 0.75rem;
   white-space: nowrap;
   color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.chain-indicator:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .chain-indicator-compact {
