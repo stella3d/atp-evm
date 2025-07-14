@@ -51,6 +51,8 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
   const [selectedChains, setSelectedChains] = useState<Record<string, number>>({});
   // Flag to show/hide validation checks
   const showValidationChecks = true;
+  // Track if a request is in flight to prevent duplicates
+  const requestInFlightRef = React.useRef(false);
 
   // Initialize default selected chain when addressRecords change
   useEffect(() => {
@@ -100,8 +102,15 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         return;
       }
 
+      // Prevent multiple simultaneous calls
+      if (requestInFlightRef.current) {
+        return;
+      }
+
+      requestInFlightRef.current = true;
       setLoadingRecords(true);
       setRecordsError(null);
+      
       try {
         const records = await fetchAddressControlRecords(selectedUser.did, selectedUser.pds);
         const deduplicatedRecords = aggregateWallets(records);
@@ -140,6 +149,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         setRecordsError(`Failed to load address records: ${error instanceof Error ? error.message : 'Unknown error'}`);
         console.error('Error loading address records:', error);
       } finally {
+        requestInFlightRef.current = false;
         setLoadingRecords(false);
       }
     };

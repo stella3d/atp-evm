@@ -7,6 +7,11 @@ const CACHE_DURATION = import.meta.env.DEV
   ? 30 * 60 * 1000 // 30 minutes in development
   : 5 * 60 * 1000;  // 5 minutes in production
 
+// Handle resolution cache duration
+const HANDLE_RESOLUTION_CACHE_DURATION = import.meta.env.DEV 
+  ? 2 * 60 * 60 * 1000 // 2 hours in development
+  : 1 * 60 * 60 * 1000; // 1 hour in production
+
 const CACHE_KEY = 'users_with_address_record';
 const ENRICHED_CACHE_KEY = 'enriched_users_data_v2';
 
@@ -273,25 +278,23 @@ const extractHandleFromDidDoc = (didDoc: DidDocument): string | undefined => {
   return undefined;
 };
 
-// Cache for handle resolution results to avoid duplicate API calls
-const handleResolutionCache = new Map<string, { did: string; timestamp: number }>();
-const HANDLE_CACHE_DURATION = 30 * 60 * 1000; // 30 minutes (longer cache)
+// Handle resolution cache using LocalStorage with TTL
+const handleResolutionCache = new LocalstorageTtlCache<string>(HANDLE_RESOLUTION_CACHE_DURATION);
 
 // Cache for profile data to avoid duplicate API calls
 const profileCache = new Map<string, { profile: BskyProfileMinimal; timestamp: number }>();
 const PROFILE_CACHE_DURATION = 15 * 60 * 1000; // 15 minutes
 
-// Cache for handle verification results
-const verificationCache = new Map<string, { isValid: boolean; timestamp: number }>();
-const VERIFICATION_CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+// Cache for handle verification results using LocalStorage with TTL
+const verificationCache = new LocalstorageTtlCache<boolean>(HANDLE_RESOLUTION_CACHE_DURATION);
 
 // Resolve a handle to DID with caching
 const resolveHandleWithCache = async (handle: string): Promise<string | null> => {
   // Check cache first
-  const cached = handleResolutionCache.get(handle);
-  if (cached && (Date.now() - cached.timestamp) < HANDLE_CACHE_DURATION) {
+  const cachedDid = handleResolutionCache.get(`handle:${handle}`);
+  if (cachedDid) {
     console.log(`Handle ${handle} resolved from cache`);
-    return cached.did;
+    return cachedDid;
   }
   
   try {
@@ -307,7 +310,7 @@ const resolveHandleWithCache = async (handle: string): Promise<string | null> =>
     const resolvedDid = data.did;
     
     // Cache the result
-    handleResolutionCache.set(handle, { did: resolvedDid, timestamp: Date.now() });
+    handleResolutionCache.set(`handle:${handle}`, resolvedDid);
     
     return resolvedDid;
   } catch (error) {
@@ -337,19 +340,18 @@ export const resolveUserIdentifier = async (identifier: string): Promise<DidStri
 // Verify that a handle actually resolves to the expected DID using ATProto
 const verifyHandleOwnership = async (handle: string, expectedDid: DidString): Promise<boolean> => {
   // Check verification cache first
-  const cacheKey = `${handle}:${expectedDid}`;
+  const cacheKey = `verification:${handle}:${expectedDid}`;
   const cached = verificationCache.get(cacheKey);
-  const now = Date.now();
   
-  if (cached && (now - cached.timestamp) < VERIFICATION_CACHE_DURATION) {
-    return cached.isValid;
+  if (cached !== null) {
+    return cached;
   }
   
   const resolvedDid = await resolveHandleWithCache(handle);
   
   if (!resolvedDid) {
     const result = false;
-    verificationCache.set(cacheKey, { isValid: result, timestamp: now });
+    verificationCache.set(cacheKey, result);
     return result;
   }
   
@@ -360,7 +362,7 @@ const verifyHandleOwnership = async (handle: string, expectedDid: DidString): Pr
   }
   
   // Cache the verification result
-  verificationCache.set(cacheKey, { isValid: matches, timestamp: now });
+  verificationCache.set(cacheKey, matches);
   
   return matches;
 };
