@@ -1078,7 +1078,24 @@
 }
 
 .done-button {
-  margin-top: 16px;
+  margin-top: 24px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+  transition: all 0.3s ease;
+  letter-spacing: 0.02em;
+}
+
+.done-button:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  transform: translateY(-2px);
 }
 
 .confirm-button:hover, .send-button:hover, .done-button:hover {
@@ -1112,11 +1129,13 @@
 /* Dark mode styles for buttons */
 @media (prefers-color-scheme: dark) {
   .confirm-button, .send-button, .done-button {
-    background: #198754;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    box-shadow: 0 4px 16px rgba(5, 150, 105, 0.4);
   }
 
   .confirm-button:hover, .send-button:hover, .done-button:hover {
-    background: #157347;
+    background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5);
   }
 
   .confirm-button:disabled, .send-button:disabled {
@@ -1166,74 +1185,175 @@
 
 .step-sending, .step-success, .step-error {
   text-align: center;
-  padding: 32px 24px;
-  min-height: 200px;
+  padding: 40px 32px;
+  min-height: 240px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
+  position: relative;
 }
 
 .step-sending h4, .step-success h4, .step-error h4 {
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.75rem;
+  font-weight: 700;
   color: #1a1a1a;
+  letter-spacing: -0.02em;
 }
 
 .step-sending p, .step-success p, .step-error p {
   margin: 0;
-  font-size: 1rem;
-  color: #666;
-  line-height: 1.5;
-  max-width: 300px;
+  font-size: 1.1rem;
+  color: #64748b;
+  line-height: 1.6;
+  max-width: 320px;
+  font-weight: 400;
 }
 
 .loading-spinner {
-  font-size: 3rem;
+  font-size: 4rem;
   margin: 0;
-  animation: pulse 2s ease-in-out infinite;
+  animation: modernPulse 2.5s ease-in-out infinite;
+  position: relative;
 }
 
-@keyframes pulse {
+.loading-spinner::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border: 3px solid transparent;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes modernPulse {
   0%, 100% {
     opacity: 1;
     transform: scale(1);
   }
   50% {
-    opacity: 0.7;
-    transform: scale(1.05);
+    opacity: 0.8;
+    transform: scale(1.02);
   }
 }
 
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
 .success-icon, .error-icon {
-  font-size: 4rem;
+  font-size: 5rem;
   margin: 0;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
+  animation: iconPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+}
+
+.success-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: -1;
+  animation: successGlow 2s ease-in-out infinite;
+}
+
+.error-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: -1;
+  animation: errorGlow 2s ease-in-out infinite;
+}
+
+@keyframes iconPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes successGlow {
+  0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+@keyframes errorGlow {
+  0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
 }
 
 .tx-hash {
-  background: #f8fafc;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 16px 20px;
+  border-radius: 16px;
+  padding: 20px 24px;
   margin: 8px 0;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #475569;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  min-width: 280px;
+}
+
+.tx-hash:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .tx-hash-link {
   color: #3b82f6;
   text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s ease;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.tx-hash-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  transition: width 0.3s ease;
 }
 
 .tx-hash-link:hover {
   color: #1d4ed8;
-  text-decoration: underline;
+  transform: translateX(2px);
+}
+
+.tx-hash-link:hover::after {
+  width: 100%;
 }
 
 .chain-help {
@@ -1277,17 +1397,30 @@
   }
 
   .step-sending p, .step-success p, .step-error p {
-    color: #cbd5e1;
+    color: #94a3b8;
+  }
+
+  .loading-spinner::after {
+    border-top-color: #60a5fa;
   }
 
   .tx-hash {
-    background: #1e293b;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     border: 1px solid #475569;
     color: #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .tx-hash:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   }
 
   .tx-hash-link {
     color: #60a5fa;
+  }
+
+  .tx-hash-link::after {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6);
   }
 
   .tx-hash-link:hover {

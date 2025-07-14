@@ -45,10 +45,18 @@ export const TransactionSuccess: React.FC<TransactionSuccessProps> = ({
   return (
     <div className="step-success">
       <div className="success-icon">✅</div>
-      <h4>Payment Successful!</h4>
-      <p>Your payment has been confirmed and recorded on the blockchain.</p>
+      <h4>Payment Complete!</h4>
+      <p>Your transaction has been successfully confirmed and permanently recorded on the blockchain.</p>
       <div className="tx-hash">
-        <div style={{ marginBottom: '8px', fontWeight: '500' }}>View Transaction:</div>
+        <div style={{ 
+          marginBottom: '12px', 
+          fontWeight: '600',
+          fontSize: '0.9rem',
+          color: 'inherit',
+          opacity: 0.8
+        }}>
+          View on Explorer
+        </div>
         <TransactionHash
           txHash={txHash}
           isClickable
