@@ -480,10 +480,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   return (
     <div className="payment-modal-overlay" onClick={onClose}>
       <div className="payment-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <div className="header-top-row">
-            <div className="header-left">
-              {step === Step.SELECT && (
+        {step === Step.SELECT && (
+          <div className="modal-header">
+            <div className="header-top-row">
+              <div className="header-left">
                 <button type="button" className="change-wallet-btn" onClick={async () => {
                   // Clear all account-related state
                   setSelectedToken(null);
@@ -504,32 +504,25 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 }}>
                   Switch Wallet
                 </button>
-              )}
+              </div>
+              <h3>Send</h3>
+              <div className="header-right">
+              </div>
             </div>
-            <h3>
-{
-                step === Step.SUCCESS 
-                  ? 'Send Successful' 
-                  : step === Step.SENDING ? 'Sending...' : 'Send'
-              }
-            </h3>
-            <div className="header-right">
-              <button type="button" className="close-button" onClick={onClose}>×</button>
-            </div>
+            {address && (
+              <div className="sender-info">
+                <span className="from-label">from:</span>
+                <AddressLink 
+                  address={address} 
+                  fontSize="0.8rem" 
+                  style={{ 
+                    color: 'inherit' // This will inherit the color from .sender-info CSS
+                  }} 
+                />
+              </div>
+            )}
           </div>
-          {address && (
-            <div className="sender-info">
-              <span className="from-label">from:</span>
-              <AddressLink 
-                address={address} 
-                fontSize="0.8rem" 
-                style={{ 
-                  color: 'inherit' // This will inherit the color from .sender-info CSS
-                }} 
-              />
-            </div>
-          )}
-        </div>
+        )}
 
         <div className="modal-content">
           {step === Step.SELECT && (
@@ -588,7 +581,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             <TransactionSuccess
               txHash={txHash}
               chainId={chainId}
-              onDone={onClose}
             />
           )}
 

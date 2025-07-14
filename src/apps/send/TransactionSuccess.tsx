@@ -7,7 +7,6 @@ import { TransactionHash } from './TransactionHash.tsx';
 interface TransactionSuccessProps {
   txHash: `0x${string}`;
   chainId: number;
-  onDone: () => void;
 }
 
 const getTransactionUrl = (txHash: string, chainId: number): string => {
@@ -28,8 +27,7 @@ const getTransactionUrl = (txHash: string, chainId: number): string => {
 
 export const TransactionSuccess: React.FC<TransactionSuccessProps> = ({
   txHash,
-  chainId,
-  onDone
+  chainId
 }) => {
   const { address } = useAccount();
 
@@ -46,7 +44,7 @@ export const TransactionSuccess: React.FC<TransactionSuccessProps> = ({
     <div className="step-success">
       <div className="success-icon">✅</div>
       <h4>Payment Complete!</h4>
-      <p>Your transaction has been successfully confirmed and permanently recorded on the blockchain.</p>
+      <p>Your transaction has been successfully confirmed.</p>
       <div className="tx-hash">
         <div style={{ 
           marginBottom: '12px', 
@@ -64,9 +62,6 @@ export const TransactionSuccess: React.FC<TransactionSuccessProps> = ({
           className="tx-hash-link"
         />
       </div>
-      <button type="button" className="done-button" onClick={onDone}>
-        Done
-      </button>
     </div>
   );
 };

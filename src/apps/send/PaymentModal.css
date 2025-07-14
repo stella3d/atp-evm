@@ -1049,7 +1049,7 @@
   min-width: 50%;
 }
 
-.confirm-button, .send-button, .done-button {
+.confirm-button, .send-button {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border: none;
@@ -1077,28 +1077,7 @@
   padding: 8px 24px;
 }
 
-.done-button {
-  margin-top: 24px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  border: none;
-  padding: 12px 32px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 1.1rem;
-  font-weight: 600;
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
-  transition: all 0.3s ease;
-  letter-spacing: 0.02em;
-}
-
-.done-button:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-  transform: translateY(-2px);
-}
-
-.confirm-button:hover, .send-button:hover, .done-button:hover {
+.confirm-button:hover, .send-button:hover {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
   transform: translateY(-1px);
@@ -1128,12 +1107,12 @@
 
 /* Dark mode styles for buttons */
 @media (prefers-color-scheme: dark) {
-  .confirm-button, .send-button, .done-button {
+  .confirm-button, .send-button {
     background: linear-gradient(135deg, #059669 0%, #047857 100%);
     box-shadow: 0 4px 16px rgba(5, 150, 105, 0.4);
   }
 
-  .confirm-button:hover, .send-button:hover, .done-button:hover {
+  .confirm-button:hover, .send-button:hover {
     background: linear-gradient(135deg, #047857 0%, #065f46 100%);
     box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5);
   }
@@ -1504,8 +1483,7 @@
   
   /* Even more compact buttons */
   .confirm-button, 
-  .send-button, 
-  .done-button,
+  .send-button,
   .back-button, 
   .cancel-button {
     max-width: 200px;
