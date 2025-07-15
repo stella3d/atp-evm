@@ -7,12 +7,13 @@
   margin-top: 16px;
   animation: slideIn 0.2s ease-out;
   max-width: min(920px, calc(100vw - 8px));
-  min-width: 250px;
+  min-width: 300px;
   width: 100%;
   margin: 16px auto 0 auto;
   margin-left: 4px;
   margin-right: 4px;
   box-sizing: border-box;
+  overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
 /* Make wider on smaller screens */
@@ -274,6 +275,8 @@
   width: 96%;
   gap: 8px;
   margin: 0 auto 6px auto;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .address-record {
@@ -285,6 +288,9 @@
   border: 1px solid #e1e5e9;
   border-radius: 8px;
   padding: 12px;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .address-record.critical-failure {
@@ -305,6 +311,8 @@
   gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 4px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .address-value {
@@ -314,6 +322,12 @@
   color: #0f1419;
   word-break: break-all;
   flex-shrink: 0;
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  box-sizing: border-box;
 }
 
 /* Address value styles for AddressLink integration */
@@ -326,12 +340,13 @@
   padding: 2px 4px;
   border-radius: 4px;
   transition: all 0.2s ease;
-}
-
-.address-value.address-link:hover {
-  background: rgba(29, 155, 240, 0.1);
-  color: #1d9bf0;
-  text-decoration: underline;
+  width: calc(100% - 8px); /* Account for padding */
+  max-width: calc(100% - 8px);
+  text-align: center;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  box-sizing: border-box;
 }
 
 .address-metadata {
@@ -451,10 +466,6 @@
 @media (max-width: 480px) {
   .address-meta-value {
     font-size: 11px;
-  }
-
-  .records-list .address-header code {
-    font-size: 15px;
   }
 
   .chain-info {
@@ -805,77 +816,81 @@
   }
 }
 
-@media (min-width: 568px) and (max-width: 2600px) {
-  .address-value.address-link code {
-    font-size: 19px;
+
+@media (min-width: 580px) {
+  .address-record .address-header code {
+    font-size: 16px;
   }
 }
 
-@media (min-width: 542px) and (max-width: 568px) {
-  .address-value.address-link code {
-    font-size: 18px;
-  }
-}
-
-@media (min-width: 516px) and (max-width: 542px) {
-  .address-value.address-link code {
-    font-size: 17px;
-  }
-}
-
-@media (min-width: 500px) and (max-width: 515px) {
-  .address-value.address-link code {
-    font-size: 16.5px;
-  }
-}
-
-@media (min-width: 480px) and (max-width: 500px) {
-  .recipient-address-display .address-link {
-    font-size: 15.5px;
-  }
-
-  .address-value.address-link code {
-    font-size: 15.5px;
-  }
-}
-
-@media (max-width: 480px) {
-  .recipient-address-display .address-link {
+@media (min-width: 540px) and (max-width: 580px) {
+  .address-record .address-header code {
     font-size: 15px;
   }
-  
-  
-
 }
 
-@media (max-width: 454px) {
-  .address-value.address-link code {
+@media (min-width: 508px) and (max-width: 540px) {
+  .recipient-address-display .address-link {
+    font-size: 15.5px;
+  }
+
+  .address-record .address-header code {
     font-size: 14px;
   }
 }
 
-/* Responsive font size adjustments for AddressLink components */
-@media (max-width: 444px) {
+@media (max-width: 470px) {
+  .recipient-address-display .address-link {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 508px) {
   .address-record .address-header code {
     font-size: 13.5px;
   }
 }
 
+/* Responsive font size adjustments for AddressLink components */
+@media (max-width: 454px) {
+  .address-record .address-header code {
+    font-size: 13px;
+  }
+}
+
 @media (max-width: 428px) {
+  .address-record .address-header code {
+    font-size: 13.5px;
+  }
+}
+
+@media (min-width: 400px) and (max-width: 414px) {
+  .address-record .address-header code {
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 384px) and (max-width: 400px) {
   .address-record .address-header code {
     font-size: 12px;
   }
 }
 
-@media (max-width: 400px) {
+@media (min-width: 372px) and (max-width: 384px) {
   .address-record .address-header code {
     font-size: 11.5px;
   }
 }
 
-@media (max-width: 376px) {
+@media (max-width: 372px) {
   .address-record .address-header code {
     font-size: 11px;
+  }
+}
+
+@media (max-width: 356px) {
+  .address-record .address-header code {
+    font-size: 10.5px;
   }
 }
 
@@ -937,4 +952,64 @@
   max-width: none;
   min-width: 100px;
   font-size: 36px;
+}
+
+/* Enhanced responsive handling - reduce font sizes more aggressively */
+@media (min-width: 540px) {
+  .address-record .address-header code {
+    font-size: 13px; /* Reduced from 15px */
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 508px) and (max-width: 540px) {
+  .address-record .address-header code {
+    font-size: 12px; /* Reduced from 14px */
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 508px) {
+  .address-record .address-header code {
+    font-size: 11px; /* Reduced from 13.5px */
+    max-width: 100%;
+  }
+}
+
+/* Enhanced responsive handling for address records */
+@media (min-width: 480px) {
+  .address-record {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .address-header {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .address-value,
+  .address-value.address-link {
+    max-width: 100%;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    white-space: normal;
+    font-size: 12px; /* Force smaller font size */
+  }
+}
+
+/* More aggressive font size reduction for larger screens */
+@media (min-width: 540px) {
+  .address-value,
+  .address-value.address-link {
+    font-size: 11px !important; /* Force even smaller */
+  }
+}
+
+@media (min-width: 600px) {
+  .address-value,
+  .address-value.address-link {
+    font-size: 10px !important; /* Force very small */
+  }
 }
