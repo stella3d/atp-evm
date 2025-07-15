@@ -667,98 +667,98 @@
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .user-detail-card {
-    background: #1a1a1a;
-    border-color: #404040;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    background: #111;
+    border-color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
   }
 
   .card-header {
-    border-bottom-color: #404040;
+    border-bottom-color: #333;
   }
 
   .card-header h3 {
-    color: #e0e0e0;
+    color: #e8e8e8;
   }
 
   .close-button {
-    color: #cccccc;
+    color: #ccc;
   }
 
   .close-button:hover {
-    background-color: #2d2d2d;
-    color: #e0e0e0;
+    background-color: #222;
+    color: #e8e8e8;
   }
 
   .profile-handle {
-    color: #e0e0e0;
+    color: #e8e8e8;
   }
 
   .profile-display-name {
-    color: #cccccc;
+    color: #ccc;
   }
 
   .profile-description {
-    color: #e0e0e0;
+    color: #e8e8e8;
   }
 
   .stat-label {
-    color: #cccccc;
+    color: #ccc;
   }
 
   .stat-value {
-    color: #e0e0e0;
+    color: #e8e8e8;
   }
 
   .user-info label {
-    color: #cccccc;
+    color: #ccc;
   }
 
   .user-did-display {
-    color: #e0e0e0;
-    background: #2d2d2d;
-    border-color: #404040;
+    color: #e8e8e8;
+    background: #1a1a1a;
+    border-color: #333;
   }
 
   .address-records label {
-    color: #cccccc;
+    color: #ccc;
   }
 
   .loading-records {
-    background: #2d2d2d;
-    color: #cccccc;
-    border-color: #404040;
+    background: #1a1a1a;
+    color: #ccc;
+    border-color: #333;
   }
 
   .records-error {
-    background: #3d1a1a;
+    background: #2a0b0e;
     color: #ff6b6b;
-    border-color: #5d2a2a;
+    border-color: #5a2029;
   }
 
   .no-records {
-    background: #2d2d2d;
-    color: #cccccc;
-    border-color: #404040;
+    background: #1a1a1a;
+    color: #ccc;
+    border-color: #333;
   }
 
   .address-record {
-    background: #2d2d2d;
-    border-color: #404040;
+    background: #1a1a1a;
+    border-color: #333;
   }
 
   .address-record.critical-failure {
-    background: radial-gradient(ellipse at center, #2d2d2d 60%, #2c0b0e 100%);
-    border: 1px solid #842029;
-    box-shadow: 0 2px 4px rgba(44, 11, 14, 0.4);
+    background: radial-gradient(ellipse at center, #1a1a1a 60%, #2a0b0e 100%);
+    border: 1px solid #5a2029;
+    box-shadow: 0 2px 4px rgba(42, 11, 14, 0.6);
   }
 
   .wallet-connection-section {
-    background: #2d2d2d;
-    border-color: #404040;
+    background: #1a1a1a;
+    border-color: #333;
   }
 
   .wallet-connection-section label {
-    color: #cccccc;
+    color: #ccc;
   }
 
   .chain-select:hover {
@@ -766,24 +766,42 @@
   }
 
   .chain-label {
-    color: #cccccc;
+    color: #ccc;
   }
 
   .chain-select option {
-    background: #2d2d2d;
-    color: #e0e0e0;
+    background: #1a1a1a;
+    color: #e8e8e8;
   }
 
   .chain-info {
-    color: #4da6ff;
+    color: #4a90e2;
   }
 
   .address-meta-value {
-    color: lightgray !important;
+    color: #aaa !important;
   }
 
   .metadata-label {
+    color: #ccc;
     opacity: 0.8;
+  }
+
+  .address-value.address-link:hover {
+    background: rgba(74, 144, 226, 0.2);
+    color: #4a90e2;
+  }
+
+  .warning.gentle {
+    color: #ffeb9c;
+    background: #2a1f00;
+    border: 1px solid #4a3000;
+  }
+
+  .warning.strong {
+    color: #f1aeb5;
+    background: #2a0b0e;
+    border: 1px solid #5a2029;
   }
 }
 

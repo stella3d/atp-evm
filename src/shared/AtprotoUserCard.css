@@ -200,8 +200,8 @@
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .at-user-card {
-    background: #2a2a2a;
-    border-color: #555;
+    background: #1a1a1a;
+    border-color: #333;
   }
 
   .at-user-card.profile {
@@ -210,12 +210,12 @@
   }
 
   .at-user-card.profile.clickable {
-    background: #2a2a2a;
-    border-color: #555;
+    background: #1a1a1a;
+    border-color: #333;
   }
 
   .at-name {
-    color: #fff;
+    color: #e8e8e8;
   }
 
   .at-handle {
@@ -223,11 +223,11 @@
   }
 
   .at-did {
-    color: #888;
+    color: #999;
   }
 
   .at-user-card.profile .at-name {
-    color: #fff;
+    color: #e8e8e8;
   }
 
   .at-user-card.profile .at-handle {
@@ -235,19 +235,19 @@
   }
 
   .at-user-card.profile .at-did {
-    color: #888;
+    color: #999;
   }
 
   .at-user-card.clickable:hover {
-    background: #3a3a3a;
-    border-color: #1d9bf0;
-    box-shadow: 0 2px 8px rgba(29, 155, 240, 0.3);
+    background: #222;
+    border-color: #4a90e2;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
   }
 
   .at-user-card.profile.clickable:hover {
-    background: #3a3a3a;
-    border-color: #1d9bf0;
-    box-shadow: 0 2px 8px rgba(29, 155, 240, 0.3);
+    background: #222;
+    border-color: #4a90e2;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
   }
 }
 

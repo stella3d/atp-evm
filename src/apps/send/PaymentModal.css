@@ -31,18 +31,15 @@
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .payment-modal-overlay {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(6px);
   }
 
   .payment-modal {
-    background: #1a1a1a;
-    color: #ffffff;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  }
-
-  /* Enhanced modal overlay for dark mode */
-  .payment-modal-overlay {
-    backdrop-filter: blur(4px);
+    background: #0d0d0d;
+    color: #e8e8e8;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+    border: 1px solid #222;
   }
 
   /* Enhanced scrollbar styling for dark mode */
@@ -51,16 +48,275 @@
   }
 
   .payment-modal::-webkit-scrollbar-track {
-    background: #2a2a2a;
+    background: #1a1a1a;
   }
 
   .payment-modal::-webkit-scrollbar-thumb {
-    background: #555;
+    background: #444;
     border-radius: 4px;
   }
 
   .payment-modal::-webkit-scrollbar-thumb:hover {
-    background: #777;
+    background: #555;
+  }
+
+  .modal-header {
+    border-bottom: 1px solid #222;
+  }
+
+  .sender-info {
+    color: #999;
+  }
+
+  .sender-info .from-label {
+    color: #999;
+  }
+
+  .sender-info .address-link {
+    color: #999;
+    background: transparent;
+  }
+
+  .sender-info .address-link:hover {
+    color: #4a90e2;
+    background: transparent;
+  }
+
+  .header-right .close-button {
+    color: #ccc;
+  }
+
+  .header-right .close-button:hover {
+    background: #1a1a1a;
+    color: #fff;
+  }
+
+  .header-left .change-wallet-btn {
+    background: #333;
+    color: #ccc;
+  }
+
+  .header-left .change-wallet-btn:hover {
+    background: #444;
+  }
+
+  .wallet-info {
+    background: #1a1a1a;
+    border: 1px solid #333;
+  }
+
+  .wallet-info code {
+    background: #111;
+    color: #e8e8e8;
+  }
+
+  .wallet-status p {
+    color: #aaa;
+  }
+
+  .disconnect-btn {
+    background: #333;
+  }
+
+  .disconnect-btn:hover {
+    background: #444;
+  }
+
+  .recipient-input {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #e8e8e8;
+  }
+
+  .recipient-input:focus {
+    border-color: #4a90e2;
+    outline: none;
+  }
+
+  .recipient-name {
+    color: #ccc;
+  }
+
+  .ens-header {
+    color: #aaa;
+  }
+
+  .ens-name {
+    background: #111;
+    border: 1px solid #333;
+  }
+
+  .ens-label {
+    color: #4a90e2;
+  }
+
+  .ens-value {
+    color: #4a90e2;
+  }
+
+  .loading {
+    color: #ccc;
+  }
+
+  .no-tokens {
+    color: #999;
+  }
+
+  .token-list {
+    border: 1px solid #333;
+    background: #0d0d0d;
+  }
+
+  .token-item {
+    border-bottom: 1px solid #222;
+  }
+
+  .token-item:hover {
+    background: #1a1a1a;
+  }
+
+  .token-item.selected {
+    background: #1a3a5a;
+    border-color: #4a90e2;
+  }
+
+  .token-name {
+    color: #ccc;
+  }
+
+  .token-balance-label {
+    color: #aaa;
+  }
+
+  .token-balance {
+    color: #e8e8e8;
+  }
+
+  .amount-row input {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #e8e8e8;
+  }
+
+  .amount-row input:focus {
+    border-color: #4a90e2;
+    outline: none;
+  }
+
+  .amount-row .token-symbol {
+    color: #e8e8e8;
+  }
+
+  .max-button {
+    background: #4a90e2;
+  }
+
+  .max-button:hover {
+    background: #357abd;
+  }
+
+  /* Disabled amount input styles for dark mode */
+  .amount-input.disabled label {
+    color: #666;
+  }
+
+  .amount-input.disabled input {
+    background: #111;
+    color: #666;
+    border-color: #222;
+  }
+
+  .amount-input.disabled .token-symbol {
+    color: #666;
+  }
+
+  .amount-input.disabled .max-button {
+    background: #333;
+  }
+
+  .amount-input.disabled .max-button:hover {
+    background: #333;
+  }
+
+  .payment-summary {
+    background: #1a1a1a;
+    border: 1px solid #333;
+  }
+
+  .tx-hash {
+    background: #1a1a1a;
+    color: #e8e8e8;
+  }
+
+  .tx-hash-link {
+    color: #4a90e2;
+  }
+
+  .tx-hash-link:hover {
+    color: #66b3ff;
+  }
+
+  .step-success .success-icon {
+    color: #22c55e;
+  }
+
+  .step-error .error-icon {
+    color: #ef4444;
+  }
+
+  .chain-help {
+    background: #1a1a1a;
+    border-left-color: #4a90e2;
+    border: 1px solid #333;
+  }
+
+  .chain-help p {
+    color: #e8e8e8;
+  }
+
+  .chain-help li {
+    color: #ccc;
+  }
+
+  .chain-help strong {
+    color: #4a90e2;
+  }
+
+  .recipient-header {
+    color: #ccc;
+  }
+
+  .recipient-address-display .address-link {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #e8e8e8;
+  }
+
+  .recipient-address-display .address-link:hover {
+    background: rgba(74, 144, 226, 0.2);
+    border-color: #4a90e2;
+    color: #4a90e2;
+  }
+
+  .amount-error {
+    color: #ff6b6b;
+  }
+
+  .amount-warning.gentle {
+    color: #ffeb9c;
+    background: #2a1f00;
+    border: 1px solid #4a3000;
+  }
+
+  .amount-warning.strong {
+    color: #f1aeb5;
+    background: #2a0b0e;
+    border: 1px solid #5a2029;
+  }
+
+  .chain-mismatch-warning .warning-content {
+    background: #2a1f00;
+    border-color: #4a3000;
   }
 }
 

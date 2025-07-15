@@ -66,32 +66,32 @@
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .validation-summary {
-    border-color: #555;
-    background-color: #2a2a2a;
-    color: #fff;
+    border-color: #333;
+    background-color: #1a1a1a;
+    color: #e8e8e8;
   }
   
   .validation-summary:hover {
-    background-color: #3a3a3a;
-    border-color: #666;
+    background-color: #222;
+    border-color: #444;
   }
   
   .validation-details .verified {
-    background-color: #1e3a2e;
+    background-color: #1a2e1a;
     color: #75b798;
-    border-color: #2d5a45;
+    border-color: #2a4a2a;
   }
   
   .validation-details .failed {
-    background-color: #3a1f23;
+    background-color: #2a0b0e;
     color: #f1aeb5;
-    border-color: #5a3239;
+    border-color: #5a2029;
   }
   
   .validation-details .warning {
-    background-color: #3a3017;
+    background-color: #2a1f00;
     color: #d4b95a;
-    border-color: #5a4a2a;
+    border-color: #4a3000;
   }
 }
 

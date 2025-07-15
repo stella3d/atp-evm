@@ -11,7 +11,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #0a0a0a;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -70,5 +70,28 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #e8e8e8;
+    background-color: #0a0a0a;
+  }
+  
+  body {
+    background-color: #0a0a0a;
+    color: #e8e8e8;
+  }
+  
+  button {
+    background-color: #1a1a1a;
+    color: #e8e8e8;
+    border-color: #333;
+  }
+  
+  button:hover {
+    background-color: #222;
+    border-color: #4a90e2;
   }
 }

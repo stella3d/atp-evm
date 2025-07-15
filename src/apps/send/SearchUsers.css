@@ -197,50 +197,50 @@
   }
 
   .search-input {
-    background: #2d2d2d;
-    border-color: #404040;
-    color: #e0e0e0;
+    background: #1a1a1a;
+    border-color: #333;
+    color: #e8e8e8;
   }
 
   .search-input:focus {
-    border-color: #0078d4;
+    border-color: #4a90e2;
   }
 
   .users-count {
-    color: #cccccc;
+    color: #ccc;
   }
 
   .enriching-indicator {
-    color: #0078d4;
+    color: #4a90e2;
   }
 
   .users-list {
-    background: #2d2d2d;
-    border-color: #404040;
+    background: #0d0d0d;
+    border-color: #333;
   }
 
   .user-item {
-    border-bottom-color: #404040;
+    border-bottom-color: #222;
   }
 
   .user-item:hover {
-    background-color: #2d2d2d;
+    background-color: #1a1a1a;
   }
 
   .user-handle {
-    color: #e0e0e0;
+    color: #e8e8e8;
   }
 
   .user-display-name {
-    color: #cccccc;
+    color: #ccc;
   }
 
   .user-did {
-    color: #999999;
+    color: #999;
   }
 
   .loading, .no-results {
-    color: #cccccc;
+    color: #ccc;
   }
 
   .error {
@@ -249,26 +249,26 @@
 
   /* Dark mode scrollbar */
   .users-list::-webkit-scrollbar-track {
-    background: #2d2d2d;
+    background: #0d0d0d;
   }
 
   .users-list::-webkit-scrollbar-thumb {
-    background: #555555;
+    background: #444;
   }
 
   .users-list::-webkit-scrollbar-thumb:hover {
-    background: #777777;
+    background: #555;
   }
 
   /* Border between items in dark mode */
   .search-users .users-list > div:not(:first-child) {
-    border-top-color: #444;
+    border-top-color: #222;
   }
 
-  /* Reduce contrast of payment cards */
+  /* Use same darker background as user cards */
   .search-users .at-user-card.payment {
-    background: #232323;
-    border-color: #444;
+    background: #1a1a1a;
+    border-color: #333;
   }
 }
 
