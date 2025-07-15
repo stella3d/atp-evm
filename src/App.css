@@ -73,5 +73,6 @@ h1 {
 .app-container {
   max-width: 800px;
   min-width: 320px;
+  width: 100%;
   margin: 0 auto;
 }

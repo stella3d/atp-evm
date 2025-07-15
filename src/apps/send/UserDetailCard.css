@@ -6,19 +6,26 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-top: 16px;
   animation: slideIn 0.2s ease-out;
-  max-width: min(920px, calc(100vw - 8px));
-  min-width: 250px;
-  width: 100%;
+  width: 546px;
   margin: 16px auto 0 auto;
   margin-left: 4px;
   margin-right: 4px;
   box-sizing: border-box;
 }
 
+/* Ensure minimum width on very small screens */
+@media (max-width: 420px) {
+  .user-detail-card {
+    min-width: 300px;
+    width: unset;
+  }
+}
+
 /* Make wider on smaller screens */
-@media (max-width: 600px) {
+@media (min-width: 420px) and (max-width: 600px) {
   .user-detail-card {
     max-width: calc(98vw - 4px);
+    min-width: 400px;
     margin-left: 2px;
     margin-right: 2px;
   }
