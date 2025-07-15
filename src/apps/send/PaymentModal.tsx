@@ -597,23 +597,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               error={error}
               errorType={errorType}
               chainId={chainId}
-              onRetry={async () => {
+              onRetry={() => {
                 if (errorType === ErrorType.WRONG_CHAIN) {
-                  // Clear all account-related state and forcefully disconnect wallet
-                  setSelectedToken(null);
-                  setAmount('');
-                  setTxHash(null);
+                  // For wrong chain errors, just go back to select step
+                  // The user can see the chain mismatch warning and choose to switch chains
+                  setStep(Step.SELECT);
                   setError(null);
                   setErrorType(null);
-                  setAmountError(null);
-                  
-                  // Force disconnect and clear cached state
-                  await forceDisconnectAndClearState(disconnect, isConnected);
-                  
-                  // Small delay to ensure state is cleared before closing
-                  setTimeout(() => {
-                    onClose();
-                  }, 100);
+                  setTxHash(null);
+                  setAmountWarning(null);
                 } else {
                   // For other errors, just go back to select step
                   setStep(Step.SELECT);
