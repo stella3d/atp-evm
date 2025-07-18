@@ -16,13 +16,12 @@ export interface TokenBalance {
 }
 
 const isProd = import.meta.env.PROD;
-const prefix = isProd ? '' : '/public';
 
-const ETH_LOGO_URL = `${prefix}/token_logos/eth.png`;
-const USDC_LOGO_URL = `${prefix}/token_logos/usdc.png`;
-const EURC_LOGO_URL = `${prefix}/token_logos/eurc.png`;
-const USDT_LOGO_URL = `${prefix}/token_logos/usdt.png`;
-const DAI_LOGO_URL = `${prefix}/token_logos/dai.png`;
+const ETH_LOGO_URL = `/token_logos/eth.png`;
+const USDC_LOGO_URL = `/token_logos/usdc.png`;
+const EURC_LOGO_URL = `/token_logos/eurc.png`;
+const USDT_LOGO_URL = `/token_logos/usdt.png`;
+const DAI_LOGO_URL = `/token_logos/dai.png`;
 
 const DAI_SHARED_INFO = {
   symbol: 'DAI',
