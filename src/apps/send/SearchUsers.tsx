@@ -25,7 +25,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
   const enrichmentTimeoutRef = useRef<number | null>(null);
   
   const INITIAL_LOAD_COUNT = 6;
-  const BATCH_DELAY_MS = 160; // Wait 160ms to collect more users before batching
+  const BATCH_DELAY_MS = 120; // Wait 120ms to collect more users before batching
 
   // Batched enrichment function for lazy loading
   const enqueueBatchEnrichment = useCallback((userDid: DidString) => {
