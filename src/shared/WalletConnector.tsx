@@ -2,8 +2,9 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultConfig,
+  ConnectButton,
 } from '@rainbow-me/rainbowkit';
-import { useSignMessage, useAccount, WagmiProvider, useEnsName, useDisconnect, useEnsAvatar} from 'wagmi';
+import { useSignMessage, useAccount, WagmiProvider } from 'wagmi';
 import {
   mainnet,
   optimism,
@@ -15,7 +16,6 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { uid, type DidString, type MaybeDidString } from './common.ts';
-import WalletOptions from './WalletOptions.tsx';
 import { serializeSiweAddressControlRecord, writeAddressControlRecord } from './recordWrite.ts';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
 import { useState } from 'react';
@@ -23,6 +23,7 @@ import type { SiweStatementString } from './common.ts';
 import AtUriLink from './AtUriLink.tsx'; // added import for the new component
 import { createSiweMessage, verifySiweMessage, type SiweMessage } from 'viem/siwe';
 import { getEthClient } from "./useTokenBalances.ts";
+import ThemedRainbowKitProvider from "./ThemedRainbowKitProvider.tsx";
 
 
 export const config = getDefaultConfig({
@@ -139,31 +140,21 @@ const VerificationError = ({ error }: { error: string }) => {
   );
 };
 
-export function Account() {
-  const { address } = useAccount()
-  const { disconnect } = useDisconnect()
-  const { data: ensName } = useEnsName({ address })
-  const { data: ensAvatar } = useEnsAvatar({ name: ensName! })
-
-  const acctLabel = ensName ? `${ensName} (${address})` : address
+export function ConnectWallet({ prompt, successText }: { prompt?: string, successText?: string }) {
+  const { address } = useAccount();
 
   return (
-    <div>
-      <p>✅ connected on EVM wallet side as:</p>
-      {ensAvatar && <img alt="ENS Avatar" src={ensAvatar} />}
-      {address && <div>{acctLabel}</div>}
-      <br/>
-      <button onClick={() => disconnect()}>Disconnect Wallet</button>
-      <br/>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+      {/* only show the prompt if there's no connected wallet address */}
+      {!address && prompt && <p style={{ marginBottom: '8px' }}>{prompt}</p>}
+      {/* show successText if specified and connected */}
+      {address && successText && <p style={{ marginBottom: '8px' }}>{successText}</p>}
+      {/* insert <br/> if no successText and connected */}
+      {address && !successText && <br />}
+      <ConnectButton showBalance={false} accountStatus="address" chainStatus="full" />
       <br/>
     </div>
-  )
-}
-
-export function ConnectWallet() {
-  const { isConnected } = useAccount()
-  if (isConnected) return <Account />
-  return <WalletOptions />
+  );
 }
 
 export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticated: boolean, did: MaybeDidString | undefined, oauth: OAuthSession }) => {
@@ -172,12 +163,16 @@ export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticat
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <ConnectWallet/>
-        {did && oauth ? (
-          <div>
-            <SignMessageComponent disabled={!isAuthenticated} oauth={oauth} />
+        <ThemedRainbowKitProvider>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+            <ConnectWallet prompt="Please connect your wallet to continue." successText="Wallet connected successfully!" />
           </div>
-        ) : null}
+          {did && oauth ? (
+            <div>
+              <SignMessageComponent disabled={!isAuthenticated} oauth={oauth} />
+            </div>
+          ) : null}
+        </ThemedRainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

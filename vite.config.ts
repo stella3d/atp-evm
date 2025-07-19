@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { generateDevClientMetadata } from './scripts/generate-dev-client-metadata.ts'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    generateDevClientMetadata()
+  ],
   base: '/', // Custom domain serves from root
   server: { 
     host: '0.0.0.0',

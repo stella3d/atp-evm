@@ -12,6 +12,7 @@ import { WalletConnectionCard } from './send/WalletConnectionCard.tsx';
 import type { DidString, EnrichedUser } from "../shared/common.ts";
 import { config } from '../shared/WalletConnector.tsx';
 import { TokenBalancesProvider, TokenBalanceLoader } from '../shared/TokenBalanceProvider.tsx';
+import ThemedRainbowKitProvider from "../shared/ThemedRainbowKitProvider.tsx";
 
 const queryClient = new QueryClient();
 
@@ -75,13 +76,14 @@ function SendApp() {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <TokenBalancesProvider>
-          <div id="app-header">
-            <h1 style={{ fontFamily: 'sans-serif' }}>@Pay</h1>
-            <p>Send value to ATProto accounts in a secure, p2p manner.</p>
-            <p style={{ color: 'orange', fontWeight: 'bold', fontSize: '16px' }}>THIS IS PRE-RELEASE SOFTWARE</p>
-          </div>
-          <div className="app-container">
+        <ThemedRainbowKitProvider>
+          <TokenBalancesProvider>
+            <div id="app-header">
+              <h1 style={{ fontFamily: 'sans-serif' }}>@Pay</h1>
+              <p>Send value to ATProto accounts in a secure, p2p manner.</p>
+              <p style={{ color: 'orange', fontWeight: 'bold', fontSize: '16px' }}>THIS IS PRE-RELEASE SOFTWARE</p>
+            </div>
+            <div className="app-container">
               <SearchUsers 
                 onUserSelect={handleUserSelect} 
                 onUsersUpdate={handleUsersUpdate}
@@ -99,7 +101,8 @@ function SendApp() {
               )}
               <TokenBalanceLoader />
             </div>
-        </TokenBalancesProvider>
+          </TokenBalancesProvider>
+        </ThemedRainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

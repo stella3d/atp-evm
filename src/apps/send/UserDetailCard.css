@@ -927,3 +927,72 @@
   min-width: 100px;
   font-size: 36px;
 }
+
+/* Wallet Connection Standalone Styles */
+.wallet-connection-standalone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 4px;
+  margin: 8px auto;
+  max-width: 600px;
+}
+
+.wallet-connection-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.wallet-connection-content h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f1419;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.wallet-connection-content p {
+  font-size: 16px;
+  color: #536471;
+  margin: 0;
+  line-height: 1.4;
+  max-width: 400px;
+}
+
+.connect-button-container {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Dark mode styles for wallet connection standalone */
+@media (prefers-color-scheme: dark) {
+  .wallet-connection-content h2 {
+    color: #e0e0e0;
+  }
+  
+  .wallet-connection-content p {
+    color: #cccccc;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 480px) {
+  .wallet-connection-standalone {
+    padding: 32px 12px;
+    margin: 16px auto;
+  }
+  
+  .wallet-connection-content h2 {
+    font-size: 24px;
+  }
+  
+  .wallet-connection-content p {
+    font-size: 14px;
+  }
+}

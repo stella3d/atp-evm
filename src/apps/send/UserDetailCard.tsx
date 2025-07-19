@@ -355,8 +355,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         
         {!isConnected && (
           <div className="wallet-connection-section">
-            <label>Connect Wallet to Send:</label>
-            <ConnectWallet />
+            <ConnectWallet prompt={undefined} />
           </div>
         )}
       </div>
