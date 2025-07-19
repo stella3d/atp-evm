@@ -144,7 +144,7 @@ export function ConnectWallet({ prompt, successText }: { prompt?: string, succes
   const { address } = useAccount();
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
       {/* only show the prompt if there's no connected wallet address */}
       {!address && prompt && <p>{prompt}</p>}
       {/* show successText if specified and connected */}
