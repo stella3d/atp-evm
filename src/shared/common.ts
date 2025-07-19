@@ -213,11 +213,3 @@ export const atpBytesToHex = (recordField: AtprotoBytesField): HexString => {
   const sigHex: HexString = ('0x' + bytes.reduce((acc, b) => acc + b.toString(16).padStart(2, '0'), '')) as HexString;
   return sigHex;
 }
-
-export const userPrefersDarkMode = (): boolean => {
-  // default to dark because it's cooler
-  // deno-lint-ignore no-window
-  if (typeof window === 'undefined' || !window.matchMedia) return true;
-  // deno-lint-ignore no-window
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
-}

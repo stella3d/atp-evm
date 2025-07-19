@@ -1,11 +1,12 @@
 import React from 'react';
 import { lightTheme, midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { userPrefersDarkMode } from './common.ts';
+
+
+const rainbowThemes = { darkMode: midnightTheme(), lightMode: lightTheme() }; 
 
 const ThemedRainbowKitProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const isDarkMode = userPrefersDarkMode();
   return (
-    <RainbowKitProvider theme={isDarkMode ? midnightTheme() : lightTheme()}>
+    <RainbowKitProvider theme={rainbowThemes}>
       {children}
     </RainbowKitProvider>
   );
