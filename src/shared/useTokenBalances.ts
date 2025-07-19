@@ -15,8 +15,6 @@ export interface TokenBalance {
   logoUrl?: string;
 }
 
-const isProd = import.meta.env.PROD;
-
 const ETH_LOGO_URL = `/token_logos/eth.png`;
 const USDC_LOGO_URL = `/token_logos/usdc.png`;
 const EURC_LOGO_URL = `/token_logos/eurc.png`;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAccount } from 'wagmi';
-import { ConnectWallet } from '../../shared/WalletConnector.tsx';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import './UserDetailCard.css';
 
 export const WalletConnectionCard: React.FC = () => {
@@ -14,7 +14,7 @@ export const WalletConnectionCard: React.FC = () => {
     <div className="user-detail-card wallet-connection-card">
       <div className="wallet-connection-section">
         <h2>Connect Wallet to Send</h2>
-        <ConnectWallet />
+        <ConnectButton />
       </div>
     </div>
   );

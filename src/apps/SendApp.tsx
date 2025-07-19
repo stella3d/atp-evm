@@ -3,6 +3,7 @@ import './SendApp.css'
 import { useEffect, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
 import { oauthClient } from "../shared/oauth.ts";
 import { OAuthSession } from "@atproto/oauth-client-browser";
@@ -75,13 +76,14 @@ function SendApp() {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <TokenBalancesProvider>
-          <div id="app-header">
-            <h1 style={{ fontFamily: 'sans-serif' }}>@Pay</h1>
-            <p>Send value to ATProto accounts in a secure, p2p manner.</p>
-            <p style={{ color: 'orange', fontWeight: 'bold', fontSize: '16px' }}>THIS IS PRE-RELEASE SOFTWARE</p>
-          </div>
-          <div className="app-container">
+        <RainbowKitProvider>
+          <TokenBalancesProvider>
+            <div id="app-header">
+              <h1 style={{ fontFamily: 'sans-serif' }}>@Pay</h1>
+              <p>Send value to ATProto accounts in a secure, p2p manner.</p>
+              <p style={{ color: 'orange', fontWeight: 'bold', fontSize: '16px' }}>THIS IS PRE-RELEASE SOFTWARE</p>
+            </div>
+            <div className="app-container">
               <SearchUsers 
                 onUserSelect={handleUserSelect} 
                 onUsersUpdate={handleUsersUpdate}
@@ -99,7 +101,8 @@ function SendApp() {
               )}
               <TokenBalanceLoader />
             </div>
-        </TokenBalancesProvider>
+          </TokenBalancesProvider>
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
