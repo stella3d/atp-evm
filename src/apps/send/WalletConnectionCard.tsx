@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAccount } from 'wagmi';
-import { ConnectWallet } from '../../shared/WalletConnector.tsx';
 import './UserDetailCard.css';
+import { ConnectWallet } from "../../shared/WalletConnector.tsx";
 
 export const WalletConnectionCard: React.FC = () => {
   const { isConnected } = useAccount();
@@ -11,10 +11,9 @@ export const WalletConnectionCard: React.FC = () => {
   }
 
   return (
-    <div className="user-detail-card wallet-connection-card">
-      <div className="wallet-connection-section">
-        <h2>Connect Wallet to Send</h2>
-        <ConnectWallet />
+    <div className="wallet-connection-standalone">
+      <div className="wallet-connection-content">
+        <ConnectWallet prompt="Please connect your wallet to send." successText="Wallet connected successfully!" />
       </div>
     </div>
   );
