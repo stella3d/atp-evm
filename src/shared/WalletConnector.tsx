@@ -146,9 +146,9 @@ export function ConnectWallet({ prompt, successText }: { prompt?: string, succes
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
       {/* only show the prompt if there's no connected wallet address */}
-      {!address && prompt && <p>{prompt}</p>}
+      {!address && prompt && <p style={{ marginBottom: '8px' }}>{prompt}</p>}
       {/* show successText if specified and connected */}
-      {address && successText && <p>{successText}</p>}
+      {address && successText && <p style={{ marginBottom: '8px' }}>{successText}</p>}
       {/* insert <br/> if no successText and connected */}
       {address && !successText && <br />}
       <ConnectButton showBalance={false} accountStatus="address" chainStatus="full" />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAccount } from 'wagmi';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import './UserDetailCard.css';
+import { ConnectWallet } from "../../shared/WalletConnector.tsx";
 
 export const WalletConnectionCard: React.FC = () => {
   const { isConnected } = useAccount();
@@ -13,10 +13,7 @@ export const WalletConnectionCard: React.FC = () => {
   return (
     <div className="wallet-connection-standalone">
       <div className="wallet-connection-content">
-        <p>Connect your wallet to send payments to ATProto accounts</p>
-        <div className="connect-button-container">
-          <ConnectButton />
-        </div>
+        <ConnectWallet prompt="Please connect your wallet to send." successText="Wallet connected successfully!" />
       </div>
     </div>
   );
