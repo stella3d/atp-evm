@@ -140,8 +140,21 @@ const VerificationError = ({ error }: { error: string }) => {
   );
 };
 
-export function ConnectWallet() {
-  return <ConnectButton />
+export function ConnectWallet({ prompt, successText }: { prompt?: string, successText?: string }) {
+  const { address } = useAccount();
+
+  return (
+    <div>
+      {/* only show the prompt if there's no connected wallet address */}
+      {!address && prompt && <p>{prompt}</p>}
+      {/* show successText if specified and connected */}
+      {address && successText && <p>{successText}</p>}
+      {/* insert <br/> if no successText and connected */}
+      {address && !successText && <br />}
+      <ConnectButton showBalance={false} accountStatus="address" chainStatus="full" />
+      <br/>
+    </div>
+  );
 }
 
 export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticated: boolean, did: MaybeDidString | undefined, oauth: OAuthSession }) => {
@@ -151,7 +164,9 @@ export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticat
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <ThemedRainbowKitProvider>
-          <ConnectWallet/>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+            <ConnectWallet prompt="Please connect your wallet to continue." successText="Wallet connected successfully!" />
+          </div>
           {did && oauth ? (
             <div>
               <SignMessageComponent disabled={!isAuthenticated} oauth={oauth} />
