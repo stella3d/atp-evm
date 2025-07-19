@@ -29,36 +29,35 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
 
   // Batched enrichment function for lazy loading
   const enqueueBatchEnrichment = useCallback((userDid: DidString) => {
-    if (enrichedUserDids.has(userDid)) return;
-    
-    pendingEnrichmentRef.current.add(userDid);
-    
-    if (enrichmentTimeoutRef.current) {
-      clearTimeout(enrichmentTimeoutRef.current);
-    }
-    
-    // Set new timeout to process batch
-    enrichmentTimeoutRef.current = setTimeout(async () => {
-      if (pendingEnrichmentRef.current.size === 0) 
-        return;
-
-      // shallow clone the pending set & then clear it for re-use
-      const enrichSet = new Set(pendingEnrichmentRef.current);
-      pendingEnrichmentRef.current.clear();
-      // mark these as being enriched
-      setEnrichedUserDids(prev => prev.union(enrichSet));
-
-      //console.log(`Lazy loading batch of ${batch.length} users:`, batch);
-      try {
-        const batch = Array.from(enrichSet);
-        await enrichUsersProgressively(batch, (updatedUsers: EnrichedUser[]) => {
-          setUsers(prev => updateEnrichedUsers(prev, updatedUsers, onUsersUpdate));
-        });
-      } catch (err) {
-        console.warn(`failed to enrich batch:`, err);
+    // Always check the latest enrichedUserDids from state
+    setEnrichedUserDids(prev => {
+      if (prev.has(userDid)) return prev;
+      pendingEnrichmentRef.current.add(userDid);
+      if (enrichmentTimeoutRef.current) {
+        clearTimeout(enrichmentTimeoutRef.current);
       }
-    }, BATCH_DELAY_MS);
-  }, [enrichedUserDids, onUsersUpdate]);
+      enrichmentTimeoutRef.current = setTimeout(async () => {
+        if (pendingEnrichmentRef.current.size === 0) return;
+        const enrichSet = new Set(pendingEnrichmentRef.current);
+        // accumulate enrichedUserDids using the latest state
+        setEnrichedUserDids(prev2 => {
+          const next = new Set(prev2);
+          enrichSet.forEach(did => next.add(did));
+          return next;
+        });
+        pendingEnrichmentRef.current.clear();
+        try {
+          const batch = Array.from(enrichSet);
+          await enrichUsersProgressively(batch, (updatedUsers: EnrichedUser[]) => {
+            setUsers(prev => updateEnrichedUsers(prev, updatedUsers, onUsersUpdate));
+          });
+        } catch (err) {
+          console.warn(`failed to enrich batch:`, err);
+        }
+      }, BATCH_DELAY_MS);
+      return prev;
+    });
+  }, [onUsersUpdate]);
 
   // Intersection Observer for lazy loading
   const observeUserCard = useCallback((node: HTMLElement | null, userDid: DidString) => {
