@@ -5,8 +5,9 @@ import {
   QueryClientProvider,
   QueryClient,
 } from "@tanstack/react-query";
-import { ConnectButton, lightTheme, midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { config } from './WalletConnector.tsx';
+import ThemedRainbowKitProvider from "./ThemedRainbowKitProvider.tsx";
 
 export function ConnectWallet() {
   return <ConnectButton />
@@ -19,9 +20,9 @@ export const SimpleWalletConnector = () => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={isDarkMode ? midnightTheme() : lightTheme()}>
+        <ThemedRainbowKitProvider>
           <ConnectWallet/>
-        </RainbowKitProvider>
+        </ThemedRainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

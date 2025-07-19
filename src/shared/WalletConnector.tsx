@@ -2,10 +2,7 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultConfig,
-  RainbowKitProvider,
   ConnectButton,
-  midnightTheme,
-  lightTheme,
 } from '@rainbow-me/rainbowkit';
 import { useSignMessage, useAccount, WagmiProvider } from 'wagmi';
 import {
@@ -26,6 +23,7 @@ import type { SiweStatementString } from './common.ts';
 import AtUriLink from './AtUriLink.tsx'; // added import for the new component
 import { createSiweMessage, verifySiweMessage, type SiweMessage } from 'viem/siwe';
 import { getEthClient } from "./useTokenBalances.ts";
+import ThemedRainbowKitProvider from "./ThemedRainbowKitProvider.tsx";
 
 
 export const config = getDefaultConfig({
@@ -148,19 +146,18 @@ export function ConnectWallet() {
 
 export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticated: boolean, did: MaybeDidString | undefined, oauth: OAuthSession }) => {
   const queryClient = new QueryClient();
-  const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; 
 
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={isDarkMode ? midnightTheme() : lightTheme()}>
+        <ThemedRainbowKitProvider>
           <ConnectWallet/>
           {did && oauth ? (
             <div>
               <SignMessageComponent disabled={!isAuthenticated} oauth={oauth} />
             </div>
           ) : null}
-        </RainbowKitProvider>
+        </ThemedRainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
