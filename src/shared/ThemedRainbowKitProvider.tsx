@@ -6,7 +6,7 @@ const rainbowThemes = { darkMode: darkTheme(), lightMode: lightTheme() };
 
 const ThemedRainbowKitProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <RainbowKitProvider theme={rainbowThemes}>
+    <RainbowKitProvider theme={rainbowThemes} modalSize="compact">
       {children}
     </RainbowKitProvider>
   );
