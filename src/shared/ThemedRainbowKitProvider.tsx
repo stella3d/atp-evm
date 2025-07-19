@@ -1,8 +1,8 @@
 import React from 'react';
-import { lightTheme, midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { darkTheme, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
 
-const rainbowThemes = { darkMode: midnightTheme(), lightMode: lightTheme() }; 
+const rainbowThemes = { darkMode: darkTheme(), lightMode: lightTheme() }; 
 
 const ThemedRainbowKitProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
