@@ -1,0 +1,19 @@
+{
+  "client_id": "https://9595d1d308fe.ngrok-free.app/client-metadata-dev.json",
+  "client_name": "@Pay Wallet Linker (dev)",
+  "client_uri": "https://9595d1d308fe.ngrok-free.app",
+  "redirect_uris": [
+    "https://9595d1d308fe.ngrok-free.app"
+  ],
+  "scope": "atproto transition:generic",
+  "grant_types": [
+    "authorization_code",
+    "refresh_token"
+  ],
+  "response_types": [
+    "code"
+  ],
+  "token_endpoint_auth_method": "none",
+  "application_type": "web",
+  "dpop_bound_access_tokens": true
+}
