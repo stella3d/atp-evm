@@ -52,25 +52,10 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
       try {
         const batch = Array.from(enrichSet);
         await enrichUsersProgressively(batch, (updatedUsers: EnrichedUser[]) => {
-          setUsers(prevUsers => {
-            const userMap = new Map(prevUsers.map(u => [u.did, u]));
-            // update with enriched data
-            updatedUsers.forEach(enrichedUser => {
-              if (enrichedUser?.handleVerified)
-                userMap.set(enrichedUser.did, enrichedUser);
-              else
-                userMap.delete(enrichedUser.did);
-            });
-            
-            const newUsers = Array.from(userMap.values());    
-            if (onUsersUpdate)
-              onUsersUpdate(newUsers);
-            
-            return newUsers;
-          });
+          setUsers(prev => updateEnrichedUsers(prev, updatedUsers, onUsersUpdate));
         });
       } catch (err) {
-        console.warn(`Failed to enrich batch:`, err);
+        console.warn(`failed to enrich batch:`, err);
       }
     }, BATCH_DELAY_MS);
   }, [enrichedUserDids, onUsersUpdate]);
@@ -141,22 +126,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
             setEnrichedUserDids(new Set(initialBatch));
             
             await enrichUsersProgressively(initialBatch, (updatedUsers: EnrichedUser[]) => {
-              setUsers(prevUsers => {
-                const userMap = new Map(prevUsers.map(u => [u.did, u]));
-                // update with enriched data
-                updatedUsers.forEach(enrichedUser => {
-                  if (enrichedUser?.handleVerified)
-                    userMap.set(enrichedUser.did, enrichedUser);
-                  else
-                    userMap.delete(enrichedUser.did);
-                });
-                
-                const newUsers = Array.from(userMap.values());   
-                if (onUsersUpdate) 
-                  onUsersUpdate(newUsers);
-                
-                return newUsers;
-              });
+              setUsers(prev => updateEnrichedUsers(prev, updatedUsers, onUsersUpdate));
             });
             
             setEnriching(false);
@@ -208,6 +178,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
           await enrichUsersProgressively([resolvedDid], (updatedUsers: EnrichedUser[]) => {
             // For pre-selected users, we show them even if handle verification fails
             // since the user specifically requested this user
+            // TODO - show a warning & refuse to open the payment modal if handle verification fails
             setUsers(updatedUsers);
             if (onUsersUpdate) {
               onUsersUpdate(updatedUsers);
@@ -387,5 +358,19 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
 };
 
 
+function updateEnrichedUsers(prevUsers: EnrichedUser[], updatedUsers: EnrichedUser[], onUsersUpdate: ((users: EnrichedUser[]) => void) | undefined): EnrichedUser[] {
+  const userMap = new Map(prevUsers.map(u => [u.did, u]));
+  updatedUsers.forEach(user => {
+    // filter DIDs with handles that don't verify
+    if (user?.handleVerified)
+      userMap.set(user.did, user);
+    else
+      userMap.delete(user.did);
+  });
 
+  const newUsers = Array.from(userMap.values());
+  if (onUsersUpdate)
+    onUsersUpdate(newUsers);
 
+  return newUsers;
+}
