@@ -4,6 +4,8 @@ import {
   getDefaultConfig,
   RainbowKitProvider,
   ConnectButton,
+  midnightTheme,
+  lightTheme,
 } from '@rainbow-me/rainbowkit';
 import { useSignMessage, useAccount, WagmiProvider } from 'wagmi';
 import {
@@ -146,11 +148,12 @@ export function ConnectWallet() {
 
 export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticated: boolean, did: MaybeDidString | undefined, oauth: OAuthSession }) => {
   const queryClient = new QueryClient();
+  const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; 
 
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
+        <RainbowKitProvider theme={isDarkMode ? midnightTheme() : lightTheme()}>
           <ConnectWallet/>
           {did && oauth ? (
             <div>

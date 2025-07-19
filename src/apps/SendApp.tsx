@@ -3,7 +3,7 @@ import './SendApp.css'
 import { useEffect, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { lightTheme, midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
 import { oauthClient } from "../shared/oauth.ts";
 import { OAuthSession } from "@atproto/oauth-client-browser";
@@ -73,10 +73,12 @@ function SendApp() {
     setTimeout(() => setTriggerPayment(null), 1000);
   };
 
+  const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; 
+
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
+        <RainbowKitProvider theme={isDarkMode ? midnightTheme() : lightTheme()}>
           <TokenBalancesProvider>
             <div id="app-header">
               <h1 style={{ fontFamily: 'sans-serif' }}>@Pay</h1>

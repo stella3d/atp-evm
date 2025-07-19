@@ -11,10 +11,12 @@ export const WalletConnectionCard: React.FC = () => {
   }
 
   return (
-    <div className="user-detail-card wallet-connection-card">
-      <div className="wallet-connection-section">
-        <h2>Connect Wallet to Send</h2>
-        <ConnectButton />
+    <div className="wallet-connection-standalone">
+      <div className="wallet-connection-content">
+        <p>Connect your wallet to send payments to ATProto accounts</p>
+        <div className="connect-button-container">
+          <ConnectButton />
+        </div>
       </div>
     </div>
   );
