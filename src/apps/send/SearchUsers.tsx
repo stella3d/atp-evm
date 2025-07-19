@@ -39,38 +39,33 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
     
     // Set new timeout to process batch
     enrichmentTimeoutRef.current = setTimeout(async () => {
-      const batch = Array.from(pendingEnrichmentRef.current);
-      if (batch.length === 0) return;
-      
-      // Clear the pending set
+      if (pendingEnrichmentRef.current.size === 0) 
+        return;
+
+      // shallow clone the pending set & then clear it for re-use
+      const enrichSet = new Set(pendingEnrichmentRef.current);
       pendingEnrichmentRef.current.clear();
-      
-      // Mark these as being enriched
-      setEnrichedUserDids(prev => {
-        const newSet = new Set(prev);
-        batch.forEach(did => newSet.add(did));
-        return newSet;
-      });
-      
+      // mark these as being enriched
+      setEnrichedUserDids(prev => prev.union(enrichSet));
+
       //console.log(`Lazy loading batch of ${batch.length} users:`, batch);
-      
       try {
+        const batch = Array.from(enrichSet);
         await enrichUsersProgressively(batch, (updatedUsers: EnrichedUser[]) => {
           setUsers(prevUsers => {
             const userMap = new Map(prevUsers.map(u => [u.did, u]));
-            // Update with enriched data
+            // update with enriched data
             updatedUsers.forEach(enrichedUser => {
-              userMap.set(enrichedUser.did, enrichedUser);
+              if (enrichedUser?.handleVerified)
+                userMap.set(enrichedUser.did, enrichedUser);
+              else
+                userMap.delete(enrichedUser.did);
             });
             
-            // Filter out users who failed handle verification
-            const newUsers = Array.from(userMap.values()).filter(user => 
-              user.handleVerified === true || user.handleVerified === undefined
-            );
-            
-            if (onUsersUpdate) {
+            const newUsers = Array.from(userMap.values());    
+            if (onUsersUpdate)
               onUsersUpdate(newUsers);
-            }
+            
             return newUsers;
           });
         });
