@@ -10,7 +10,6 @@ const getNgrokUrl = () => {
   if (!isProduction && typeof globalThis !== 'undefined' && globalThis.location) {
     const hostname = globalThis.location.hostname;
     if (hostname.includes('.ngrok-free.app') || hostname.includes('.ngrok.io')) {
-      console.log(`using ngrok URL for OAuth redirect: https://${hostname}`);
       return `https://${hostname}`;
     }
   }
