@@ -221,11 +221,15 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                 };
 
                 return (
-                  <div key={record.uri || index} className={`address-record ${(() => {
-                    const validation = validationResults.get(record.uri);
-                    const isCriticalFailure = validation && isCriticalValidationFailure(validation);
-                    return isCriticalFailure ? 'critical-failure' : '';
-                  })()}`}>
+                  <div 
+                    key={record.uri || index} 
+                    className={`address-record ${(() => {
+                      const validation = validationResults.get(record.uri);
+                      const isCriticalFailure = validation && isCriticalValidationFailure(validation);
+                      return isCriticalFailure ? 'critical-failure' : '';
+                    })()}`}
+                    data-address-hash={parseInt(address.slice(-2), 16) % 8}
+                  >
                     <div className="address-info">
                       <div className="address-header">
                         {isAddress(address) ? (
