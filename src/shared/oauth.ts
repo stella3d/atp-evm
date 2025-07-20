@@ -1,4 +1,5 @@
 import { BrowserOAuthClient, type OAuthClientMetadataInput } from '@atproto/oauth-client-browser'
+import { appName } from "./constants.ts";
 
 const prodDomain = 'https://wallet-link.stellz.club';
 const devDomain = 'http://127.0.0.1:5173';
@@ -36,13 +37,13 @@ const config: Readonly<OAuthClientMetadataInput> = {
   ...(isProduction
     ? {
         client_id: `${prodDomain}/client-metadata.json`,
-        client_name: "@Pay Wallet Linker",
+        client_name: appName,
         client_uri: prodDomain,
         redirect_uris: [prodDomain],
       }
     : {
         client_id: effectiveDevClientId,
-        client_name: "@Pay Wallet Linker (dev)",
+        client_name: `${appName} (dev)`,
         client_uri: effectiveDevDomain,
         redirect_uris: [effectiveDevDomain],
       }
