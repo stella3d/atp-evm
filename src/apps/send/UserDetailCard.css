@@ -288,10 +288,43 @@
   flex-direction: column;
   align-items: stretch;
   gap: 6px;
-  background: #f7f9fa;
+  background: linear-gradient(135deg, #f7f9fa 0%, #eef2f5 100%);
   border: 1px solid #e1e5e9;
   border-radius: 8px;
   padding: 12px;
+}
+
+/* Gradient variations based on wallet address hash */
+.address-record[data-address-hash="0"] {
+  background: radial-gradient(ellipse at top left, #f9fafb 0%, #f4f6f8 70%, #eef2f5 100%); /* Soft blue-gray */
+}
+
+.address-record[data-address-hash="1"] {
+  background: radial-gradient(ellipse at top right, #f9fbf9 0%, #f5f7f4 70%, #f0f4f1 100%); /* Soft green */
+}
+
+.address-record[data-address-hash="2"] {
+  background: radial-gradient(ellipse at bottom left, #faf9fb 0%, #f6f4f7 70%, #f1eff4 100%); /* Soft purple */
+}
+
+.address-record[data-address-hash="3"] {
+  background: radial-gradient(ellipse at bottom right, #fbf9f8 0%, #f7f5f3 70%, #f2f0ee 100%); /* Soft warm */
+}
+
+.address-record[data-address-hash="4"] {
+  background: radial-gradient(ellipse at center, #f9fbfa 0%, #f5f7f5 70%, #f0f3f1 100%); /* Soft mint */
+}
+
+.address-record[data-address-hash="5"] {
+  background: radial-gradient(ellipse at top center, #fafafb 0%, #f6f6f7 70%, #f1f1f3 100%); /* Soft gray */
+}
+
+.address-record[data-address-hash="6"] {
+  background: radial-gradient(ellipse at bottom center, #fbfaf9 0%, #f7f6f4 70%, #f2f1ef 100%); /* Soft beige */
+}
+
+.address-record[data-address-hash="7"] {
+  background: radial-gradient(ellipse at left center, #f9fafb 0%, #f5f6f8 70%, #f0f2f5 100%); /* Soft steel */
 }
 
 .address-record.critical-failure {
@@ -754,8 +787,41 @@
   }
 
   .address-record {
-    background: #2d2d2d;
+    background: linear-gradient(135deg, #2d2d2d 0%, #353535 100%);
     border-color: #404040;
+  }
+
+  /* Dark mode gradient variations based on wallet address hash */
+  .address-record[data-address-hash="0"] {
+    background: radial-gradient(ellipse at top left, #303030 0%, #2c2c2c 70%, #282828 100%); /* Soft dark base */
+  }
+
+  .address-record[data-address-hash="1"] {
+    background: radial-gradient(ellipse at top right, #2f312f 0%, #2c2e2c 70%, #292b29 100%); /* Soft dark green */
+  }
+
+  .address-record[data-address-hash="2"] {
+    background: radial-gradient(ellipse at bottom left, #312f31 0%, #2e2c2e 70%, #2b292b 100%); /* Soft dark purple */
+  }
+
+  .address-record[data-address-hash="3"] {
+    background: radial-gradient(ellipse at bottom right, #312f2e 0%, #2e2c2b 70%, #2b2928 100%); /* Soft dark warm */
+  }
+
+  .address-record[data-address-hash="4"] {
+    background: radial-gradient(ellipse at center, #2f312f 0%, #2c2e2c 70%, #292b29 100%); /* Soft dark mint */
+  }
+
+  .address-record[data-address-hash="5"] {
+    background: radial-gradient(ellipse at top center, #313131 0%, #2d2d2d 70%, #2a2a2a 100%); /* Soft dark gray */
+  }
+
+  .address-record[data-address-hash="6"] {
+    background: radial-gradient(ellipse at bottom center, #31302f 0%, #2e2d2c 70%, #2b2a29 100%); /* Soft dark beige */
+  }
+
+  .address-record[data-address-hash="7"] {
+    background: radial-gradient(ellipse at left center, #2f3031 0%, #2c2d2e 70%, #292a2b 100%); /* Soft dark steel */
   }
 
   .address-record.critical-failure {
