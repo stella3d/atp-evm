@@ -82,16 +82,16 @@
 
 /* Avatar styles */
 .at-avatar {
-  width: 80px;
-  height: 80px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
 }
 
 .at-avatar-placeholder {
-  width: 80px;
-  height: 80px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
