@@ -513,9 +513,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   : step === Step.SENDING ? 'Sending...' : 'Send'
               }
             </h3>
-            <div className="header-right">
-              <button type="button" className="close-button" onClick={onClose}>×</button>
-            </div>
           </div>
           {address && (
             <div className="sender-info">
