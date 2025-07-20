@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { isAddress } from 'viem';
 import { useAccount, WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { EnrichedUser, AddressControlRecordWithMeta, DidString } from "../../shared/common.ts";
+import type { EnrichedUser, AddressControlRecordWithMeta, DidString, AtUriString } from "../../shared/common.ts";
 import { getChainName, getChainColor, getChainGradient, aggregateWallets } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
 import { checkLinkValidityMinimal, type AddressControlVerificationChecks } from "../../shared/verify.ts";
@@ -24,7 +24,6 @@ interface UserDetailCardProps {
 // Cache for validation results with 1 month TTL
 const validationCache = new LocalstorageTtlCache<AddressControlVerificationChecks>(21 * 24 * 60 * 60 * 1000); // 3 weeks in ms
 
-type AtUriString = `at://${string}`;
 // Generate cache key for validation results
 const getValidationCacheKey = (recordUri: AtUriString): `validation:${AtUriString}` => {
   return `validation:${recordUri}`;
