@@ -10,7 +10,6 @@ import { LocalstorageTtlCache } from "../../shared/LocalstorageTtlCache.ts";
 import { PaymentModal } from "./PaymentModal.tsx";
 import { AddressLink } from "../../shared/AddressLink.tsx";
 import { AtprotoUserCard, UserCardVariant } from "../../shared/AtprotoUserCard.tsx";
-import { ConnectWallet } from "../../shared/WalletConnector.tsx";
 import { config } from '../../shared/WalletConnector.tsx';
 import { ProfileDetails } from "./ProfileDetails.tsx";
 import { ValidationChecks, isCriticalValidationFailure } from "./ValidationChecks.tsx";
