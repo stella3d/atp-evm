@@ -249,17 +249,20 @@ const resolveDid = async (did: DidString): Promise<DidDocument> => {
     return cachedDidDoc;
   }
   
-  // Cache miss - fetch from network
-  const response = await fetch(`https://plc.directory/${did}`);
+  let response: Response;
+  if (did.startsWith('did:web:')) {
+    const didDomain = did.slice(8);
+    response = await fetch(`https://${didDomain}/.well-known/did.json`);
+  } else {
+    response = await fetch(`https://plc.directory/${did}`);
+  }
+
   if (!response.ok) {
     throw new Error(`Failed to resolve DID: ${response.status}`);
   }
   
   const didDoc = await response.json();
-  
-  // Cache the result
   didDocumentCache.set(cacheKey, didDoc);
-  
   return didDoc;
 };
 
