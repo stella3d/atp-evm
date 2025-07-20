@@ -305,6 +305,11 @@
   min-width: 0;
 }
 
+.address-info p {
+  margin-block-start: 4px;
+  margin-block-end: 4px;
+}
+
 .address-header {
   display: flex;
   align-items: center;

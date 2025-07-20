@@ -240,15 +240,7 @@ interface DidDocument {
 // DID document cache with 30 minute TTL
 const didDocumentCache = new LocalstorageTtlCache<DidDocument>(30 * 60 * 1000);
 
-const resolveDid = async (did: DidString): Promise<DidDocument> => {
-  // Check cache first
-  const cacheKey = `${did}_doc`;
-  const cachedDidDoc = didDocumentCache.get(cacheKey);
-  if (cachedDidDoc) {
-    //console.log(`using cached DID document for ${did}`);
-    return cachedDidDoc;
-  }
-  
+const fetchDidDocument = async (did: DidString): Promise<DidDocument> => {
   let response: Response;
   if (did.startsWith('did:web:')) {
     const didDomain = did.slice(8);
@@ -258,10 +250,21 @@ const resolveDid = async (did: DidString): Promise<DidDocument> => {
   }
 
   if (!response.ok) {
-    throw new Error(`Failed to resolve DID: ${response.status}`);
+    throw new Error(`failed to resolve DID: ${response.status}`);
+  }
+
+  return await response.json();
+}
+const resolveDid = async (did: DidString): Promise<DidDocument> => {
+  // Check cache first
+  const cacheKey = `${did}_doc`;
+  const cachedDidDoc = didDocumentCache.get(cacheKey);
+  if (cachedDidDoc) {
+    //console.log(`using cached DID document for ${did}`);
+    return cachedDidDoc;
   }
   
-  const didDoc = await response.json();
+  const didDoc = await fetchDidDocument(did);
   didDocumentCache.set(cacheKey, didDoc);
   return didDoc;
 };
