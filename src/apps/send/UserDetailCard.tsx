@@ -251,7 +251,7 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                           />
                         </>
                       )}
-                      <AtUriLink atUri={record.uri} caption="view record on PDSls"></AtUriLink>
+                      <AtUriLink atUri={record.uri} caption="view record"></AtUriLink>
 
                       {issuedAt && (
                         <div>
