@@ -14,6 +14,7 @@ import { config } from '../../shared/WalletConnector.tsx';
 import { ProfileDetails } from "./ProfileDetails.tsx";
 import { ValidationChecks, isCriticalValidationFailure } from "./ValidationChecks.tsx";
 import './UserDetailCard.css';
+import AtUriLink from "../../shared/AtUriLink.tsx";
 
 interface UserDetailCardProps {
   selectedUser: EnrichedUser;
@@ -250,6 +251,8 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
                           />
                         </>
                       )}
+                      <AtUriLink atUri={record.uri} caption="view record on PDSls"></AtUriLink>
+
                       {issuedAt && (
                         <div>
                         <div style={{ color: 'gray', fontWeight: 720 }}>signed on</div>
