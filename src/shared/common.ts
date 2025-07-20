@@ -33,7 +33,7 @@ export type AddressControlRecord = {
 
 // Address control record from the user's PDS
 export interface AddressControlRecordWithMeta {
-  uri: `at://${string}`;
+  uri: AtUriString;
   value: AddressControlRecord;
 }
 
@@ -214,4 +214,4 @@ export const atpBytesToHex = (recordField: AtprotoBytesField): HexString => {
   return sigHex;
 }
 
-export type AtUriString = `at://${string}`;
+export type AtUriString = `at://${DidString}/${string}`;
