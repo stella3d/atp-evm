@@ -352,12 +352,6 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
             </div>
           )}
         </div>
-        
-        {!isConnected && (
-          <div className="wallet-connection-section">
-            <ConnectWallet prompt={undefined} />
-          </div>
-        )}
       </div>
       
       <PaymentModal
