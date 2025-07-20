@@ -1,3 +1,4 @@
+import { CHAIN_COLORS, CHAIN_NAMES } from "./constants.ts";
 
 export type HexString = `0x${string}`;
 export type EvmAddressString = HexString;
@@ -106,27 +107,9 @@ export function uid(length = 96): string {
   return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('').substring(0, length);
 }
 
-// Chain ID to friendly name mapping
-export const CHAIN_NAMES: Record<number, string> = {
-  1: 'Ethereum',
-  8453: 'Base',
-  10: 'Optimism',
-  100: 'Gnosis',
-  42161: 'Arbitrum'
-};
-
 export function getChainName(chainId: number): string {
   return CHAIN_NAMES[chainId] || `Chain ${chainId}`;
 }
-
-// Chain ID to brand color mapping
-export const CHAIN_COLORS: Record<number, string> = {
-  1: '#627EEA',     // Ethereum - blue
-  8453: 'rgb(0, 82, 255)',  // Base - blue
-  10: '#ff0420',    // Optimism - red
-  100: 'rgb(62, 105, 87)', // Gnosis Chain - dark green
-  42161: '#213147'  // Arbitrum - dark blue/gray
-};
 
 export function getChainColor(chainId: number): string {
   return CHAIN_COLORS[chainId] || '#627EEA'; // default to Ethereum blue
