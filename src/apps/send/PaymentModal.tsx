@@ -11,7 +11,7 @@ import { TokenSelector } from './TokenSelector.tsx';
 import { AmountInput } from './AmountInput.tsx';
 import { TransactionPending } from './TransactionPending.tsx';
 import { TransactionSuccess } from './TransactionSuccess.tsx';
-import { TransactionError, ErrorType, ErrorState } from './TransactionError.tsx';
+import { TransactionError, ErrorType } from './TransactionError.tsx';
 import './PaymentModal.css';
 
 enum Step {
@@ -19,6 +19,12 @@ enum Step {
   SENDING,
   SUCCESS,
   ERROR
+}
+
+// why doesn't this work as an import?
+type ErrorState = {
+  type: ErrorType;
+  message: string;
 }
 
 // ERC20 ABI for transfer function
