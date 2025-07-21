@@ -309,8 +309,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     if (!isAddress(customRecipient)) {
       const categorized = categorizeError(chainId, 'Invalid recipient address');
       setError(categorized);
-      setStep(Step.ERROR);
-      return;
+      return setStep(Step.ERROR);
     }
 
     // Check if selected token belongs to the correct chain
@@ -320,8 +319,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         message: `selected token is for chain ${selectedToken.chainId} but transaction requires chain ${chainId}`,
         type: ErrorType.OTHER
       });
-      setStep(Step.ERROR);
-      return;
+      return setStep(Step.ERROR);
     }
 
     // Check if amount exceeds balance
@@ -332,8 +330,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         message: `Amount ${amount} ${selectedToken.symbol} exceeds your balance of ${selectedToken.balance} ${selectedToken.symbol}`,
         type: ErrorType.INSUFFICIENT_FUNDS
       });
-      setStep(Step.ERROR);
-      return;
+      return setStep(Step.ERROR);
     }
 
     try {
