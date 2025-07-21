@@ -1,0 +1,7 @@
+.record-link a {
+  transition: filter 0.2s ease;
+}
+
+.record-link a:hover {
+  filter: brightness(1.2);
+}
