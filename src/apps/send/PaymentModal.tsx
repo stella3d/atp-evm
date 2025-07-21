@@ -11,7 +11,7 @@ import { TokenSelector } from './TokenSelector.tsx';
 import { AmountInput } from './AmountInput.tsx';
 import { TransactionPending } from './TransactionPending.tsx';
 import { TransactionSuccess } from './TransactionSuccess.tsx';
-import { TransactionError, ErrorType } from './TransactionError.tsx';
+import { TransactionError, ErrorType, ErrorState } from './TransactionError.tsx';
 import './PaymentModal.css';
 
 enum Step {
@@ -95,7 +95,7 @@ const extractCurrentChainIdFromError = (errorMessage: string): number | null => 
     return null;
   };
 
-const isWrongChainErr = (chainId: number, err: { type: ErrorType; message: string; }, originalErrorMessage: string) => {
+const isWrongChainErr = (chainId: number, err: ErrorState, originalErrorMessage: string) => {
   if (err.type === ErrorType.WRONG_CHAIN)
     return true;
   
@@ -113,7 +113,7 @@ const isWrongChainErr = (chainId: number, err: { type: ErrorType; message: strin
 }
 
 // Helper function to categorize errors
-const categorizeError = (chainId: number, errorMessage: string): { type: ErrorType, message: string } => {
+const categorizeError = (chainId: number, errorMessage: string): ErrorState => {
   const msg = errorMessage.toLowerCase();
   
   if (msg.includes('user rejected') || msg.includes('user denied') || msg.includes('rejected') || msg.includes('user cancelled')) {
@@ -166,6 +166,49 @@ interface PaymentModalProps {
   chainId?: number;
 }
 
+
+type AmountValidationWarning = { 
+  type: 'gentle' | 'strong'; 
+  message: string;
+};
+
+const checkLargePaymentWarning = (amount: number, token: TokenBalance): AmountValidationWarning | null => {
+  const symbol = token.symbol.toUpperCase();
+
+  // Stablecoin thresholds
+  const stablecoins = ['USDC', 'USDT', 'DAI', 'EURC'];
+  if (stablecoins.includes(symbol)) {
+    if (amount >= 1500) {
+      return {
+        type: 'strong' as const,
+        message: `⚠️ Large payment alert: You're sending ${amount.toLocaleString()} ${symbol}. Please double-check this amount before proceeding.`
+      };
+    } else if (amount >= 500) {
+      return {
+        type: 'gentle' as const,
+        message: `💰 Sending ${amount.toLocaleString()} ${symbol} - please verify this amount is correct.`
+      };
+    }
+  }
+
+  // ETH thresholds
+  if (symbol === 'ETH') {
+    if (amount >= 0.5) {
+      return {
+        type: 'strong' as const,
+        message: `⚠️ Large payment alert: You're sending ${amount} ETH. Please double-check this amount before proceeding.`
+      };
+    } else if (amount >= 0.2) {
+      return {
+        type: 'gentle' as const,
+        message: `💰 Sending ${amount} ETH - please verify this amount is correct.`
+      };
+    }
+  }
+
+  return null;
+};
+
 export const PaymentModal: React.FC<PaymentModalProps> = ({
   isOpen,
   onClose,
@@ -183,10 +226,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [customRecipient, setCustomRecipient] = useState(recipientAddress);
   const [step, setStep] = useState<Step>(Step.SELECT);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [errorType, setErrorType] = useState<ErrorType | null>(null);
+
+  const [error, setError] = useState<ErrorState | null>(null);
+
   const [amountError, setAmountError] = useState<string | null>(null);
-  const [amountWarning, setAmountWarning] = useState<{type: 'gentle' | 'strong', message: string} | null>(null);
+  const [amountWarning, setAmountWarning] = useState<AmountValidationWarning | null>(null);
+  const clearAmountValidation = () => { setAmountError(null); setAmountWarning(null); };
 
   const { getBalancesForChain, fetchBalancesForChain, isLoadingChain } = useTokenBalancesContext();
 
@@ -198,51 +243,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const isWrongChain = walletChain?.id !== chainId;
   const currentWalletChainId = walletChain?.id;
 
-  // Helper function to check for large payment warnings
-  const checkLargePaymentWarning = (amount: number, token: TokenBalance) => {
-    const symbol = token.symbol.toUpperCase();
-    
-    // Stablecoin thresholds
-    const stablecoins = ['USDC', 'USDT', 'DAI', 'EURC'];
-    if (stablecoins.includes(symbol)) {
-      if (amount >= 1500) {
-        return {
-          type: 'strong' as const,
-          message: `⚠️ Large payment alert: You're sending ${amount.toLocaleString()} ${symbol}. Please double-check this amount before proceeding.`
-        };
-      } else if (amount >= 500) {
-        return {
-          type: 'gentle' as const,
-          message: `💰 Sending ${amount.toLocaleString()} ${symbol} - please verify this amount is correct.`
-        };
-      }
-    }
-    
-    // ETH thresholds
-    if (symbol === 'ETH') {
-      if (amount >= 0.6) {
-        return {
-          type: 'strong' as const,
-          message: `⚠️ Large payment alert: You're sending ${amount} ETH. Please double-check this amount before proceeding.`
-        };
-      } else if (amount >= 0.2) {
-        return {
-          type: 'gentle' as const,
-          message: `💰 Sending ${amount} ETH - please verify this amount is correct.`
-        };
-      }
-    }
-    
-    return null;
-  };
-
   // Helper function to validate amount
   const validateAmount = (value: string, token: TokenBalance | null) => {
-    if (!token || !value) {
-      setAmountError(null);
-      setAmountWarning(null);
-      return;
-    }
+    if (!token || !value)
+      return clearAmountValidation();
 
     const numericAmount = parseFloat(value);
     if (numericAmount < 0) {
@@ -250,11 +254,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       setAmountError('amount must be greater than 0');
       return;
     }
-    if (isNaN(numericAmount)) {
-      setAmountError(null);
-      setAmountWarning(null);
-      return;
-    }
+    if (isNaN(numericAmount))
+      return clearAmountValidation();
 
     const tokenBalance = parseFloat(token.balance);
     if (numericAmount > tokenBalance) {
@@ -277,14 +278,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       onError: (error) => {
         const categorized = categorizeError(chainId, error.message);
         console.error('sendTransaction error:', error.message, categorized);
-        if (categorized.type !== ErrorType.OTHER) {
-          // For typed errors, only store the user-friendly message but log the raw error
-          setError(categorized.message);
-        } else {
-          // For unknown errors, show the raw message
-          setError(categorized.message);
-        }
-        setErrorType(categorized.type);
+        setError(categorized);
         setStep(Step.ERROR);
       }
     }
@@ -299,18 +293,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       onError: (error) => {
         const categorized = categorizeError(chainId, error.message);
         console.error('writeContract error:', error.message, categorized);
-        if (isWrongChainErr(chainId, categorized, error.message))
+        if (isWrongChainErr(chainId, categorized, error.message)) {
           categorized.type = ErrorType.WRONG_CHAIN;
-        
-        if (categorized.type !== ErrorType.OTHER) {
-          // For typed errors, only store the user-friendly message but log the raw error
-          setError(categorized.message);
-        } else {
-          // For unknown errors, show the raw message
-          setError(categorized.message);
+          setError(categorized);
+          setStep(Step.ERROR);
         }
-        setErrorType(categorized.type);
-        setStep(Step.ERROR);
       }
     }
   });
@@ -321,10 +308,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   React.useEffect(() => {
     if (isSuccess && step === Step.SENDING) {
-      // Add delay to allow block explorer to index the transaction
-      setTimeout(() => {
-        setStep(Step.SUCCESS);
-      }, 1000);
+      // 1/2 second delay to allow block explorer to index the transaction
+      setTimeout(() => { setStep(Step.SUCCESS); }, 500);
     }
   }, [isSuccess, step]);
 
@@ -332,15 +317,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     if (isError && receiptError && step === Step.SENDING) {
       const categorized = categorizeError(chainId, receiptError.message);
       console.error('transaction receipt error:', receiptError.message, categorized);
-      
-      if (categorized.type !== ErrorType.OTHER) {
-        // For typed errors, only store the user-friendly message but log the raw error
-        setError(categorized.message);
-      } else {
-        // For unknown errors, show the raw message
-        setError(categorized.message);
-      }
-      setErrorType(categorized.type);
+      setError(categorized);
       setStep(Step.ERROR);
     }
   }, [isError, receiptError, step]);
@@ -353,18 +330,17 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   }, [isConnected, recipientChainBalances.length, recipientChainBalances, selectedToken]);
 
   // Fetch balances for recipient's chain when modal opens or chainId changes
+  // TODO - should this be removed? would it help with rate limits?
   React.useEffect(() => {
     if (isOpen && address && recipientChainBalances.length === 0 && !loadingBalances) {
       fetchBalancesForChain(chainId);
     }
   }, [isOpen, address, chainId, recipientChainBalances.length, loadingBalances, fetchBalancesForChain]);
 
-  // Clear validation errors when balances are loading for a new chain
+  // clear validation errors when balances are loading for a new chain
   React.useEffect(() => {
-    if (loadingBalances) {
-      setAmountError(null);
-      setAmountWarning(null);
-    }
+    if (loadingBalances) 
+      clearAmountValidation();
   }, [loadingBalances]);
 
   React.useEffect(() => {
@@ -376,9 +352,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       setCustomRecipient(recipientAddress);
       setTxHash(null);
       setError(null);
-      setErrorType(null);
-      setAmountError(null);
-      setAmountWarning(null);
+      clearAmountValidation();
     }
   }, [isOpen, recipientAddress]);
 
@@ -390,8 +364,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   // Reset selected token when chainId changes to prevent validation against wrong chain balances
   React.useEffect(() => {
     setSelectedToken(null);
-    setAmountError(null);
-    setAmountWarning(null);
+    clearAmountValidation();
   }, [chainId]);
 
   // Validate amount when selected token changes or chainId changes
@@ -399,8 +372,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     if (selectedToken && amount) {
       validateAmount(amount, selectedToken);
     } else {
-      setAmountError(null);
-      setAmountWarning(null);
+      clearAmountValidation();
     }
   }, [selectedToken, amount, chainId]);
 
@@ -409,16 +381,18 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
     if (!isAddress(customRecipient)) {
       const categorized = categorizeError(chainId, 'Invalid recipient address');
-      setError(categorized.message);
-      setErrorType(categorized.type);
+      setError(categorized);
       setStep(Step.ERROR);
       return;
     }
 
     // Check if selected token belongs to the correct chain
+    // TODO - is this still needed? can we remove it?
     if (selectedToken.chainId !== chainId) {
-      setError(`Selected token is for chain ${selectedToken.chainId} but transaction requires chain ${chainId}`);
-      setErrorType(ErrorType.OTHER);
+      setError({
+        message: `selected token is for chain ${selectedToken.chainId} but transaction requires chain ${chainId}`,
+        type: ErrorType.OTHER
+      });
       setStep(Step.ERROR);
       return;
     }
@@ -427,8 +401,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     const numericAmount = parseFloat(amount);
     const tokenBalance = parseFloat(selectedToken.balance);
     if (numericAmount > tokenBalance) {
-      setError(`Amount ${amount} ${selectedToken.symbol} exceeds your balance of ${selectedToken.balance} ${selectedToken.symbol}`);
-      setErrorType(ErrorType.INSUFFICIENT_FUNDS);
+      setError({
+        message: `Amount ${amount} ${selectedToken.symbol} exceeds your balance of ${selectedToken.balance} ${selectedToken.symbol}`,
+        type: ErrorType.INSUFFICIENT_FUNDS
+      });
       setStep(Step.ERROR);
       return;
     }
@@ -456,8 +432,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to send transaction';
       const categorized = categorizeError(chainId, errorMessage);
-      setError(categorized.message);
-      setErrorType(categorized.type);
+      setError(categorized);
       setStep(Step.ERROR);
     }
   };
@@ -479,10 +454,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   setAmount('');
                   setTxHash(null);
                   setError(null);
-                  setErrorType(null);
-                  setAmountError(null);
-                  setAmountWarning(null);
-                  
+                  clearAmountValidation();
+
                   // Force disconnect and clear cached state
                   await forceDisconnectAndClearState(disconnect, isConnected);
                   
@@ -578,25 +551,22 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             />
           )}
 
-          {step === Step.ERROR && (
+          {step === Step.ERROR && error && (
             <TransactionError
               error={error}
-              errorType={errorType}
               chainId={chainId}
               onRetry={() => {
-                if (errorType === ErrorType.WRONG_CHAIN) {
+                if (error.type === ErrorType.WRONG_CHAIN) {
                   // For wrong chain errors, just go back to select step
                   // The user can see the chain mismatch warning and choose to switch chains
                   setStep(Step.SELECT);
                   setError(null);
-                  setErrorType(null);
                   setTxHash(null);
                   setAmountWarning(null);
                 } else {
                   // For other errors, just go back to select step
                   setStep(Step.SELECT);
                   setError(null);
-                  setErrorType(null);
                   setTxHash(null);
                   setAmountWarning(null);
                 }
