@@ -155,18 +155,6 @@ const categorizeError = (chainId: number, errorMessage: string): ErrorState => {
   };
 };
 
-interface PaymentModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  recipientAddress: `0x${string}`;
-  recipientName?: string;
-  recipientHandle?: string;
-  recipientAvatar?: string;
-  recipientDid?: string;
-  chainId?: number;
-}
-
-
 type AmountValidationWarning = { 
   type: 'gentle' | 'strong'; 
   message: string;
@@ -208,6 +196,17 @@ const checkLargePaymentWarning = (amount: number, token: TokenBalance): AmountVa
 
   return null;
 };
+
+interface PaymentModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  recipientAddress: `0x${string}`;
+  recipientName?: string;
+  recipientHandle?: string;
+  recipientAvatar?: string;
+  recipientDid?: string;
+  chainId?: number;
+}
 
 export const PaymentModal: React.FC<PaymentModalProps> = ({
   isOpen,
