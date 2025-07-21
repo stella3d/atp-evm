@@ -15,7 +15,6 @@ export function ConnectWallet() {
 
 export const SimpleWalletConnector = () => {
   const queryClient = new QueryClient();
-  const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; 
 
   return (
     <WagmiProvider config={config}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { AddressLink } from '../../shared/AddressLink.tsx';
-import { AtprotoUserCard } from '../../shared/AtprotoUserCard.tsx';
+import { AtprotoUserCard, UserCardVariant } from '../../shared/AtprotoUserCard.tsx';
 import { ChainIndicator } from '../../shared/ChainIndicator.tsx';
 import { useEnsName } from 'wagmi';
 import { isAddress } from 'viem';
@@ -51,7 +51,7 @@ export const RecipientInfo: React.FC<RecipientInfoProps> = ({
             did={recipientDid}
             avatar={recipientAvatar}
             clickable={!!recipientHandle}
-            variant="payment"
+            variant={UserCardVariant.PAYMENT}
             showDid
           />
         </div>

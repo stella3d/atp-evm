@@ -352,6 +352,10 @@
   margin-bottom: 4px;
 }
 
+.address-header .ens-info {
+  margin-bottom: 8px;
+}
+
 .address-value {
   font-family: monospace;
   font-size: 14px;
@@ -797,11 +801,11 @@
   }
 
   .address-record[data-address-hash="1"] {
-    background: radial-gradient(ellipse at top right, #2f312f 0%, #2c2e2c 70%, #292b29 100%); /* Soft dark green */
+    background: radial-gradient(ellipse at top right, #2f312f 0%, #2e302d 70%, #292b29 100%); /* Soft dark green */
   }
 
   .address-record[data-address-hash="2"] {
-    background: radial-gradient(ellipse at bottom left, #312f31 0%, #2e2c2e 70%, #2b292b 100%); /* Soft dark purple */
+    background: radial-gradient(ellipse at bottom left, #312f31 0%, #2f2c2f 70%, #2b292b 100%); /* Soft dark purple */
   }
 
   .address-record[data-address-hash="3"] {
@@ -809,19 +813,19 @@
   }
 
   .address-record[data-address-hash="4"] {
-    background: radial-gradient(ellipse at center, #2f312f 0%, #2c2e2c 70%, #292b29 100%); /* Soft dark mint */
+    background: radial-gradient(ellipse at center, #272927 0%, #2d302d 70%, #292b29 100%); /* Soft dark mint */
   }
 
   .address-record[data-address-hash="5"] {
-    background: radial-gradient(ellipse at top center, #313131 0%, #2d2d2d 70%, #2a2a2a 100%); /* Soft dark gray */
+    background: radial-gradient(ellipse at top center, #313131 0%, #2d2d2e 70%, #1f2324 100%); /* Soft dark gray */
   }
 
   .address-record[data-address-hash="6"] {
-    background: radial-gradient(ellipse at bottom center, #31302f 0%, #2e2d2c 70%, #2b2a29 100%); /* Soft dark beige */
+    background: radial-gradient(ellipse at bottom center, #31302f 0%, #302e30 70%, #2b2a29 100%); /* Soft dark pink */
   }
 
   .address-record[data-address-hash="7"] {
-    background: radial-gradient(ellipse at left center, #2f3031 0%, #2c2d2e 70%, #292a2b 100%); /* Soft dark steel */
+    background: radial-gradient(ellipse at left center, #212428 0%, #2d2e32 70%, #27292b 100%); /* Soft dark steel */
   }
 
   .address-record.critical-failure {
