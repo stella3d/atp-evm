@@ -350,6 +350,11 @@
   gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 4px;
+  border-bottom: #03a9f41f;
+  border-bottom-style: outset;
+  border-width: 0.2px;
+  border-bottom-left-radius: 32px;
+  border-bottom-right-radius: 32px;
 }
 
 .address-header .ens-info {
