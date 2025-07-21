@@ -716,7 +716,7 @@
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .user-detail-card {
-    background: #1a1a1a;
+    background: linear-gradient(to bottom, #1a1a1a 0%, #121212 100%);
     border-color: #404040;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
