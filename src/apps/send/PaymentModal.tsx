@@ -244,13 +244,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       return;
     }
 
-    // Ensure token belongs to the correct chain
-    if (token.chainId !== chainId) {
-      setAmountError(`token is for chain ${token.chainId} but expected chain ${chainId}`);
-      setAmountWarning(null);
-      return;
-    }
-
     const numericAmount = parseFloat(value);
     if (numericAmount < 0) {
       setAmountWarning(null);
