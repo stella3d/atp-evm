@@ -3,9 +3,10 @@ import { isAddress } from 'viem';
 import type { AddressControlRecordWithMeta } from '../../shared/common.ts';
 import type { AddressControlVerificationChecks } from '../../shared/verify.ts';
 import { getChainName, getChainColor, getChainGradient } from '../../shared/common.ts';
-import { AddressLink } from '../../shared/AddressLink.tsx';
 import AtUriLink from '../../shared/AtUriLink.tsx';
 import { ValidationChecks, isCriticalValidationFailure } from './ValidationChecks.tsx';
+import { EnrichedEthAddress } from "../../shared/EnrichedEthAddress.tsx";
+import './LinkedWallet.css';
 
 interface LinkedWalletProps {
   record: AddressControlRecordWithMeta;
@@ -58,7 +59,7 @@ export const LinkedWallet: React.FC<LinkedWalletProps> = ({
       <div className="address-info">
         <div className="address-header">
           {isAddress(address) ? (
-            <AddressLink address={address as `0x${string}`} className="address-value" />
+            <EnrichedEthAddress address={address as `0x${string}`} caption="also known as" className="address-value" />
           ) : (
             <div className="address-value">{address}</div>
           )}
@@ -80,11 +81,18 @@ export const LinkedWallet: React.FC<LinkedWalletProps> = ({
             />
           </>
         )}
-        <AtUriLink atUri={record.uri} caption="view record"></AtUriLink>
 
         {issuedAt && (
           <div>
-          <div style={{ color: 'gray', fontWeight: 720 }}>signed on</div>
+          {/*<div style={{ color: 'gray', fontWeight: 720 }}>signed on</div>*/}
+          <div>
+            <AtUriLink className="record-link" atUri={record.uri} caption="record " wrapperTag="span" color="#5a5ea6" fontWeight={720} />
+            <span style={{ color: 'gray', fontWeight: 720 }}>
+              signed on
+            </span>
+          </div>
+
+
           <div className="address-metadata">
             <div className="metadata-column">
               <div className="metadata-label">⛓️</div>
