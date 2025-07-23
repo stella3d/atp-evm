@@ -480,6 +480,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               error={error}
               chainId={chainId}
               onRetry={() => {
+                // TODO - cleanup, can wrong chain errors happen now that we block them?
                 if (error.type === ErrorType.WRONG_CHAIN) {
                   // For wrong chain errors, just go back to select step
                   // The user can see the chain mismatch warning and choose to switch chains
