@@ -3,7 +3,7 @@
   "client_name": "Atproto Wallet Linker",
   "client_uri": "https://wallet-link.stellz.club",
   "redirect_uris": ["https://wallet-link.stellz.club"],
-  "scope": "atproto transition:generic",
+  "scope": "atproto repo:club.stellz.evm.addressControl?action=create",
   "grant_types": ["authorization_code", "refresh_token"],
   "response_types": ["code"],
   "token_endpoint_auth_method": "none",

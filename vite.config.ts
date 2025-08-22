@@ -12,7 +12,7 @@ export default defineConfig({
   server: { 
     host: '0.0.0.0',
     port: 5173,
-    allowedHosts: ['wallet-link.stellz.club', '127.0.0.1'] 
+    allowedHosts: ['wallet-link.stellz.club', '127.0.0.1', '7e6a6bca11ba.ngrok-free.app'] 
   },
   build: {
     rollupOptions: {

@@ -1,11 +1,11 @@
 {
-  "client_id": "https://9595d1d308fe.ngrok-free.app/client-metadata-dev.json",
+  "client_id": "https://7e6a6bca11ba.ngrok-free.app/client-metadata-dev.json",
   "client_name": "@Pay Wallet Linker (dev)",
-  "client_uri": "https://9595d1d308fe.ngrok-free.app",
+  "client_uri": "https://7e6a6bca11ba.ngrok-free.app",
   "redirect_uris": [
-    "https://9595d1d308fe.ngrok-free.app"
+    "https://7e6a6bca11ba.ngrok-free.app"
   ],
-  "scope": "atproto transition:generic",
+  "scope": "atproto repo:club.stellz.evm.addressControl?action=create",
   "grant_types": [
     "authorization_code",
     "refresh_token"
