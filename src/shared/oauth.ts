@@ -25,7 +25,7 @@ const sharedConfig: Readonly<Pick<OAuthClientMetadataInput,
   "scope" | "grant_types" | "response_types" | "application_type" | 
   "token_endpoint_auth_method" | "dpop_bound_access_tokens"
 >> = {
-  scope: "atproto transition:generic",
+  scope: "atproto repo:club.stellz.evm.addressControl?action=create",
   grant_types: ["authorization_code", "refresh_token"],
   response_types: ["code"],
   application_type: "web",

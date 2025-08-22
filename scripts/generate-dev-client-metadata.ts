@@ -38,7 +38,7 @@ export function generateDevClientMetadata(): Plugin {
           client_name: "@Pay Wallet Linker (dev)",
           client_uri: baseUrl,
           redirect_uris: [baseUrl],
-          scope: "atproto transition:generic",
+          scope: "atproto repo:club.stellz.evm.addressControl?action=create",
           grant_types: ["authorization_code", "refresh_token"],
           response_types: ["code"],
           token_endpoint_auth_method: "none",
