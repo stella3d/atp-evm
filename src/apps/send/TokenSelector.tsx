@@ -20,7 +20,10 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({
       {loadingBalances ? (
         <div className="loading">Loading token balances...</div>
       ) : recipientChainBalances.length === 0 ? (
-        <div className="no-tokens">No tokens with balance found</div>
+        <div className="no-tokens">
+          No supported tokens found in your connected wallet. 
+          @Pay supports ETH, USDC, USDT, DAI, & EURC.
+        </div>
       ) : (
         <div className="token-list">
           {recipientChainBalances.map((token, index) => (
