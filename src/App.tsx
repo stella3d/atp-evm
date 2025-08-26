@@ -1,16 +1,21 @@
 import './App.css'
-import AuthLinker from './shared/AuthLinker.tsx';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import LinkerApp from './apps/LinkerApp.tsx';
+import SendApp from './apps/SendApp.tsx';
 
 function App() {
   return (
-    <>
-      <h1>ATProto Wallet Linker</h1>
-      <p>This allows you to link an Ethereum wallet address to your <a href="https://atproto.com/specs/did">ATProto identity</a> in a way that can be cryptographically verified on both sides.</p>
-      <b style={{ color: "#ee5f90" }}>Only use this if you are OK with being publicly associated to the linked wallet.</b>
-      <p>It works by writing a record to your PDS that contains the wallet address and a Sign In With Ethereum message from the wallet.</p>
-      <br/>
-      <AuthLinker />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LinkerApp />} />
+        <Route path="/send" element={<SendApp />} />
+        <Route path="/atpay" element={<SendApp />} />
+        {/* Back-compat: redirect any stray index.html access to root */}
+        <Route path="/index.html" element={<Navigate to="/" replace />} />
+        {/* Fallback to root */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
