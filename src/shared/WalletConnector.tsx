@@ -67,7 +67,6 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
   // Show a gentle info toast if connected to Ethereum mainnet (chainId 1)
   useEffect(() => {
     if (account?.chainId === 1) {
-      console.log('ROLLUP NUDGE SHOULD SHOW');
       setShowMainnetTip(true);
     } else {
       setShowMainnetTip(false);
@@ -117,7 +116,8 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
         console.log('SIWE verification succeeded');
         setVerificationError(null);
 
-        const record = serializeSiweAddressControlRecord(account.address, siweMsg, sig);
+        const alsoOnArray: undefined | number[] = alsoOn.size > 0 ? Array.from(alsoOn) : undefined;
+        const record = serializeSiweAddressControlRecord(account.address, alsoOnArray, siweMsg, sig);
         // include optional alsoOn chains as an array to comply with the lexicon schema
         if (alsoOn.size > 0) {
           record.alsoOn = Array.from(alsoOn);

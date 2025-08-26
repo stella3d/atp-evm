@@ -11,13 +11,15 @@ type SignatureString = `0x${string}`;
 const hexToAtpBytes = (hex: string): AtprotoBytesField => ({ "$bytes": hexToBase64(hex) });
 
 export const serializeSiweAddressControlRecord = (
-  address: EvmAddressString, 
+  address: EvmAddressString,
+  alsoOn: undefined | number[], 
   siweMsg: SiweMessage, 
   sig: SignatureString
 ): AddressControlRecord => {
   const record: AddressControlRecord = {
     '$type': ADDRESS_CONTROL_LEXICON_TYPE,
     address: hexToAtpBytes(address),
+    alsoOn,
     signature: hexToAtpBytes(sig),
     siwe: lexiconFormatSiweMessage(siweMsg)
   };

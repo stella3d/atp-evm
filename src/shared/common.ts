@@ -27,7 +27,7 @@ export const ADDRESS_CONTROL_LEXICON_TYPE = 'club.stellz.evm.addressControl';
 export type AddressControlRecord = {
   '$type': 'club.stellz.evm.addressControl',
   address: AtprotoBytesField;
-  alsoOn?: Set<number> | number[]; // List of other chain IDs this address is active on
+  alsoOn?: number[]; // List of other chain IDs this address is active on
   signature: AtprotoBytesField;
   siwe: SiweLexiconObject;
 };
@@ -168,7 +168,7 @@ export function isHandle(input: string): boolean {
 // Group records by address, collecting all chains for each address
 export const aggregateWallets = (records: AddressControlRecordWithMeta[]): AddressControlRecordWithMeta[] => {
   const addressMap = new Map<string, AddressControlRecordWithMeta>();
-  
+
   for (const record of records) {
     const val = record.value;
     const address = val.siwe.address.toLowerCase();
@@ -182,13 +182,11 @@ export const aggregateWallets = (records: AddressControlRecordWithMeta[]): Addre
       // add chains if not already present
       const thisChains = Array.from([val.siwe.chainId, ...(val?.alsoOn || [])]);
       if (!existing.value.alsoOn) {
-        existing.value.alsoOn = new Set<number>(thisChains);
-      } else if (existing.value.alsoOn instanceof Set) {
-        thisChains.forEach(chain => (existing.value.alsoOn as Set<number>).add(chain));
+        existing.value.alsoOn = thisChains;
       } else {
         // existing.value.alsoOn is an array
-        const merged = new Set<number>([...existing.value.alsoOn as number[], ...thisChains]);
-        existing.value.alsoOn = merged;
+        const merged = new Set<number>([...existing.value.alsoOn, ...thisChains]);
+        existing.value.alsoOn = Array.from(merged.values());
       }
     }
   }
