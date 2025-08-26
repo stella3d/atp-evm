@@ -20,6 +20,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
   const [error, setError] = useState<string | null>(null);
   const [allUserDids, setAllUserDids] = useState<DidString[]>([]);
   const [enrichedUserDids, setEnrichedUserDids] = useState<Set<DidString>>(new Set());
+  const [exactMatchDid, setExactMatchDid] = useState<DidString | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const pendingEnrichmentRef = useRef<Set<DidString>>(new Set());
   const enrichmentTimeoutRef = useRef<number | null>(null);
@@ -173,6 +174,42 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
     loadUsers();
   }, []); // Only run once on mount
 
+  // When the user types a full @handle or a DID, try resolving it and include as an exact match
+  useEffect(() => {
+    const term = searchTerm.trim();
+    if (!term) {
+      setExactMatchDid(null);
+      return;
+    }
+
+    // Normalize input: drop leading @ for handles
+    const query = term.startsWith('@') ? term.slice(1) : term;
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const did = await resolveUserIdentifier(query);
+        if (cancelled) return;
+        if (did && allUserDids.includes(did)) {
+          setExactMatchDid(did);
+          // Ensure it's in the list so it can render immediately
+          setUsers(prev => (prev.some(u => u.did === did) ? prev : [{ did }, ...prev]));
+          // Kick off enrichment for the exact match
+          enqueueBatchEnrichment(did);
+        } else {
+          setExactMatchDid(null);
+        }
+  } catch {
+        // ignore resolve errors during free-typing
+        setExactMatchDid(null);
+      }
+    }, 250); // debounce
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [searchTerm, allUserDids, enqueueBatchEnrichment]);
+
   // Handle pre-selected user resolution after we have the user list
   useEffect(() => {
     const resolvePreSelectedUser = async () => {
@@ -245,17 +282,33 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
     );
     
     if (!searchTerm.trim()) {
+      // If there's an exact match and it's not yet in verifiedUsers, ensure it's present at the top
+      if (exactMatchDid) {
+        const existing = verifiedUsers.find(u => u.did === exactMatchDid);
+        const matchUser = existing || users.find(u => u.did === exactMatchDid) || { did: exactMatchDid } as EnrichedUser;
+        return [matchUser, ...verifiedUsers.filter(u => u.did !== exactMatchDid)];
+      }
       return verifiedUsers;
     }
     
     const searchLower = searchTerm.toLowerCase();
-    return verifiedUsers.filter(user => 
+    const matches = verifiedUsers.filter(user => 
       // Search in handle (if available), DID, and display name (if available)
       user.handle?.toLowerCase().includes(searchLower) ||
       user.did.toLowerCase().includes(searchLower) ||
       user.displayName?.toLowerCase().includes(searchLower)
     );
-  }, [users, searchTerm]);
+
+    // If we resolved an exact match, ensure it appears at the top even if not enriched yet
+    if (exactMatchDid) {
+      const existing = users.find(u => u.did === exactMatchDid);
+      const matchUser = existing || ({ did: exactMatchDid } as EnrichedUser);
+      const deduped = matches.filter(u => u.did !== exactMatchDid);
+      return [matchUser, ...deduped];
+    }
+
+    return matches;
+  }, [users, searchTerm, exactMatchDid]);
 
   // Auto-select user when there's exactly one match
   useEffect(() => {

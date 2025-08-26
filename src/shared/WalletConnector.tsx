@@ -27,7 +27,7 @@ import ThemedRainbowKitProvider from "./ThemedRainbowKitProvider.tsx";
 
 
 export const config = getDefaultConfig({
-  appName: 'ATProto Wallet Linker',
+  appName: '@Pay',
   projectId: '9314bee13462fde2ec9f13451ea0f01c',
   chains: [mainnet, optimism, arbitrum, base],
 });

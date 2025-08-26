@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting…</title>
+  </head>
+  <body>
+    <p>Redirecting…</p>
+    <script>
+      // SPA fallback for static hosting (e.g., GitHub Pages)
+      // Redirect to index.html with the original path in a query param
+      (function() {
+        var l = window.location;
+        var original = l.pathname + l.search + l.hash;
+        var target = '/?p=' + encodeURIComponent(original);
+        l.replace(target);
+      })();
+    </script>
+  </body>
+  </html>
