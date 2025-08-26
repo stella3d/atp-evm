@@ -76,3 +76,7 @@ h1 {
   width: 100%;
   margin: 0 auto;
 }
+
+#mainnet-warning p {
+  margin: 4px 2px 4px 2px;
+}

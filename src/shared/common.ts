@@ -27,7 +27,7 @@ export const ADDRESS_CONTROL_LEXICON_TYPE = 'club.stellz.evm.addressControl';
 export type AddressControlRecord = {
   '$type': 'club.stellz.evm.addressControl',
   address: AtprotoBytesField;
-  alsoOn?: Set<number>; // List of other chain IDs this address is active on
+  alsoOn?: Set<number> | number[]; // List of other chain IDs this address is active on
   signature: AtprotoBytesField;
   siwe: SiweLexiconObject;
 };
@@ -181,10 +181,15 @@ export const aggregateWallets = (records: AddressControlRecordWithMeta[]): Addre
     } else {
       // add chains if not already present
       const thisChains = Array.from([val.siwe.chainId, ...(val?.alsoOn || [])]);
-      if (!existing.value.alsoOn) 
+      if (!existing.value.alsoOn) {
         existing.value.alsoOn = new Set<number>(thisChains);
-      else
-        thisChains.forEach(chain => existing.value.alsoOn?.add(chain));
+      } else if (existing.value.alsoOn instanceof Set) {
+        thisChains.forEach(chain => (existing.value.alsoOn as Set<number>).add(chain));
+      } else {
+        // existing.value.alsoOn is an array
+        const merged = new Set<number>([...existing.value.alsoOn as number[], ...thisChains]);
+        existing.value.alsoOn = merged;
+      }
     }
   }
 
