@@ -38,7 +38,7 @@
       "properties": {
         "domain": { 
           "type": "string", 
-          "description": "Domain of the application requesting the signature, e.g. 'wallet-link.stellz.club'"
+          "description": "Domain of the application requesting the signature, e.g. 'atpay.stellz.club'"
         },
         "address": { 
           "type": "string",
@@ -53,7 +53,7 @@
         },
         "uri": {
           "type": "string",
-          "description": "URI of the application requesting the signature, e.g. 'https://wallet-link.stellz.club'",
+          "description": "URI of the application requesting the signature, e.g. 'https://atpay.stellz.club'",
           "format": "uri"
         },
         "version": {

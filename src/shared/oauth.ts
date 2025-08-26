@@ -1,7 +1,7 @@
 import { BrowserOAuthClient, type OAuthClientMetadataInput } from '@atproto/oauth-client-browser'
 import { appName } from "./constants.ts";
 
-const prodDomain = 'https://wallet-link.stellz.club';
+const prodDomain = 'https://atpay.stellz.club';
 const devDomain = 'http://127.0.0.1:5173';
 const isProduction = import.meta.env.PROD;
 

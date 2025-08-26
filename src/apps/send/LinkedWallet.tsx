@@ -102,7 +102,7 @@ export const LinkedWallet: React.FC<LinkedWalletProps> = ({
             </div>
             
             <div className="metadata-column">
-              <div className="metadata-label">{domain === 'wallet-link.stellz.club' ? `🌐 ✅` : '🌐 ⚠️'}</div>
+              <div className="metadata-label">{(domain === 'wallet-link.stellz.club' || domain === 'atpay.stellz.club') ? `🌐 ✅` : '🌐 ⚠️'}</div>
               <div className="address-meta-value">{domain}</div>
             </div>
             
