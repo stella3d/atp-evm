@@ -1,6 +1,7 @@
 import '../App.css'
 import './SendApp.css'
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -92,6 +93,7 @@ function SendApp() {
                 onTriggerPayment={handleTriggerPayment}
               />
               <WalletConnectionCard />
+              <p>looking to <Link to="/" style={{ textDecoration: 'none' }}>link your wallet</Link> instead?</p>
               {selectedUser && (
                 <UserDetailCard 
                   selectedUser={selectedUser} 
