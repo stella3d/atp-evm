@@ -1,6 +1,7 @@
 import '../App.css'
 import './SendApp.css'
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -80,8 +81,7 @@ function SendApp() {
           <TokenBalancesProvider>
             <div id="app-header">
               <h1 style={{ fontFamily: 'sans-serif' }}>@Pay</h1>
-              <p>Send value to ATProto accounts in a secure, p2p manner.</p>
-              <p style={{ color: 'orange', fontWeight: 'bold', fontSize: '16px' }}>THIS IS PRE-RELEASE SOFTWARE</p>
+              <p>Send value to ATProto accounts securely, via Ethereum.</p>
             </div>
             <div className="app-container">
               <SearchUsers 
@@ -92,6 +92,7 @@ function SendApp() {
                 onTriggerPayment={handleTriggerPayment}
               />
               <WalletConnectionCard />
+              <p>looking to <Link to="/" style={{ textDecoration: 'none' }}>link your wallet</Link> instead?</p>
               {selectedUser && (
                 <UserDetailCard 
                   selectedUser={selectedUser} 

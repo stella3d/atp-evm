@@ -14,13 +14,5 @@ export default defineConfig({
     port: 5173,
     allowedHosts: ['wallet-link.stellz.club', '127.0.0.1', '7e6a6bca11ba.ngrok-free.app'] 
   },
-  build: {
-    rollupOptions: {
-      input: {
-        main: './index.html',
-        send: './send.html',
-        atpay: './atpay.html',
-      }
-    }
-  }
+  // Single-page app: default entry is index.html
 })
