@@ -18,6 +18,11 @@ interface LinkedWalletProps {
   showValidationChecks: boolean;
 }
 
+const knownGoodLinkHosts = new Set([
+  'wallet-link.stellz.club',
+  'atpay.stellz.club'
+]);
+
 export const LinkedWallet: React.FC<LinkedWalletProps> = ({
   record,
   validationResults,
@@ -102,7 +107,7 @@ export const LinkedWallet: React.FC<LinkedWalletProps> = ({
             </div>
             
             <div className="metadata-column">
-              <div className="metadata-label">{(domain === 'wallet-link.stellz.club' || domain === 'atpay.stellz.club') ? `🌐 ✅` : '🌐 ⚠️'}</div>
+              <div className="metadata-label">{knownGoodLinkHosts.has(domain) ? `🌐 ✅` : '🌐 ⚠️'}</div>
               <div className="address-meta-value">{domain}</div>
             </div>
             

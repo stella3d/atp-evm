@@ -18,12 +18,13 @@ import {
 import { uid, type DidString, type MaybeDidString } from './common.ts';
 import { serializeSiweAddressControlRecord, writeAddressControlRecord } from './recordWrite.ts';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { SiweStatementString } from './common.ts';
 import AtUriLink from './AtUriLink.tsx'; // added import for the new component
 import { createSiweMessage, verifySiweMessage, type SiweMessage } from 'viem/siwe';
 import { getEthClient } from "./useTokenBalances.ts";
 import ThemedRainbowKitProvider from "./ThemedRainbowKitProvider.tsx";
+import { ChainIndicator } from './ChainIndicator.tsx';
 
 
 export const config = getDefaultConfig({
@@ -58,8 +59,29 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 	const [siweMsg, setSiweMsg] = useState<SiweMessage | null>(null);
 	const [verificationError, setVerificationError] = useState<string | null>(null);
 	const [successUri, setSuccessUri] = useState<string | null>(null); // new state for writeResponse URI
+  const [showMainnetTip, setShowMainnetTip] = useState<boolean>(false);
+  const [alsoOn, setAlsoOn] = useState<Set<number>>(new Set<number>());
 	disabled = disabled || !account?.address;
   const did = oauth.did;
+
+  // Show a gentle info toast if connected to Ethereum mainnet (chainId 1)
+  useEffect(() => {
+    if (account?.chainId === 1) {
+      setShowMainnetTip(true);
+    } else {
+      setShowMainnetTip(false);
+    }
+  }, [account?.chainId]);
+
+  // Ensure the current primary chain isn't included in alsoOn
+  useEffect(() => {
+    if (!account?.chainId) return;
+    setAlsoOn(prev => {
+      const next = new Set(prev);
+      if (typeof account.chainId === 'number') next.delete(account.chainId);
+      return next;
+    });
+  }, [account?.chainId]);
 
 	const { signMessage } = useSignMessage({
 		mutation: {
@@ -94,7 +116,12 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
         console.log('SIWE verification succeeded');
         setVerificationError(null);
 
-        const record = serializeSiweAddressControlRecord(account.address, siweMsg, sig);
+        const alsoOnArray: undefined | number[] = alsoOn.size > 0 ? Array.from(alsoOn) : undefined;
+        const record = serializeSiweAddressControlRecord(account.address, alsoOnArray, siweMsg, sig);
+        // include optional alsoOn chains as an array to comply with the lexicon schema
+        if (alsoOn.size > 0) {
+          record.alsoOn = Array.from(alsoOn);
+        }
         const writeResponse = await writeAddressControlRecord(record, oauth);
         if (writeResponse.success) {
           setSuccessUri(writeResponse.data.uri);  // set the success URI
@@ -117,6 +144,65 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
   
   return disabled ? null : (
 		<>
+      {showMainnetTip && (
+        <div id="mainnet-warning"
+          style={{
+            margin: '4px auto',
+            padding: '4px 6px',
+            borderRadius: '8px',
+            border: '1px solid #f59e0b',
+            background: '#2a1f00',
+            color: '#fbd38d',
+            textAlign: 'center',
+            maxWidth: 560
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 14, flex: 1, display: 'inline-flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
+              <p>
+                You’re setting your default chain to receive funds on as
+                <ChainIndicator chainId={1} variant="compact" /> mainnet.
+              </p>
+              <p>
+                A rollup chain like
+                <ChainIndicator chainId={8453} variant="compact" />,
+                <ChainIndicator chainId={10} variant="compact" />, or
+                <ChainIndicator chainId={42161} variant="compact" /> is much cheaper to use. Consider switching networks before linking.
+              </p>
+            </span>
+          </div>
+        </div>
+      )}
+      {/* alsoOn chain selection checkboxes (always visible, exclude primary) */}
+      <div style={{ margin: '10px auto 12px', maxWidth: 640, textAlign: 'center' }}>
+        <div style={{ marginBottom: 6, fontSize: 13, color: '#ddd' }}>Check all other chains you accept funds on. Leave this blank if you don't know.</div>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          {[
+            { id: 1, label: 'Ethereum' },
+            { id: 8453, label: 'Base' },
+            { id: 10, label: 'Optimism' },
+            { id: 42161, label: 'Arbitrum' },
+          ]
+            .filter(({ id }) => id !== account?.chainId)
+            .map(({ id }) => (
+              <label key={id} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <input
+                  type="checkbox"
+                  checked={alsoOn.has(id)}
+                  onChange={(e) => {
+                    setAlsoOn(prev => {
+                      const next = new Set(prev);
+                      if (e.target.checked) next.add(id); else next.delete(id);
+                      return next;
+                    });
+                  }}
+                />
+                <ChainIndicator chainId={id} variant="compact" />
+              </label>
+            ))}
+        </div>
+        <br/>
+      </div>
 			<button disabled={disabled} onClick={onClick}>
 				Link DID to Wallet
 			</button>
@@ -152,7 +238,6 @@ export function ConnectWallet({ prompt, successText }: { prompt?: string, succes
       {/* insert <br/> if no successText and connected */}
       {address && !successText && <br />}
       <ConnectButton showBalance={false} accountStatus="address" chainStatus="full" />
-      <br/>
     </div>
   );
 }
