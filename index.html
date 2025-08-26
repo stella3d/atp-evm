@@ -21,6 +21,20 @@
     <meta property="twitter:image" content="https://wallet-link.stellz.club/logo.png" />
   </head>
   <body>
+    <script>
+      // If redirected here from 404.html, restore the original path for the client router
+      (function() {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var p = params.get('p');
+          if (p) {
+            var url = new URL(p, window.location.origin);
+            // Use history.replaceState to avoid a full page reload
+            window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+          }
+        } catch (_) { /* no-op */ }
+      })();
+    </script>
     <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
   </body>

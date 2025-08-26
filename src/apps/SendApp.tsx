@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { oauthClient } from "../shared/oauth.ts";
-import { OAuthSession } from "@atproto/oauth-client-browser";
 import { SearchUsers } from "./send/SearchUsers.tsx";
 import { UserDetailCard } from "./send/UserDetailCard.tsx";
 import { WalletConnectionCard } from './send/WalletConnectionCard.tsx';
@@ -18,7 +16,7 @@ import ThemedRainbowKitProvider from "../shared/ThemedRainbowKitProvider.tsx";
 const queryClient = new QueryClient();
 
 function SendApp() {
-  const [_oauthSession, setOauthSession] = useState<OAuthSession | null>(null);
+  // OAuth session not needed in this component currently
   const [selectedUser, setSelectedUser] = useState<EnrichedUser | null>(null);
   const [enrichedUsers, setEnrichedUsers] = useState<EnrichedUser[]>([]);
   const [preSelectedUser, setPreSelectedUser] = useState<string | undefined>(undefined);
@@ -40,13 +38,6 @@ function SendApp() {
     }
   }, []);
 
-  useEffect(() => {
-    const fetchSession = async () => {
-      const initRes = await oauthClient.init();
-      setOauthSession(initRes?.session || null);
-    };
-    fetchSession();
-  }, []);
 
   const handleUserSelect = (userDid: DidString) => {
     const enrichedUser = enrichedUsers.find(user => user.did === userDid);
@@ -82,6 +73,7 @@ function SendApp() {
             <div id="app-header">
               <h1 style={{ fontFamily: 'sans-serif' }}>@Pay</h1>
               <p>Send value to ATProto accounts securely, via Ethereum.</p>
+              <p>Looking to <Link to="/" style={{ textDecoration: 'none' }}>link your wallet</Link> instead?</p>
             </div>
             <div className="app-container">
               <SearchUsers 
@@ -92,7 +84,6 @@ function SendApp() {
                 onTriggerPayment={handleTriggerPayment}
               />
               <WalletConnectionCard />
-              <p>looking to <Link to="/" style={{ textDecoration: 'none' }}>link your wallet</Link> instead?</p>
               {selectedUser && (
                 <UserDetailCard 
                   selectedUser={selectedUser} 
