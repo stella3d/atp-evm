@@ -10,7 +10,7 @@ function LinkerApp() {
       <b style={{ color: "#ee5f90" }}>Only use this if you are OK with being publicly associated to the linked wallet.</b>
       <p></p>
       <AuthLinker />
-  <p>looking to <Link to="/send" style={{ textDecoration: 'none' }}>send money to an existing user</Link> instead?</p>
+      <p>looking to <Link to="/send" style={{ textDecoration: 'none' }}>send money to an existing user</Link> instead?</p>
     </>
   );
 }
