@@ -81,8 +81,7 @@ function SendApp() {
           <TokenBalancesProvider>
             <div id="app-header">
               <h1 style={{ fontFamily: 'sans-serif' }}>@Pay</h1>
-              <p>Send value to ATProto accounts in a secure, p2p manner.</p>
-              <p style={{ color: 'orange', fontWeight: 'bold', fontSize: '16px' }}>THIS IS PRE-RELEASE SOFTWARE</p>
+              <p>Send value to ATProto accounts securely, via Ethereum.</p>
             </div>
             <div className="app-container">
               <SearchUsers 
