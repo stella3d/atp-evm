@@ -4,7 +4,7 @@ import {
   getDefaultConfig,
   ConnectButton,
 } from '@rainbow-me/rainbowkit';
-import { useSignMessage, useAccount, WagmiProvider } from 'wagmi';
+import { useSignMessage, useAccount, WagmiProvider, http } from 'wagmi';
 import {
   mainnet,
   optimism,
@@ -32,6 +32,12 @@ export const config = getDefaultConfig({
   appName: '@Pay',
   projectId: '9314bee13462fde2ec9f13451ea0f01c',
   chains: [mainnet, optimism, arbitrum, base],
+  transports: {
+    [mainnet.id]: http(undefined, { batch: true, retryCount: 0 }),
+    [optimism.id]: http(undefined, { batch: true, retryCount: 0 }),
+    [arbitrum.id]: http(undefined, { batch: true, retryCount: 0 }),
+    [base.id]: http(undefined, { batch: true, retryCount: 0 }),
+  }
 });
 
 
