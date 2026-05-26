@@ -53,6 +53,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
       try {
         const batch = Array.from(enrichSet);
         await enrichUsersProgressively(batch, (updatedUsers: EnrichedUser[]) => {
+          let newUsersForProp: EnrichedUser[] | null = null;
           setUsers(prevUsers => {
             const userMap = new Map(prevUsers.map(u => [u.did, u]));
             // update with enriched data
@@ -64,11 +65,13 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
             });
             
             const newUsers = Array.from(userMap.values());    
-            if (onUsersUpdate)
-              onUsersUpdate(newUsers);
+            newUsersForProp = newUsers;
             
             return newUsers;
           });
+          if (onUsersUpdate && newUsersForProp) {
+            onUsersUpdate(newUsersForProp);
+          }
         });
       } catch (err) {
         console.warn(`Failed to enrich batch:`, err);
@@ -142,6 +145,7 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
             setEnrichedUserDids(new Set(initialBatch));
             
             await enrichUsersProgressively(initialBatch, (updatedUsers: EnrichedUser[]) => {
+              let newUsersForProp: EnrichedUser[] | null = null;
               setUsers(prevUsers => {
                 const userMap = new Map(prevUsers.map(u => [u.did, u]));
                 // update with enriched data
@@ -153,11 +157,13 @@ export const SearchUsers: React.FC<SearchUsersProps> = ({ onUserSelect, onUsersU
                 });
                 
                 const newUsers = Array.from(userMap.values());   
-                if (onUsersUpdate) 
-                  onUsersUpdate(newUsers);
+                newUsersForProp = newUsers;
                 
                 return newUsers;
               });
+              if (onUsersUpdate && newUsersForProp) {
+                onUsersUpdate(newUsersForProp);
+              }
             });
             
             setEnriching(false);
