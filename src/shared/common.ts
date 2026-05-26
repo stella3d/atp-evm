@@ -160,6 +160,48 @@ export function getBlockExplorerTxUrl(txHash: string, chainId: number = 1): stri
   return `${baseUrl}/tx/${txHash}`;
 }
 
+// Global fetch queue to rate limit RPC requests and avoid 429s on public endpoints
+class FetchQueue {
+  private queue: Array<() => void> = [];
+  private activeCount = 0;
+  private maxConcurrent = 3;
+  private delayMs = 333; // ~3 requests per second max per concurrent slot
+
+  async enqueue<T>(task: () => Promise<T>): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      this.queue.push(async () => {
+        try {
+          const result = await task();
+          resolve(result);
+        } catch (e) {
+          reject(e);
+        } finally {
+          this.activeCount--;
+          setTimeout(() => this.processNext(), this.delayMs);
+        }
+      });
+      this.processNext();
+    });
+  }
+
+  private processNext() {
+    if (this.activeCount >= this.maxConcurrent || this.queue.length === 0) {
+      return;
+    }
+    this.activeCount++;
+    const nextTask = this.queue.shift();
+    if (nextTask) {
+      nextTask();
+    }
+  }
+}
+
+const globalFetchQueue = new FetchQueue();
+
+export const queuedFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+  return globalFetchQueue.enqueue(() => fetch(input, init));
+};
+
 // Utility functions for user identity resolution
 export function isDidString(input: string): input is DidString {
   return input.startsWith('did:plc:') || input.startsWith('did:web:');
