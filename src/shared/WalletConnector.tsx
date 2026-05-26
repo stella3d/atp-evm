@@ -25,6 +25,7 @@ import { createSiweMessage, verifySiweMessage, type SiweMessage } from 'viem/siw
 import { getEthClient } from "./useTokenBalances.ts";
 import ThemedRainbowKitProvider from "./ThemedRainbowKitProvider.tsx";
 import { ChainIndicator } from './ChainIndicator.tsx';
+import { fetchAddressControlRecords } from "./fetch.ts";
 
 
 export const config = getDefaultConfig({
@@ -50,6 +51,11 @@ export const makeSiweMessage = (did: DidString, address: `0x${string}`, chainId:
     nonce: uid(24),
     issuedAt: new Date()
   }
+}
+
+export const isWalletAlreadyLinked = async (did: DidString, pds: string, addr: `0x${string}`): Promise<boolean> => {
+  const userRecords = await fetchAddressControlRecords(did, pds);
+  return userRecords.some(r => r.value.siwe.address === addr);
 }
 
 const NO_ACCOUNT_ERROR = 'No Ethereum account found for signing message. Please connect your wallet first.';
@@ -135,6 +141,7 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 			alert(NO_ACCOUNT_ERROR);
 			return;
 		}
+    
 		const siwe = makeSiweMessage(did, account.address, account.chainId);
 		setSiweMsg(siwe);
 
