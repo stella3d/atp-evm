@@ -1,7 +1,7 @@
 import '../App.css'
 import './SendApp.css'
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { SearchUsers } from "./send/SearchUsers.tsx";
 import { UserDetailCard } from "./send/UserDetailCard.tsx";
@@ -10,6 +10,7 @@ import type { DidString, EnrichedUser } from "../shared/common.ts";
 import { TokenBalanceLoader } from '../shared/TokenBalanceProvider.tsx';
 
 function SendApp() {
+  const [searchParams] = useSearchParams();
   // OAuth session not needed in this component currently
   const [selectedUser, setSelectedUser] = useState<EnrichedUser | null>(null);
   const [enrichedUsers, setEnrichedUsers] = useState<EnrichedUser[]>([]);
@@ -19,9 +20,8 @@ function SendApp() {
 
   // Extract URL parameters on component mount
   useEffect(() => {
-    const urlParams = new URLSearchParams(globalThis.location.search);
-    const userParam = urlParams.get('user');
-    const payParam = urlParams.get('pay');
+    const userParam = searchParams.get('user');
+    const payParam = searchParams.get('pay');
     
     if (userParam) {
       setPreSelectedUser(userParam);
@@ -30,7 +30,7 @@ function SendApp() {
         setShouldOpenPayment(true);
       }
     }
-  }, []);
+  }, [searchParams]);
 
 
   const handleUserSelect = (userDid: DidString) => {
