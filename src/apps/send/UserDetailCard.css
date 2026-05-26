@@ -257,10 +257,34 @@
   text-align: center;
 }
 
+@keyframes pulseLoading {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(83, 100, 113, 0.3);
+  border-radius: 50%;
+  border-top-color: #1d9bf0;
+  animation: spin 1s ease-in-out infinite;
+}
+
 .loading-records {
   background: #f7f9fa;
   color: #536471;
   border: 1px solid #e1e5e9;
+  animation: pulseLoading 1.5s infinite ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .records-error {

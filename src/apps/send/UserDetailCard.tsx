@@ -183,7 +183,10 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         <div className="address-records">
           <label>Linked Wallets</label>
           {loadingRecords ? (
-            <div className="loading-records">loading addresses...</div>
+            <div className="loading-records">
+              <span className="spinner"></span>
+              Loading addresses...
+            </div>
           ) : recordsError ? (
             <div className="records-error">{recordsError}</div>
           ) : addressRecords.length === 0 ? (
