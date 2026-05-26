@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { isAddress } from 'viem';
-import { useAccount, WagmiProvider } from 'wagmi';
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useAccount } from 'wagmi';
 import type { EnrichedUser, AddressControlRecordWithMeta, DidString, AtUriString } from "../../shared/common.ts";
 import { aggregateWallets } from "../../shared/common.ts";
 import { fetchAddressControlRecords } from "../../shared/fetch.ts";
@@ -9,7 +8,6 @@ import { checkLinkValidityMinimal, type AddressControlVerificationChecks } from 
 import { LocalstorageTtlCache } from "../../shared/LocalstorageTtlCache.ts";
 import { PaymentModal } from "./PaymentModal.tsx";
 import { AtprotoUserCard, UserCardVariant } from "../../shared/AtprotoUserCard.tsx";
-import { config } from '../../shared/WalletConnector.tsx';
 import { ProfileDetails } from "./ProfileDetails.tsx";
 import { isCriticalValidationFailure } from "./ValidationChecks.tsx";
 import './UserDetailCard.css';
@@ -29,8 +27,7 @@ const getValidationCacheKey = (recordUri: AtUriString): `validation:${AtUriStrin
   return `validation:${recordUri}`;
 };
 
-// Inner component that uses wagmi hooks
-const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onClose, triggerPayment }) => {
+export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, onClose, triggerPayment }) => {
   const { isConnected } = useAccount();
   const [addressRecords, setAddressRecords] = useState<AddressControlRecordWithMeta[]>([]);
   const [loadingRecords, setLoadingRecords] = useState(false);
@@ -183,7 +180,10 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         <div className="address-records">
           <label>Linked Wallets</label>
           {loadingRecords ? (
-            <div className="loading-records">loading addresses...</div>
+            <div className="loading-records">
+              <span className="spinner"></span>
+              Loading addresses...
+            </div>
           ) : recordsError ? (
             <div className="records-error">{recordsError}</div>
           ) : addressRecords.length === 0 ? (
@@ -239,18 +239,5 @@ const UserDetailCardInner: React.FC<UserDetailCardProps> = ({ selectedUser, onCl
         chainId={paymentModal.chainId}
       />
     </div>
-  );
-};
-
-// Main component that provides Wagmi context
-export const UserDetailCard: React.FC<UserDetailCardProps> = ({ selectedUser, onClose, triggerPayment }) => {
-  const queryClient = new QueryClient();
-
-  return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <UserDetailCardInner selectedUser={selectedUser} onClose={onClose} triggerPayment={triggerPayment} />
-      </QueryClientProvider>
-    </WagmiProvider>
   );
 };

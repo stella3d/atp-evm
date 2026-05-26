@@ -140,18 +140,24 @@ export function getChainClass(chainId: number): string {
   return chainClassMap[chainId] || 'ethereum'; // default to ethereum styling
 }
 
-export function getDoraNetworkSlug(chainId: number): string | null {
-  const ondoraSlugMap: Record<number, string> = {
-    1: 'ethereum',
-    8453: 'base',
-    42161: 'arbitrum',
+export function getBlockExplorerUrl(chainId: number): string {
+  const explorerMap: Record<number, string> = {
+    1: 'https://etherscan.io',
+    10: 'https://optimistic.etherscan.io',
+    8453: 'https://basescan.org',
+    42161: 'https://arbiscan.io',
   };
-  return ondoraSlugMap[chainId] || null; // default to ethereum
+  return explorerMap[chainId] || 'https://etherscan.io'; // default to mainnet etherscan
 }
 
-export function getDoraTransactionUrl(txHash: string, chainId: number): string {
-  const networkSlug = getDoraNetworkSlug(chainId);
-  return `https://ondora.xyz/network/${networkSlug}/interactions/${txHash}`;
+export function getBlockExplorerAccountUrl(address: string, chainId: number = 1): string {
+  const baseUrl = getBlockExplorerUrl(chainId);
+  return `${baseUrl}/address/${address}`;
+}
+
+export function getBlockExplorerTxUrl(txHash: string, chainId: number = 1): string {
+  const baseUrl = getBlockExplorerUrl(chainId);
+  return `${baseUrl}/tx/${txHash}`;
 }
 
 // Utility functions for user identity resolution

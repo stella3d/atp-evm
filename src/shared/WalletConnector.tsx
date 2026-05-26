@@ -4,7 +4,7 @@ import {
   getDefaultConfig,
   ConnectButton,
 } from '@rainbow-me/rainbowkit';
-import { useSignMessage, useAccount, WagmiProvider } from 'wagmi';
+import { useSignMessage, useAccount, WagmiProvider, http } from 'wagmi';
 import {
   mainnet,
   optimism,
@@ -25,12 +25,19 @@ import { createSiweMessage, verifySiweMessage, type SiweMessage } from 'viem/siw
 import { getEthClient } from "./useTokenBalances.ts";
 import ThemedRainbowKitProvider from "./ThemedRainbowKitProvider.tsx";
 import { ChainIndicator } from './ChainIndicator.tsx';
+import { fetchAddressControlRecords } from "./fetch.ts";
 
 
 export const config = getDefaultConfig({
   appName: '@Pay',
   projectId: '9314bee13462fde2ec9f13451ea0f01c',
   chains: [mainnet, optimism, arbitrum, base],
+  transports: {
+    [mainnet.id]: http(undefined, { batch: true, retryCount: 0 }),
+    [optimism.id]: http(undefined, { batch: true, retryCount: 0 }),
+    [arbitrum.id]: http(undefined, { batch: true, retryCount: 0 }),
+    [base.id]: http(undefined, { batch: true, retryCount: 0 }),
+  }
 });
 
 
@@ -50,6 +57,11 @@ export const makeSiweMessage = (did: DidString, address: `0x${string}`, chainId:
     nonce: uid(24),
     issuedAt: new Date()
   }
+}
+
+export const isWalletAlreadyLinked = async (did: DidString, pds: string, addr: `0x${string}`): Promise<boolean> => {
+  const userRecords = await fetchAddressControlRecords(did, pds);
+  return userRecords.some(r => r.value.siwe.address === addr);
 }
 
 const NO_ACCOUNT_ERROR = 'No Ethereum account found for signing message. Please connect your wallet first.';
@@ -135,6 +147,7 @@ export const SignMessageComponent = ({ disabled, oauth }: { disabled: boolean, o
 			alert(NO_ACCOUNT_ERROR);
 			return;
 		}
+    
 		const siwe = makeSiweMessage(did, account.address, account.chainId);
 		setSiweMsg(siwe);
 
@@ -243,23 +256,17 @@ export function ConnectWallet({ prompt, successText }: { prompt?: string, succes
 }
 
 export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticated: boolean, did: MaybeDidString | undefined, oauth: OAuthSession }) => {
-  const queryClient = new QueryClient();
-
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <ThemedRainbowKitProvider>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-            <ConnectWallet prompt="Please connect your wallet to continue." successText="Wallet connected successfully!" />
-          </div>
-          {did && oauth ? (
-            <div>
-              <SignMessageComponent disabled={!isAuthenticated} oauth={oauth} />
-            </div>
-          ) : null}
-        </ThemedRainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+        <ConnectWallet prompt="Please connect your wallet to continue." successText="Wallet connected successfully!" />
+      </div>
+      {did && oauth ? (
+        <div>
+          <SignMessageComponent disabled={!isAuthenticated} oauth={oauth} />
+        </div>
+      ) : null}
+    </>
   );
 }
 

@@ -1,21 +1,16 @@
 import '../App.css'
 import './SendApp.css'
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { WagmiProvider } from 'wagmi';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { SearchUsers } from "./send/SearchUsers.tsx";
 import { UserDetailCard } from "./send/UserDetailCard.tsx";
 import { WalletConnectionCard } from './send/WalletConnectionCard.tsx';
 import type { DidString, EnrichedUser } from "../shared/common.ts";
-import { config } from '../shared/WalletConnector.tsx';
-import { TokenBalancesProvider, TokenBalanceLoader } from '../shared/TokenBalanceProvider.tsx';
-import ThemedRainbowKitProvider from "../shared/ThemedRainbowKitProvider.tsx";
-
-const queryClient = new QueryClient();
+import { TokenBalanceLoader } from '../shared/TokenBalanceProvider.tsx';
 
 function SendApp() {
+  const [searchParams] = useSearchParams();
   // OAuth session not needed in this component currently
   const [selectedUser, setSelectedUser] = useState<EnrichedUser | null>(null);
   const [enrichedUsers, setEnrichedUsers] = useState<EnrichedUser[]>([]);
@@ -25,9 +20,8 @@ function SendApp() {
 
   // Extract URL parameters on component mount
   useEffect(() => {
-    const urlParams = new URLSearchParams(globalThis.location.search);
-    const userParam = urlParams.get('user');
-    const payParam = urlParams.get('pay');
+    const userParam = searchParams.get('user');
+    const payParam = searchParams.get('pay');
     
     if (userParam) {
       setPreSelectedUser(userParam);
@@ -36,7 +30,7 @@ function SendApp() {
         setShouldOpenPayment(true);
       }
     }
-  }, []);
+  }, [searchParams]);
 
 
   const handleUserSelect = (userDid: DidString) => {
@@ -66,37 +60,31 @@ function SendApp() {
   };
 
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <ThemedRainbowKitProvider>
-          <TokenBalancesProvider>
-            <div id="app-header">
-              <h1 style={{ fontFamily: 'sans-serif' }}>@Pay</h1>
-              <p>Send value to ATProto accounts securely, via Ethereum.</p>
-              <p>Looking to <Link to="/" style={{ textDecoration: 'none' }}>link your wallet</Link> instead?</p>
-            </div>
-            <div className="app-container">
-              <SearchUsers 
-                onUserSelect={handleUserSelect} 
-                onUsersUpdate={handleUsersUpdate}
-                preSelectedUser={preSelectedUser}
-                shouldOpenPayment={shouldOpenPayment}
-                onTriggerPayment={handleTriggerPayment}
-              />
-              <WalletConnectionCard />
-              {selectedUser && (
-                <UserDetailCard 
-                  selectedUser={selectedUser} 
-                  onClose={handleCloseCard}
-                  triggerPayment={triggerPayment}
-                />
-              )}
-              <TokenBalanceLoader />
-            </div>
-          </TokenBalancesProvider>
-        </ThemedRainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <>
+      <div id="app-header">
+        <h1 style={{ fontFamily: 'sans-serif' }}>@Pay</h1>
+        <p>Send value to ATProto accounts securely, via Ethereum.</p>
+        <p>Looking to <Link to="/" style={{ textDecoration: 'none' }}>link your wallet</Link> instead?</p>
+      </div>
+      <div className="app-container">
+        <SearchUsers 
+          onUserSelect={handleUserSelect} 
+          onUsersUpdate={handleUsersUpdate}
+          preSelectedUser={preSelectedUser}
+          shouldOpenPayment={shouldOpenPayment}
+          onTriggerPayment={handleTriggerPayment}
+        />
+        <WalletConnectionCard />
+        {selectedUser && (
+          <UserDetailCard 
+            selectedUser={selectedUser} 
+            onClose={handleCloseCard}
+            triggerPayment={triggerPayment}
+          />
+        )}
+        <TokenBalanceLoader />
+      </div>
+    </>
   );
 }
 

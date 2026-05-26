@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAccount } from 'wagmi';
-import { getDoraTransactionUrl } from "../../shared/common.ts";
+import { getBlockExplorerTxUrl } from "../../shared/common.ts";
 import { clearTokenBalanceCache } from "../../shared/useTokenBalances.ts";
 import { TransactionHash } from './TransactionHash.tsx';
 
@@ -11,19 +11,7 @@ interface TransactionSuccessProps {
 }
 
 const getTransactionUrl = (txHash: string, chainId: number): string => {
-  switch (chainId) {
-    // Dora currently supports these 3 chains out of the 5
-    case 1: // Ethereum Mainnet
-    case 8453: // Base
-    case 42161: // Arbitrum
-      return getDoraTransactionUrl(txHash, chainId);
-    case 10: // Optimism
-      return `https://optimistic.etherscan.io/tx/${txHash}`;
-    case 100: // Gnosis
-      return `https://gnosisscan.io/tx/${txHash}`;
-    default:
-      return "";
-  }
+  return getBlockExplorerTxUrl(txHash, chainId);
 };
 
 export const TransactionSuccess: React.FC<TransactionSuccessProps> = ({

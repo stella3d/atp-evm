@@ -1,7 +1,8 @@
 import React from 'react';
+import { getBlockExplorerAccountUrl } from './common.ts';
 
 interface AddressLinkProps {
-  address: `0x${string}`;
+  address: string;
   className?: string;
   children?: React.ReactNode;
   showFullAddress?: boolean;
@@ -9,6 +10,7 @@ interface AddressLinkProps {
   fontSize?: string | number;
   color?: string;
   style?: React.CSSProperties;
+  chainId?: number; // Optional chainId to link to the correct explorer
 }
 
 export const AddressLink: React.FC<AddressLinkProps> = ({
@@ -19,7 +21,8 @@ export const AddressLink: React.FC<AddressLinkProps> = ({
   monospace = true,
   fontSize,
   color,
-  style
+  style,
+  chainId = 1
 }) => {
   // Validate that the address is a proper 42-character hex string
   if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
@@ -27,12 +30,12 @@ export const AddressLink: React.FC<AddressLinkProps> = ({
     return <span className={className}>{children || address}</span>;
   }
 
-  const doraUrl = `https://ondora.xyz/accounts/${address}/all`;
+  const explorerUrl = getBlockExplorerAccountUrl(address, chainId);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    globalThis.open(doraUrl, '_blank');
+    globalThis.open(explorerUrl, '_blank');
   };
 
   const displayText = children || (showFullAddress ? address : `${address.slice(0, 6)}...${address.slice(-4)}`);
@@ -52,12 +55,12 @@ export const AddressLink: React.FC<AddressLinkProps> = ({
 
   return (
     <a
-      href={doraUrl}
+      href={explorerUrl}
       target="_blank"
       rel="noopener noreferrer"
       className={`address-link ${className}`}
       onClick={handleClick}
-      title={`view ${address}'s profile on Dora`}
+      title={`View ${address} on block explorer`}
       style={combinedStyle}
     >
       {content}
