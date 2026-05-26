@@ -121,8 +121,8 @@ const ETH_CLIENT_OPTS = {
     wait: 10
   },
   retryDelay: 750,
-  retryCount: 4,
-  timeout: 20000,
+  retryCount: 0, // Disable viem transport retries to prevent spam on 429
+  timeout: 10000,
 }
 
 const ETH_CLIENTS = new Map<SupportedChain, Client<HttpTransport, Chain, Account | undefined, RpcSchema>>();
