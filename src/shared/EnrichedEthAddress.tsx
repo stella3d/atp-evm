@@ -16,6 +16,11 @@ export const EnrichedEthAddress: React.FC<EnrichedEthAddressProps> = ({
   const { data: ensName } = useEnsName({
 	address: isAddress(address) ? address : undefined,
 	chainId: 1, 
+    query: {
+      retry: false,
+      staleTime: 1000 * 60 * 60 * 24, // 24 hours
+      refetchOnWindowFocus: false,
+    }
   });
 
   return (
