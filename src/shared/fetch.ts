@@ -69,16 +69,28 @@ export const fetchUsersWithAddressRecord = async (): Promise<DidString[]> => {
   // Cache miss or expired, fetch new data
   type ResponseShape = { repos: { did: DidString }[] };
   // using regular fetch skips needing OAuth permissions
-  const res = await fetch('https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=club.stellz.evm.addressControl');
+
+  const collectionParam = 'club.stellz.evm.addressControl';
+  const lightrailUrl = `https://lightrail.microcosm.blue/xrpc/com.atproto.sync.listReposByCollection?collection=${collectionParam}`;
+  const bskyUrl = `https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=${collectionParam}`;
+
+  let res: Response;
+  try {
+    res = await fetch(bskyUrl);
+    if (!res.ok) throw new Error(`Bsky endpoint failed with status: ${res.status}`);
+  } catch (err) {
+    console.warn('Fallback to lightrail for listReposByCollection due to error:', err);
+    res = await fetch(lightrailUrl);
+  }
+
   const data: ResponseShape = await res.json();
   const users = data.repos.map(r => r.did);
 
   // Cache the new data
   setCachedData(users);
-  
+
   return users;
 }
-
 // Cache functions for enriched user data
 const getCachedEnrichedData = (): EnrichedUser[] | null => {
   try {

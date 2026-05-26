@@ -15,7 +15,7 @@ import {
   QueryClientProvider,
   QueryClient,
 } from "@tanstack/react-query";
-import { uid, type DidString, type MaybeDidString } from './common.ts';
+import { uid, type DidString, type MaybeDidString, queuedFetch } from './common.ts';
 import { serializeSiweAddressControlRecord, writeAddressControlRecord } from './recordWrite.ts';
 import type { OAuthSession } from '@atproto/oauth-client-browser';
 import { useState, useEffect } from 'react';
@@ -33,10 +33,10 @@ export const config = getDefaultConfig({
   projectId: '9314bee13462fde2ec9f13451ea0f01c',
   chains: [mainnet, optimism, arbitrum, base],
   transports: {
-    [mainnet.id]: http(undefined, { batch: true, retryCount: 0 }),
-    [optimism.id]: http(undefined, { batch: true, retryCount: 0 }),
-    [arbitrum.id]: http(undefined, { batch: true, retryCount: 0 }),
-    [base.id]: http(undefined, { batch: true, retryCount: 0 }),
+    [mainnet.id]: http(undefined, { fetch: queuedFetch, retryCount: 0 }),
+    [optimism.id]: http(undefined, { fetch: queuedFetch, retryCount: 0 }),
+    [arbitrum.id]: http(undefined, { fetch: queuedFetch, retryCount: 0 }),
+    [base.id]: http(undefined, { fetch: queuedFetch, retryCount: 0 }),
   }
 });
 

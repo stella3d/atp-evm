@@ -4,6 +4,7 @@ import { createPublicClient, http, formatUnits, erc20Abi, type RpcSchema, type A
 import { chainForId } from './WalletConnector.tsx';
 import { SupportedChain } from "./ChainIndicator.tsx";
 import { LocalstorageTtlCache } from './LocalstorageTtlCache.ts';
+import { queuedFetch } from './common.ts';
 
 export interface TokenBalance {
   address: `0x${string}` | 'native';
@@ -116,10 +117,7 @@ const COMMON_TOKENS: Record<number, Array<{address: `0x${string}`, symbol: strin
 };
 
 const ETH_CLIENT_OPTS = {
-  batch: {
-    batchSize: 5,
-    wait: 10
-  },
+  fetch: queuedFetch,
   retryDelay: 750,
   retryCount: 0, // Disable viem transport retries to prevent spam on 429
   timeout: 10000,
