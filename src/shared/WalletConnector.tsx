@@ -250,23 +250,17 @@ export function ConnectWallet({ prompt, successText }: { prompt?: string, succes
 }
 
 export const WalletConnector = ({ isAuthenticated, did, oauth }: { isAuthenticated: boolean, did: MaybeDidString | undefined, oauth: OAuthSession }) => {
-  const queryClient = new QueryClient();
-
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <ThemedRainbowKitProvider>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-            <ConnectWallet prompt="Please connect your wallet to continue." successText="Wallet connected successfully!" />
-          </div>
-          {did && oauth ? (
-            <div>
-              <SignMessageComponent disabled={!isAuthenticated} oauth={oauth} />
-            </div>
-          ) : null}
-        </ThemedRainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+        <ConnectWallet prompt="Please connect your wallet to continue." successText="Wallet connected successfully!" />
+      </div>
+      {did && oauth ? (
+        <div>
+          <SignMessageComponent disabled={!isAuthenticated} oauth={oauth} />
+        </div>
+      ) : null}
+    </>
   );
 }
 
