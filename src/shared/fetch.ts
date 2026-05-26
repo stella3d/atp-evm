@@ -72,15 +72,15 @@ export const fetchUsersWithAddressRecord = async (): Promise<DidString[]> => {
 
   const collectionParam = 'club.stellz.evm.addressControl';
   const lightrailUrl = `https://lightrail.microcosm.blue/xrpc/com.atproto.sync.listReposByCollection?collection=${collectionParam}`;
-  const bskyUrl = `https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=${collectionParam}`;
 
   let res: Response;
   try {
-    res = await fetch(bskyUrl);
-    if (!res.ok) throw new Error(`Bsky endpoint failed with status: ${res.status}`);
-  } catch (err) {
-    console.warn('Fallback to lightrail for listReposByCollection due to error:', err);
     res = await fetch(lightrailUrl);
+    if (!res.ok) throw new Error(`Lightrail endpoint failed with status: ${res.status}`);
+  } catch (err) {
+    console.warn('Fallback to bsky relay for listReposByCollection due to error:', err);
+    const bskyUrl = `https://relay1.us-west.bsky.network/xrpc/com.atproto.sync.listReposByCollection?collection=${collectionParam}`;
+    res = await fetch(bskyUrl);
   }
 
   const data: ResponseShape = await res.json();
